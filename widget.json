@@ -1,0 +1,26 @@
+{
+  "name": "Whiteboard",
+  "author": "BryceAndJuly",
+  "url": "https://github.com/BryceAndJuly/Whiteboard",
+  "version": "1.0.0",
+  "minAppVersion": "2.9.0",
+  "displayName": {
+    "default": "Whiteboard",
+    "zh_CN": "Whiteboard"
+  },
+  "description": {
+    "default": "这是一个白板挂件，嵌入后会默认铺满文档区域",
+    "zh_CN": "这是一个白板挂件，嵌入后会默认铺满文档区域"
+  },
+  "readme": {
+    "default": "README.md"
+  },
+  "funding": {
+    "openCollective": "",
+    "patreon": "",
+    "github": "",
+    "custom": [
+      ""
+    ]
+  }
+}
