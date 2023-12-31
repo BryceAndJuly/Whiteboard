@@ -1,3 +1,14 @@
+## 更新记录
+
+### V1.0.0
+
+* 首次提交
+
+### V1.0.1
+
+* 修复问题：[将白板以嵌入块形式嵌入到其他文档时显示不完全](https://github.com/BryceAndJuly/Whiteboard/issues/1)
+
+
 ## 一、简介
 
 一个基于[Excalidraw](https://github.com/excalidraw/excalidraw)的挂件，嵌入后会自动铺满文档，将一个文档当成一个白板。融合了块悬浮预览、关键词搜索定位、画板内不同元素之间的跳转等小功能。
@@ -104,7 +115,7 @@ assets/ExcalidrawFiles/20231227015401-w0olmpi.excalidraw
 
 ### 1、手动更改画笔的粗细
 
-打开挂件文件夹`画布`​​​​——`static`​​​​——`js`​​​​——`main.js`​​​​，这个main.js全名一般是：main.abb32a81.js 这种形式。在该js文件中搜索：
+打开挂件文件夹`Whiteboard`​​​​——`static`​​​​——`js`​​​​——`main.js`​​​​，这个main.js全名一般是：main.abb32a81.js 这种形式。在该js文件中搜索：
 
 ```css
 simulatePressure:e.simulatePressure,size:1.2*e.strokeWidth
