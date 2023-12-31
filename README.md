@@ -115,7 +115,7 @@ assets/ExcalidrawFiles/20231227015401-w0olmpi.excalidraw
 
 ### 1、手动更改画笔的粗细
 
-打开挂件文件夹`Whiteboard`​​​​——`static`​​​​——`js`​​​​——`main.js`​​​​，这个main.js全名一般是：main.abb32a81.js 这种形式。在该js文件中搜索：
+打开挂件文件夹`画布`​​​​——`static`​​​​——`js`​​​​——`main.js`​​​​，这个main.js全名一般是：main.abb32a81.js 这种形式。在该js文件中搜索：
 
 ```css
 simulatePressure:e.simulatePressure,size:1.2*e.strokeWidth
