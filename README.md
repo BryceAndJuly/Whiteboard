@@ -31,6 +31,50 @@
 >
 > 手动点击保存按钮、键盘上按Ctrl+S依旧保留弹窗提醒。
 
+### V1.0.5
+1、去掉刚打开白板时触发的那次自动保存，减少不必要的性能消耗，这样打开白板时更流畅些。
+2、处理问题：在macOS端保存按钮失效的问题。
+
+> * 关于在macOS端保存按钮的问题，我尝试处理了兼容，但是不知道有没有实际生效。使用该设备的用户如果发现还是没有生效，可以到仓库提Issue，我会重新处理。
+> * 另外建议：最好在新建的空白页面嵌入该挂件，不要在有其他内容的文档里嵌入。简介里也说了嘛，会自动铺满，有其他内容的话会被遮挡的。
+
+
+对于版本：V1.0.5
+
+如果你**不想默认开启自动保存功能**，可以使用VS Code之类的编辑器打开挂件文件夹`Whiteboard`——`index.html`，
+
+搜索：
+
+```js
+window._autoSave=!0
+```
+
+替换成：
+
+```js
+window._autoSave=0
+```
+
+
+如果你想**调整自动保存的延时时间**（默认是1500ms），可以打开挂件文件夹`Whiteboard`——`static`——`js`——`main.57b55d4d.js`
+
+搜索：
+
+```js
+window._isDarwin?document.dispatchEvent(new KeyboardEvent("keydown",{key:"S",metaKey:!0,bubbles:!1})):document.dispatchEvent(new KeyboardEvent("keydown",{key:"S",ctrlKey:!0,bubbles:!1}))}),1500)
+```
+
+将最后那个数值：1500 改成你想设置的数值即可，单位是毫秒。
+
+
+
+
+---
+
+
+
+
+
 
 
 ## 一、简介
