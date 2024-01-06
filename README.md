@@ -35,11 +35,26 @@
 1、去掉刚打开白板时触发的那次自动保存，减少不必要的性能消耗，这样打开白板时更流畅些。
 2、处理问题：在macOS端保存按钮失效的问题。
 
-> * 关于在macOS端保存按钮的问题，我尝试处理了兼容，但是不知道有没有实际生效。使用该设备的用户如果发现还是没有生效，可以到仓库提Issue，我会重新处理。
-> * 另外建议：最好在新建的空白页面嵌入该挂件，不要在有其他内容的文档里嵌入。简介里也说了嘛，会自动铺满，有其他内容的话会被遮挡的。
+
+### V1.0.6
+1、修复问题：在移动端，白板文档作为嵌入块时显示不全。【之前修复的部分是PC端的，忘了移动端，最近用到才发现】。
+
+2、在白板文档中，文档树右侧（调整页面宽度）的拖拽线被遮挡。
+
+这个问题添加CSS片段即可，白板的z-index层级不能再调低了，不然有时遮不住挂件的块标，会很难看，所以可以把拖拽线的层级调高。
+
+```js
+.layout__resize--lr {
+    z-index: 3;
+}
+```
+
+3、自动保存的延时默认值调整为2500ms。
+
+> 虽然有防抖，但是之前设置的默认值1.5s还是太小了，可能造成卡顿等问题，而且最近使用的时候发现，白板上鼠标右键弹出的菜单如果碰上自动保存会收起来。所以如果碰上卡顿或者鼠标右键弹出的菜单被收起，建议关掉自动保存（快捷键`Alt`+`S`）。
 
 
-对于版本：V1.0.5
+对于版本：**V1.0.6**
 
 如果你**不想默认开启自动保存功能**，可以使用VS Code之类的编辑器打开挂件文件夹`Whiteboard`——`index.html`，
 
@@ -55,25 +70,17 @@ window._autoSave=!0
 window._autoSave=0
 ```
 
-
-如果你想**调整自动保存的延时时间**（默认是1500ms），可以打开挂件文件夹`Whiteboard`——`static`——`js`——`main.57b55d4d.js`
+如果你想**调整自动保存的延时时间**（默认是2500ms），可以打开挂件文件夹`Whiteboard`——`static`——`js`——`main.57b55d4d.js`
 
 搜索：
 
 ```js
-window._isDarwin?document.dispatchEvent(new KeyboardEvent("keydown",{key:"S",metaKey:!0,bubbles:!1})):document.dispatchEvent(new KeyboardEvent("keydown",{key:"S",ctrlKey:!0,bubbles:!1}))}),1500)
+window._isDarwin?document.dispatchEvent(new KeyboardEvent("keydown",{key:"S",metaKey:!0,bubbles:!1})):document.dispatchEvent(new KeyboardEvent("keydown",{key:"S",ctrlKey:!0,bubbles:!1}))}),2500)
 ```
 
-将最后那个数值：1500 改成你想设置的数值即可，单位是毫秒。
-
-
-
+将最后那个数值：2500 改成你想设置的数值即可，单位是毫秒。
 
 ---
-
-
-
-
 
 
 
@@ -212,6 +219,6 @@ D:\Siyuan\SiYuan.exe  --port=6806
 
 * [Excalidraw项目](https://github.com/excalidraw/excalidraw)
 * 画板中的中文字体文件拷贝自 [superdraw](https://github.com/zuoez02/superdraw) 项目；
-* 感谢插件【开放 API】的作者[Zuoqiu-Yingyi](https://github.com/Zuoqiu-Yingyi)的贡献。
+* 感谢插件【开放 API】的作者[Zuoqiu-Yingyi](https://github.com/Zuoqiu-Yingyi)。
 
 ‍
