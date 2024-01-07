@@ -36,8 +36,10 @@
 2、处理问题：在macOS端保存按钮失效的问题。
 
 
+
+
 ### V1.0.6
-1、修复问题：在移动端，白板文档作为嵌入块时显示不全。【之前修复的部分是PC端的，忘了移动端，最近用到才发现】。
+1、修复问题：在移动端，白板文档作为嵌入块时显示不全。【之前修复的部分是PC端的，忘了移动端，最近看到才发现】。
 
 2、在白板文档中，文档树右侧（调整页面宽度）的拖拽线被遮挡。
 
@@ -54,7 +56,15 @@
 > 虽然有防抖，但是之前设置的默认值1.5s还是太小了，可能造成卡顿等问题，而且最近使用的时候发现，白板上鼠标右键弹出的菜单如果碰上自动保存会收起来。所以如果碰上卡顿或者鼠标右键弹出的菜单被收起，建议关掉自动保存（快捷键`Alt`+`S`）。
 
 
-对于版本：**V1.0.6**
+
+### V1.0.7
+
+* 前面的版本打开白板时还是有几个重复的加载消耗，这个版本主要是删除掉那些冗余部分。这版打开应该会流畅些。
+
+> 如果后续没出现使用上的问题的话，更新就到此了，希望这个小工具能帮到大家，新年快乐。
+
+
+对于当前版本：**V1.0.7**
 
 如果你**不想默认开启自动保存功能**，可以使用VS Code之类的编辑器打开挂件文件夹`Whiteboard`——`index.html`，
 
@@ -70,7 +80,7 @@ window._autoSave=!0
 window._autoSave=0
 ```
 
-如果你想**调整自动保存的延时时间**（默认是2500ms），可以打开挂件文件夹`Whiteboard`——`static`——`js`——`main.57b55d4d.js`
+如果你想**调整自动保存的延时时间**（默认是2500ms），可以打开挂件文件夹`Whiteboard`——`static`——`js`——`main.8ae0fa01.js`
 
 搜索：
 
@@ -80,7 +90,12 @@ window._isDarwin?document.dispatchEvent(new KeyboardEvent("keydown",{key:"S",met
 
 将最后那个数值：2500 改成你想设置的数值即可，单位是毫秒。
 
+
 ---
+
+
+
+
 
 
 
@@ -219,6 +234,6 @@ D:\Siyuan\SiYuan.exe  --port=6806
 
 * [Excalidraw项目](https://github.com/excalidraw/excalidraw)
 * 画板中的中文字体文件拷贝自 [superdraw](https://github.com/zuoez02/superdraw) 项目；
-* 感谢插件【开放 API】的作者[Zuoqiu-Yingyi](https://github.com/Zuoqiu-Yingyi)。
+* 感谢插件【开放 API】的作者[Zuoqiu-Yingyi](https://github.com/Zuoqiu-Yingyi)的贡献。
 
 ‍
