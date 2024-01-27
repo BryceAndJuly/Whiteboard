@@ -1,11 +1,48 @@
 ## 更新记录
 
+### V1.0.9
+* 修复样式问题：在移动端，【保存】、【刷新】按钮无法自动调整位置导致被遮挡。
+* 关于全屏快捷键在Excalidraw V0.17.0被移除的问题 。新增全屏快捷键`Alt`+`Y`，这个快捷键跟笔记里其他文档的全屏快捷键保持一致，点击白板空白处后，按该快捷键可进入/退出全屏模式。
+
+**Web-Embed相关**：
+* 如果嵌入的是文档的块超链接，则自动插入文档标题。
+* 预览文档中支持渲染katex公式、Mermaid。
+* 对于预览文档中的嵌入块，就不继续查询渲染了，处理为直接显示对应的SQL 文本。
+---
+对于当前版本：**V1.0.9**
+
+如果你**不想默认开启自动保存功能**，可以使用VS Code之类的编辑器打开挂件文件夹`Whiteboard`——`index.html`，
+
+搜索：
+
+```js
+window._autoSave = true;
+```
+
+改成：
+
+```js
+window._autoSave = false;
+```
+
+如果你想**调整自动保存的延时时间**（默认是2000ms），可以打开挂件文件夹`Whiteboard`——`assets`——`index-2d556bed.js`
+
+搜索：
+
+```js
+window._isDarwin?document.dispatchEvent(new KeyboardEvent("keydown",{key:"S",metaKey:!0,bubbles:!1})):document.dispatchEvent(new KeyboardEvent("keydown",{key:"S",ctrlKey:!0,bubbles:!1}))},2000));
+```
+
+将最后那个数值：2000 改成你想设置的数值即可，单位是毫秒。
+
+---
+
 ### V1.0.8
 * Excalidraw版本升级，0.15.0——>0.17.0
 * 支持嵌入笔记内文档（预览的形式，不可编辑），效果见顶部那个预览图。
   > 基本用法：
   >
-  > * 白板顶部工具栏有个【嵌入网页】的功能，点击后按住鼠标拖拽出一个Web-Embed的框，然后把笔记内的块超链接【形如：siyuan://blocks/20200812220555-lj3enxa】粘贴进链接框，然后**随便挪动一下鼠标**就开始渲染那个块/文档了。
+  > * 白板顶部工具栏有个【嵌入网页】的功能，点击后按住鼠标拖拽出一个Web-Embed的框，然后把笔记内的块超链接【形如：siyuan://blocks/20200812220555-lj3enxa】粘贴进链接框并回车，然后**随便挪动一下鼠标**就开始渲染那个块/文档了。
   > * 在Web-Embed框里要滚动页面查看内容的话，需要先把鼠标挪到框中央并点击按钮【点击开始交互】，框里的块引用、超链接点击能跳转。
   > * 预览的文档里有些块还没处理，像公式、HTML块、Mermaid、嵌入块等，但目前用来看个大概还是可以的。
   > * 如果刚打开白板或者刷新后看到那个Web-Embed框是空白的，只需要在白板里随便挪一下鼠标就开始渲染了。
@@ -24,43 +61,14 @@
    }
 ```
 
-
-
-对于当前版本：**V1.0.8**
-
-如果你**不想默认开启自动保存功能**，可以使用VS Code之类的编辑器打开挂件文件夹`Whiteboard`——`index.html`，
-
-搜索：
-
-```js
-window._autoSave = true;
-```
-
-改成：
-
-```js
-window._autoSave = false;
-```
-
-如果你想**调整自动保存的延时时间**（默认是2000ms），可以打开挂件文件夹`Whiteboard`——`assets`——`index-f2207347.js`
-
-搜索：
-
-```js
-window._isDarwin?document.dispatchEvent(new KeyboardEvent("keydown",{key:"S",metaKey:!0,bubbles:!1})):document.dispatchEvent(new KeyboardEvent("keydown",{key:"S",ctrlKey:!0,bubbles:!1}))},2000))
-```
-将最后那个数值：2000 改成你想设置的数值即可，单位是毫秒。
-
-
-
 ### V1.0.7
 
 * 前面的版本打开白板时还是有几个重复的加载消耗，这个版本主要是删除掉那些冗余部分。这版打开应该会流畅些。
 
 ### V1.0.6
-1、修复问题：在移动端，白板文档作为嵌入块时显示不全。【之前修复的部分是PC端的，忘了移动端，最近看到才发现】。
+* 修复问题：在移动端，白板文档作为嵌入块时显示不全。【之前修复的部分是PC端的，忘了移动端，最近看到才发现】。
 
-2、在白板文档中，文档树右侧（调整页面宽度）的拖拽线被遮挡。
+* 在白板文档中，文档树右侧（调整页面宽度）的拖拽线被遮挡。
 
 这个问题添加CSS片段即可，白板的z-index层级不能再调低了，不然有时遮不住挂件的块标，会很难看，所以可以把拖拽线的层级调高。
 
@@ -70,14 +78,14 @@ window._isDarwin?document.dispatchEvent(new KeyboardEvent("keydown",{key:"S",met
 }
 ```
 
-3、自动保存的延时默认值调整为2500ms。
+* 自动保存的延时默认值调整为2500ms。
 
 > 虽然有防抖，但是之前设置的默认值1.5s还是太小了，可能造成卡顿等问题，而且最近使用的时候发现，白板上鼠标右键弹出的菜单如果碰上自动保存会收起来。所以如果碰上卡顿或者鼠标右键弹出的菜单被收起，建议关掉自动保存（快捷键`Alt`+`S`）。
 
 
 ### V1.0.5
-1、去掉刚打开白板时触发的那次自动保存，减少不必要的性能消耗，这样打开白板时更流畅些。
-2、处理问题：在macOS端保存按钮失效的问题。
+* 去掉刚打开白板时触发的那次自动保存，减少不必要的性能消耗，这样打开白板时更流畅些。
+* 处理问题：在macOS端保存按钮失效的问题。
 
 ### V1.0.4
 
@@ -110,7 +118,6 @@ window._isDarwin?document.dispatchEvent(new KeyboardEvent("keydown",{key:"S",met
 
 * 首次提交
 
----
 ---
 
 
@@ -216,10 +223,10 @@ assets/ExcalidrawFiles/20231227015401-w0olmpi.excalidraw
 
 ### 1、手动更改画笔的粗细
 
-对于版本V1.0.8，打开挂件文件夹`Whiteboard`——`assets`——`index-f2207347.js`,在该js文件中搜索：
+对于版本V1.0.8，打开挂件文件夹`Whiteboard`——`assets`——`index-2d556bed.js`,在该js文件中搜索：
 
 ```css
-e.simulatePressure,size:e.strokeWidth*1.2,thinning
+simulatePressure:e.simulatePressure,size:e.strokeWidth*1.2,thinning
 ```
 
 那个1.2是现在设置的值（已经相对小了），最开始的默认值是4点几，你可以根据自己需要更改这个值的大小来修改画笔的粗细。
