@@ -178,7 +178,8 @@
 
 /* 文档的过渡 */
 .protyle-wysiwyg {
-    transition: none
+    transition: none;
+    font-size: 16px;
 }
 
 .protyle-content--transition .protyle-wysiwyg {
@@ -195,15 +196,7 @@
     display: none;
 }
 
-/* 全屏——导图挂件要用 */
-.fullScreen {
-    position: fixed;
-    top: 0px;
-    left: 0px;
-    width: 100vw !important;
-    height: 100vh !important;
-    z-index: 200;
-}
+
 
 /* 引用块 */
 .protyle-wysiwyg [data-node-id] span[data-type~=block-ref],
@@ -235,24 +228,7 @@
     border: none;   
 }
 
-/* 折叠后的代码块高度 */
-.protyle-wysiwyg [data-node-id][fold="1"]:not(.li):not([data-type=NodeHeading]).code-block {
-    height: 46px;
-}
 
-
-/* 斜杠菜单 */
-.protyle-hint.b3-list.b3-list--background.hint--menu >div{
-    display: flex;
-    flex-wrap: wrap;
-}
-
-.protyle-hint.b3-list.b3-list--background.hint--menu >div >button {
-    width: calc(33% - 16px) !important;
-}
-.protyle-hint.b3-list.b3-list--background.hint--menu span.b3-menu__accelerator {
-    display: none;
-}
 
 /* 行内备注 */
 .tooltip--memo {
@@ -260,19 +236,12 @@
     line-height: 1.5;
     padding: 10px;
 }
-
-/* 代码块——复制按钮 */
-.code-block span.protyle-icon.protyle-icon--first.protyle-action__copy {
-    order: -1;
-    color: gray;
-    background-color: transparent;
-    margin-top: -4px;
-    margin-right: 6px;
+/* 代码块顶部操作栏 */
+.code-block:hover  span.protyle-icon.protyle-icon--first.protyle-action__copy{
+    display: none;
 }
-
-.code-block span.protyle-icon.protyle-icon--first.protyle-action__copy:hover {
-    /* color: red; */
-    background-color: rgb(216, 216, 216);
+.code-block:hover  span.b3-tooltips__nw.b3-tooltips.protyle-icon.protyle-icon--last.protyle-action__menu{
+    display: none;
 }
 
 /* 行内代码 */
