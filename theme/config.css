@@ -1,20 +1,21 @@
-/* 无序列表——修正图标的位置 */
+/* 修正图标的位置============================ */
+
+/* 无序列表 */
 .protyle-wysiwyg [data-node-id].li>.protyle-action {
     left: 17px;
     width: 16px;
     top: -59px;
 }
-
 /* 有序列表 */
 .protyle-wysiwyg [data-node-id][data-subtype="o"].li>.protyle-action{
     left: 17px;
     width: 16px;
     top: 4px;
 }
-
 /* 任务列表 */
 .protyle-wysiwyg [data-node-id][data-subtype="t"].li>.protyle-action{
     left: 17px;
     width: 16px;
     top: -74px;
 }
+/* ------------------------------------------------- */

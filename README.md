@@ -1,4 +1,47 @@
 ## 更新记录
+### V1.2.0
+* 删掉sourcemap文件，减小挂件包的体积。
+* 预览文档中支持渲染嵌入块。
+* 预览文档中支持渲染数据库表格视图（Database table view）。
+* 优化消息弹窗，加上时间戳并在样式上减少干扰，保留最后一个通知。
+* 白板中预览文档的样式调整：减少文档内边距（边缘空白），theme.css中引入了超链接图标。
+
+Tips:
+
+1. 预览文档如果在翻页或者鼠标滚动过程中出现模糊，可以先把鼠标移出`Web-Embed`框来恢复清晰度。
+2. 如果预览文档中有Mermaid图表，建议保存的时候让对应的文档处于白板可视区域内（通过白板的缩小等方式），这样下次打开的时候能保证正常渲染。
+3. 在白板中渲染数据库表格视图的时候虽然没有滚动条，但是可以通过`shift`+鼠标滚轮的方式来横向滚动查看数据表格。
+
+---
+
+对于当前版本：**V1.2.0**
+
+如果你**不想默认开启自动保存功能**，可以使用VS Code之类的编辑器打开挂件文件夹`Whiteboard`——`index.html`，
+
+搜索：
+
+```js
+window._autoSave = true;
+```
+
+改成：
+
+```js
+window._autoSave = false;
+```
+
+如果你想**调整自动保存的延时时间**（默认是2000ms），可以打开挂件文件夹`Whiteboard`​——`assets`​——`index-c894b550.js`​
+
+搜索：
+
+```js
+window._isDarwin?document.dispatchEvent(new KeyboardEvent("keydown",{key:"S",metaKey:!0,bubbles:!1})):document.dispatchEvent(new KeyboardEvent("keydown",{key:"S",ctrlKey:!0,bubbles:!1}))},2000));
+```
+
+将最后那个数值：2000 改成你想设置的数值即可，单位是毫秒。
+
+---
+
 
 ### V1.1.0
 
@@ -29,35 +72,6 @@ document.addEventListener("dragstart", (event) => {
 );
 ```
 
----
-
-对于当前版本：**V1.1.0**
-
-如果你**不想默认开启自动保存功能**，可以使用VS Code之类的编辑器打开挂件文件夹`Whiteboard`——`index.html`，
-
-搜索：
-
-```js
-window._autoSave = true;
-```
-
-改成：
-
-```js
-window._autoSave = false;
-```
-
-如果你想**调整自动保存的延时时间**（默认是2000ms），可以打开挂件文件夹`Whiteboard`​——`assets`​——`index-7cc5d345.js`​
-
-搜索：
-
-```js
-window._isDarwin?document.dispatchEvent(new KeyboardEvent("keydown",{key:"S",metaKey:!0,bubbles:!1})):document.dispatchEvent(new KeyboardEvent("keydown",{key:"S",ctrlKey:!0,bubbles:!1}))},2000));
-```
-
-将最后那个数值：2000 改成你想设置的数值即可，单位是毫秒。
-
----
 
 ### V1.0.9
 
@@ -255,7 +269,7 @@ assets/ExcalidrawFiles/20231227015401-w0olmpi.excalidraw
 
 ### 1、手动更改画笔的粗细
 
-对于版本V1.1.0，打开挂件文件夹`Whiteboard`​——`assets`​——`index-7cc5d345.js`​,在该js文件中搜索：
+对于版本V1.2.0，打开挂件文件夹`Whiteboard`​——`assets`​——`index-c894b550.js`​,在该js文件中搜索：
 
 ```css
 simulatePressure:e.simulatePressure,size:e.strokeWidth*1.2,thinning

@@ -4,10 +4,11 @@
   <head>
     <meta charset="utf-8" />
     <title>Excalidraw | Hand-drawn look & feel • Collaborative • Secure</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover, shrink-to-fit=no" />
+    <meta name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover, shrink-to-fit=no" />
     <meta name="theme-color" content="#121212" />
     <meta name="title" content="Excalidraw" />
-    <style> html.dark { background-color: #121212; color: #fff;}</style>
+    <style>html.dark {background-color: #121212;color: #fff;}</style>
     <!-- 挂件自动全屏，铺满当前页签，PC端设置z-index:2,移动端设置z-index:1 -->
     <script>
       try {
@@ -31,21 +32,20 @@
             window.frameElement.setAttribute("style", "position:absolute;left:0px;top:0px;width:100%;height:100%;z-index:2;"), window.frameElement.parentElement.setAttribute("style", "width:100%;height:100%;"), window.frameElement.parentElement.parentElement.setAttribute("style", "position:absolute;top:0px;left:0px;width:100%;height:100%;overflow:hidden;margin:0px;padding:0px;")
           }
         }
-      } catch (t) { }</script>
-    <!-- Excalidraw version -->
-    <meta name="version" content="2024-02-05T16:35:15.327Z-none" />
+      } catch (t) {console.error(t)}</script>
+    <meta name="version" content="2024-02-20T21:43:54.028Z-none" />
     <link rel="preload" href="./Virgil.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
     <link rel="preload" href="./Cascadia.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
     <link rel="stylesheet" href="./fonts.css" type="text/css" />
     <style>
-      body,html {
+      body,
+      html {
         margin: 0;
         -webkit-text-size-adjust: 100%;
         width: 100%;
         height: 100%;
         overflow: hidden;
       }
-
       .visually-hidden {
         position: absolute !important;
         height: 1px;
@@ -55,7 +55,6 @@
         white-space: nowrap;
         user-select: none;
       }
-
       #root {
         height: 100%;
         -webkit-touch-callout: none;
@@ -65,7 +64,6 @@
         -ms-user-select: none;
         user-select: none;
       }
-
       @media screen and (min-width: 1200px) {
         #root {
           -webkit-touch-callout: default;
@@ -80,13 +78,11 @@
       button.dropdown-menu-button.App-toolbar__extra-tools-trigger.zen-mode-transition+.dropdown-menu.App-toolbar__extra-tools-dropdown button:last-child {
         display: none !important;
       }
-
       /* 右键菜单的粘贴按钮失效，暂时不想花时间去修复了 */
       .excalidraw .popover>ul.context-menu>li[data-testid="paste"],
       .excalidraw .popover>ul.context-menu>li[data-testid="paste"]+hr.context-menu-item-separator {
         display: none;
       }
-
       /* 在线素材库 */
       .layer-ui__library .library-menu-items__no-items,
       .layer-ui__library a.library-menu-browse-button,
@@ -105,7 +101,7 @@
       .Island.dropdown-menu-container>a {
         display: none !important;
       }
-      /* 保存按钮 */
+      /* 样式——保存按钮 */
       #saveBtn {
         position: fixed;
         max-width: 340px;
@@ -121,6 +117,7 @@
         border: 1px solid #3b3a3a40;
         border-radius: 8px;
         cursor: pointer;
+        user-select: none;
       }
       #refreshBtn {
         position: fixed;
@@ -137,6 +134,7 @@
         border: 1px solid #3b3a3a40;
         border-radius: 8px;
         cursor: pointer;
+        user-select: none;
       }
       #saveBtn:hover,
       #refreshBtn:hover {
@@ -146,35 +144,37 @@
         height: auto;
         max-width: 400px;
         padding: 0px 10px 0px 10px;
-        /* background: #d23f31;
-        color: white; */
-        background-color: #f6f6f6;
-        color: black;
+        background-color: transparent;
+        color: #B8B8B8;
         margin-bottom: 5px;
         border-radius: 5px;
         user-select: none;
       }
       #myMessage {
-        width: 400px;
+        width: 277px;
         max-height: 400px;
         padding: 0px 15px;
         position: fixed;
         text-align: left;
         line-height: 25px;
         top: 17px;
-        left: 120px;
-        font-size: 14px;
+        left: 96px;
+        font-size: 12px;
         border-radius: 7px;
-        z-index: 1002;
+        z-index: 2;
         display: flex;
         flex-direction: column;
         align-items: start;
       }
-      @media screen and (max-width:853px){#saveBtn{top: 81px;left: 31px;}#myMessage{top: 101px;left: -2px;}#refreshBtn{top: 81px;right: 17px;}}
+        
+      @media screen and (max-width:1217px){#myMessage{top: 60px;left: -2px;}}
+      @media screen and (max-width:853px){#saveBtn{top: 81px;left: 31px;}#refreshBtn{top: 81px;right: 17px;}#myMessage{top: 101px;left: -2px;}}
+
       html.dark #saveBtn,
       html.dark #refreshBtn {
         border: 1px solid #474747;
         background-color: #262627;
+
       }
       html.dark #saveBtn:hover,
       html.dark #refreshBtn:hover {
@@ -189,10 +189,9 @@
         background-color: #8ad4df !important
       }
     </style>
-    <script type="module" crossorigin src="./assets/index-7cc5d345.js"></script>
+    <script type="module" crossorigin src="./assets/index-c894b550.js"></script>
     <link rel="stylesheet" href="./assets/index-8a263e3d.css">
     <link rel="manifest" href="./manifest.webmanifest"></head>
-
   <body>
     <noscript> You need to enable JavaScript to run this app. </noscript>
     <header>
@@ -201,6 +200,7 @@
     <div id="root"></div>
     <!-- 消息弹窗 -->
     <div id="myMessage"></div>
+    <!-- 左上角——保存按键 -->
     <div id="saveBtn">
       保存
     </div>
@@ -221,15 +221,17 @@
       let saveBtn = document.getElementById('saveBtn');
       let refreshBtn = document.getElementById('refreshBtn');
       refreshBtn.addEventListener('click', () => { window.location.reload(); })
-      // 弹出消息弹窗
-      window.showMessage = function (msg, duration = 2000) {
+     // 弹出消息弹窗
+     window.showMessage = function (msg, duration = 2000) {
         let dom = document.createElement('div')
-        dom.innerText = '⏳ ' + msg
+        dom.innerText = msg+`（${new Date().toLocaleString()}）`;
         dom.className = 'message'
-        myMessage.appendChild(dom)
+        myMessage.appendChild(dom);
         setTimeout(() => {
-          myMessage.removeChild(dom)
-        }, duration)
+          if(dom.previousElementSibling){
+            myMessage.removeChild(dom.previousElementSibling)
+          }
+        }, duration);
       }
       // 默认关闭悬浮预览
       window._allowPreview = !1;
@@ -257,7 +259,6 @@
         document.body.removeChild(input)
         return status
       }
-
       async function getElementIDFromClipboadr() {
         let str = await navigator.clipboard.readText()
         if (!str.startsWith(`{"type":"excalidraw/clipboard"`)) {
@@ -288,9 +289,9 @@
         if (e.altKey && "f" === e.key) {
           window._autoSave = !window._autoSave;
           if (!window._autoSave) {
-            showMessage('已关闭自动保存！！！')
+            showMessage('已关闭自动保存！')
           } else {
-            showMessage('已开启自动保存【编辑结束约 2s 后自动保存】')
+            showMessage('编辑结束约2s后自动保存')
           }
         }
         if (e.ctrlKey && e.key === "j") {
@@ -306,9 +307,7 @@
             }
           }
         }
-
       }), !0);
-
       // 调试——手动保存
       saveBtn.addEventListener('click', (e) => {
         if (window._isDarwin) {
@@ -318,11 +317,9 @@
           document.dispatchEvent(new KeyboardEvent("keydown", { key: "S", ctrlKey: true, bubbles: true }));
         }
       }, false);
-
       // 调试——搜素关键字
       (async () => {
-        //  搜索关键字
-        function request(url, data = null) {return new Promise((resolve, reject) => { fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data),}).then((data) => resolve(data.json()),(error) => {reject(error);}).catch((err) => {console.error("请求失败:", err); });});}
+        function request(url, data = null) {return new Promise((resolve, reject) => {fetch(url, {method: "POST",headers: { "Content-Type": "application/json" },body: JSON.stringify(data),}).then((data) => resolve(data.json()),(error) => {reject(error);}).catch((err) => {console.error("请求失败:", err);});});}
         ; const searchPanel = document.getElementById("searchPanel"),
           keywordInput = document.getElementById("keywordInput"),
           targetArrContainer = document.getElementById("targetArrContainer");
@@ -373,7 +370,6 @@
               for (let r = 0; r < t.length; r++)e.target.parentElement !== t[r] || t[r].classList.contains("active") ? t[r].classList.remove("active") : t[r].classList.add("active")
             }
           }), !1),
-
           searchPanel.addEventListener("click", (e => { e.stopPropagation() }), !1), document.addEventListener("keydown", (e => { e.altKey && "t" === e.key && (searchPanel.style.visibility = "hidden" === searchPanel.style.visibility ? "visible" : "hidden", keywordInput.focus(), currentIndex = -1) }), !1), document.addEventListener("click", (e => { "visible" === searchPanel.style.visibility && (searchPanel.style.visibility = "hidden") }), !1), keywordInput.addEventListener("keydown", (e => { if (itemsArr.length > 0 && ("ArrowDown" === e.key || "ArrowUp" === e.key)) { "ArrowDown" === e.key ? currentIndex++ : "ArrowUp" === e.key && (e.preventDefault(), currentIndex--), currentIndex > itemsArr.length - 1 && (currentIndex = 0), currentIndex < 0 && (currentIndex = itemsArr.length - 1); let t = targetArrContainer.querySelectorAll("div.ExcalidrawItem"); for (let e = 0; e < t.length; e++)e !== currentIndex || t[e].classList.contains("active") ? t[e].classList.remove("active") : t[e].classList.add("active"); const r = parseInt(itemsArr[currentIndex][2]), n = parseInt(itemsArr[currentIndex][3]); window.dispatchEvent(new CustomEvent("searchKeyword", { detail: { x: r, y: n } })) } }), !1);
       })()
     </script>

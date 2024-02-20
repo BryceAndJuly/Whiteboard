@@ -1,3 +1,5 @@
+/* 链接前的图标 */
+@import url(./link.css);
 :root {
     /* 主色 */
     --b3-theme-primary: #3575f0;
@@ -168,36 +170,26 @@
 .protyle-action--order:after {
     mix-blend-mode: multiply;
 }
-
 .b3-typography div.hljs,
 .protyle-wysiwyg div.hljs {
     background-color: #f8f9fa;
 }
-
-
-
 /* 文档的过渡 */
 .protyle-wysiwyg {
     transition: none;
     font-size: 16px;
 }
-
 .protyle-content--transition .protyle-wysiwyg {
     transition: none
 }
-
 /* 文档标题的过渡 */
 .protyle-title {
     transition: none
 }
-
 /* 块滚动条 */
 .protyle-scroll {
     display: none;
 }
-
-
-
 /* 引用块 */
 .protyle-wysiwyg [data-node-id] span[data-type~=block-ref],
 .protyle-wysiwyg [data-node-id] span[data-type~=file-annotation-ref] {
@@ -209,8 +201,6 @@
     border-bottom: 1px dashed black;
     cursor: pointer;
 }
-
-
 /* 引述块——组成超级快 */
 .protyle-wysiwyg [data-node-id].sb[data-sb-layout=col]>div {
     margin-right: 8px;
@@ -222,14 +212,10 @@
 .protyle-wysiwyg [data-node-id].li>.protyle-action.protyle-action--task svg {
     zoom: 1.2;
 }
-
 /* 挂件——去掉边框 */
 .b3-typography iframe, .protyle-wysiwyg iframe {
     border: none;   
 }
-
-
-
 /* 行内备注 */
 .tooltip--memo {
     font-size: 16px;
@@ -248,12 +234,11 @@
 .fn__code, .b3-typography code:not(.hljs), .b3-typography span[data-type~=code], .protyle-wysiwyg code:not(.hljs), .protyle-wysiwyg span[data-type~=code] {
     background-color: #f9d7da;
 }
+
 /* 行内代码——加阴影 */
 .fn__code, .b3-typography code:not(.hljs), .b3-typography span[data-type~=code], .protyle-wysiwyg code:not(.hljs), .protyle-wysiwyg span[data-type~=code] {
     box-shadow: inset -1px -1px 0 #838383;
 }
-
-
 
 /* 白板相关样式======================================= */
 /* 白板页面——隐藏标题 */
