@@ -3,6 +3,7 @@ function request(url, data = null) {return new Promise((resolve, reject) => {fet
 
 // 内嵌块中的超链接跳转
 function handleIframeInternalLink(e) {
+  // 文档中的超链接
   if (
     e.target.tagName === 'SPAN' &&
     e.target.getAttribute('data-type') === 'a'
@@ -21,6 +22,26 @@ function handleIframeInternalLink(e) {
       }
     }
   }
+  // 数据表格中的超链接
+  if (
+    e.target.tagName === 'SPAN' &&
+    e.target.getAttribute('data-type') === 'url'
+  ) {
+    let url = e.target.getAttribute('data-href')
+    if (url) {
+      e.stopPropagation();
+      try {
+        if (url.startsWith("siyuan://blocks/")) {
+          window.top.openFileByURL(url)
+        } else {
+          window.top.open(url);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  }
+
   //   引用块
   if (
     e.target.tagName === 'SPAN' &&
@@ -333,7 +354,7 @@ function renderCell(cellValue) {
       }
   } else if (cellValue.type === "relation") {
       cellValue?.relation?.contents?.forEach((item, index) => {
-          text += `<span class="av__celltext--ref" style="margin-right: 8px" data-id="${cellValue?.relation?.blockIDs[index]}">${item || "Untitled"}</span>`;
+          text += `<span class="av__celltext--ref" style="margin-right: 8px" data-id="${cellValue?.relation?.blockIDs[index]}">${ item?.block?.content || item || "Untitled"}</span>`;
       });
   }
   if (["text", "template", "url", "email", "phone", "number", "date", "created", "updated"].includes(cellValue.type) &&
@@ -378,6 +399,31 @@ function renderRollup(cellValue) {
   }
   return text;
 };
+// 数据表格——所需工具函数5
+function unicode2Emoji(unicode, className = "", needSpan = false, lazy = false) {
+  if (!unicode) {
+    return "";
+  }
+  let emoji = "";
+  if (unicode.indexOf(".") > -1) {
+    emoji = `<img class="${className}" ${lazy ? "data-" : ""}src="/emojis/${unicode}"/>`;
+  } else {
+    try {
+      unicode.split("-").forEach(item => {
+        if (item.length < 5) {
+          emoji += String.fromCodePoint(parseInt("0" + item, 16));
+        } else {
+          emoji += String.fromCodePoint(parseInt(item, 16));
+        }
+      });
+      if (needSpan) {
+        emoji = `<span class="${className}">${emoji}</span>`;
+      }
+    } catch (e) {
+    }
+  }
+  return emoji;
+};
 
 // 渲染数据表格——数据库的表格视图
 async function avRender() {
@@ -385,6 +431,7 @@ async function avRender() {
   if (avElements.length === 0) {
     return;
   }
+  await addScript("./theme/dayjs.js");
   if (avElements.length > 0) {
     avElements.forEach((e) => {
       request("/api/av/renderAttributeView", {
@@ -555,8 +602,4 @@ async function main() {
   await renderMermaid();
 }
 
-try {
-  main();
-} catch (err) {
-  console.error(err);
-}
+main().catch(err=>{console.error(err);})

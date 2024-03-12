@@ -1,5 +1,6 @@
 /* 链接前的图标 */
 @import url(./link.css);
+
 :root {
     /* 主色 */
     --b3-theme-primary: #3575f0;
@@ -170,26 +171,33 @@
 .protyle-action--order:after {
     mix-blend-mode: multiply;
 }
+
 .b3-typography div.hljs,
 .protyle-wysiwyg div.hljs {
     background-color: #f8f9fa;
 }
-/* 文档的过渡 */
+/* ----------------------------------------------------------------------- */
+
+/* 文档 */
 .protyle-wysiwyg {
     transition: none;
     font-size: 16px;
 }
+
 .protyle-content--transition .protyle-wysiwyg {
     transition: none
 }
+
 /* 文档标题的过渡 */
 .protyle-title {
     transition: none
 }
+
 /* 块滚动条 */
 .protyle-scroll {
     display: none;
 }
+
 /* 引用块 */
 .protyle-wysiwyg [data-node-id] span[data-type~=block-ref],
 .protyle-wysiwyg [data-node-id] span[data-type~=file-annotation-ref] {
@@ -201,6 +209,7 @@
     border-bottom: 1px dashed black;
     cursor: pointer;
 }
+
 /* 引述块——组成超级快 */
 .protyle-wysiwyg [data-node-id].sb[data-sb-layout=col]>div {
     margin-right: 8px;
@@ -212,21 +221,25 @@
 .protyle-wysiwyg [data-node-id].li>.protyle-action.protyle-action--task svg {
     zoom: 1.2;
 }
+
 /* 挂件——去掉边框 */
 .b3-typography iframe, .protyle-wysiwyg iframe {
-    border: none;   
+    border: none;
 }
+
 /* 行内备注 */
 .tooltip--memo {
     font-size: 16px;
     line-height: 1.5;
     padding: 10px;
 }
+
 /* 代码块顶部操作栏 */
-.code-block:hover  span.protyle-icon.protyle-icon--first.protyle-action__copy{
+.code-block:hover span.protyle-icon.protyle-icon--first.protyle-action__copy {
     display: none;
 }
-.code-block:hover  span.b3-tooltips__nw.b3-tooltips.protyle-icon.protyle-icon--last.protyle-action__menu{
+
+.code-block:hover span.b3-tooltips__nw.b3-tooltips.protyle-icon.protyle-icon--last.protyle-action__menu {
     display: none;
 }
 
@@ -240,27 +253,47 @@
     box-shadow: inset -1px -1px 0 #838383;
 }
 
-/* 白板相关样式======================================= */
+/* 白板相关样式------------------------------------------------------------------ */
 /* 白板页面——隐藏标题 */
-.protyle-title.protyle-wysiwyg--attr:has(+ .protyle-wysiwyg.protyle-wysiwyg--attr[alias="whiteboard"]){
+.protyle-title.protyle-wysiwyg--attr:has(+ .protyle-wysiwyg.protyle-wysiwyg--attr[alias="whiteboard"]) {
     visibility: hidden;
-   }
-   
-   /* 白板页面——隐藏面包屑 */
-   .protyle-breadcrumb:has(+ .protyle-content.protyle-content--transition > .protyle-wysiwyg.protyle-wysiwyg--attr[alias="whiteboard"]) {
-      visibility: hidden;
-   }
-   
-   /* 文档树右侧——调节宽度的条 */
-   .layout__resize--lr {
-       z-index: 3;
-   }
-   /* 挂件——去掉边框 */
-   .b3-typography iframe, .protyle-wysiwyg iframe {
-       border: none;   
-   }
-   /* 白板嵌入块——隐藏底边的空白行 */
-   .protyle-wysiwyg__embed > .iframe[custom-data-assets^="assets/ExcalidrawFiles/"] + .p{
-     display:none;
-   }
-   /* ------------------------------------------------------------- */
+}
+
+/* 白板页面——隐藏面包屑 */
+.protyle-breadcrumb:has(+ .protyle-content.protyle-content--transition > .protyle-wysiwyg.protyle-wysiwyg--attr[alias="whiteboard"]) {
+    visibility: hidden;
+}
+
+/* 文档树右侧——调节宽度的条 */
+.layout__resize--lr {
+    z-index: 3;
+}
+
+/* 挂件——去掉边框 */
+.b3-typography iframe, .protyle-wysiwyg iframe {
+    border: none;
+}
+
+/* 白板嵌入块——隐藏底边的空白行 */
+.protyle-wysiwyg__embed>.iframe[custom-data-assets^="assets/ExcalidrawFiles/"]+.p {
+    display: none;
+}
+
+/* ================================================================================ */
+
+/* 数据库表格——自定义样式----------------------------------------------------------- */
+
+/* 单元格垂直居中 */
+.av__cell {
+    display: flex;
+    align-items: center;
+}
+/* 图片显示大一点 */
+img.av__cellassetimg {
+    max-height: 86px;
+}
+/* 数据表格——勾选框 */
+.av__cell.av__cell-check {
+    background: #72c37266;
+}
+/* ============================================================================================== */

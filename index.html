@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
   <head>
     <meta charset="utf-8" />
     <title>Excalidraw | Hand-drawn look & feel • Collaborative • Secure</title>
@@ -104,41 +103,54 @@
       /* 样式——保存按钮 */
       #saveBtn {
         position: fixed;
-        max-width: 340px;
-        height: 35px;
+        width: 30px;
+        height: 36px;
         top: 34px;
         left: 84px;
         padding: 0 7px;
         transform: translate(-50%, -50%);
         z-index: 3;
         text-align: center;
-        line-height: 34px;
-        font-size: 14px;
-        border: 1px solid #3b3a3a40;
+        line-height: 36px;
+        font-size: 12px;
         border-radius: 8px;
         cursor: pointer;
         user-select: none;
+        background-color: transparent;
       }
       #refreshBtn {
         position: fixed;
-        max-width: 340px;
-        height: 35px;
+        width: 28px;
+        height: 36px;
         top: 34px;
         right: 84px;
         padding: 0 7px;
         transform: translate(-50%, -50%);
         z-index: 3;
         text-align: center;
-        line-height: 34px;
-        font-size: 14px;
-        border: 1px solid #3b3a3a40;
+        line-height: 36px;
+        font-size: 12px;
         border-radius: 8px;
         cursor: pointer;
         user-select: none;
+        background-color: transparent;
       }
-      #saveBtn:hover,
-      #refreshBtn:hover {
-        background-color: rgba(128, 0, 128, .234)
+      html:not(.dark) #saveBtn,
+      html:not(.dark) #refreshBtn{
+        border: 1px solid #2323291c;
+      }
+      html:not(.dark) #saveBtn:hover,
+      html:not(.dark) #refreshBtn:hover {
+        background-color: #F1F0FF
+      }
+      html.dark #saveBtn,
+      html.dark #refreshBtn {
+        color: #E3E3E8;
+        border: 1px solid #363541;
+      }
+      html.dark #saveBtn:hover,
+      html.dark #refreshBtn:hover {
+        background-color: #363541;
       }
       .message {
         height: auto;
@@ -170,17 +182,7 @@
       @media screen and (max-width:1217px){#myMessage{top: 60px;left: -2px;}}
       @media screen and (max-width:853px){#saveBtn{top: 81px;left: 31px;}#refreshBtn{top: 81px;right: 17px;}#myMessage{top: 101px;left: -2px;}}
 
-      html.dark #saveBtn,
-      html.dark #refreshBtn {
-        border: 1px solid #474747;
-        background-color: #262627;
 
-      }
-      html.dark #saveBtn:hover,
-      html.dark #refreshBtn:hover {
-        border: 1px solid #474747;
-        background-color: #3d3d3d;
-      }
       /* 搜索面板 */
       .ExcalidrawItem:hover {
         background-color: #8ad4df !important
