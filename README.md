@@ -3,7 +3,7 @@
 ### V1.3.0
 
 * 白板中的嵌入文档支持代码高亮，见顶部预览图。
-* 处理在当前版本（SiYuan V3.1.0）中，隐藏白板所在文档标题的CSS代码片段失效的问题。
+* 处理在当前版本（SiYuan V3.0.16）中，隐藏白板所在文档标题的CSS代码片段失效的问题。
 
 之前隐藏白板所在文档标题的CSS片段是：
 
@@ -76,7 +76,7 @@ window._isDarwin?document.dispatchEvent(new KeyboardEvent("keydown",{key:"S",met
    visibility: hidden;
 }
 
-/* 如果是新版本，比如SiYuan V3.1.0，还需要以下片段 */
+/* 如果是新版本，比如SiYuan V3.0.16，还需要以下片段 */
 .protyle-top:has(+ .protyle-wysiwyg.protyle-wysiwyg--attr[alias="whiteboard"]){
  visibility: hidden;
 }
