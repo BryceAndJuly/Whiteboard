@@ -593,9 +593,40 @@ async function avRender() {
 
   }
 }
+
+
+// 代码高亮
+async function highlight() {
+  let codeBlocks = document.querySelectorAll('.code-block[data-type="NodeCodeBlock"]');
+  if (codeBlocks.length > 0) {
+    addStyle("./theme/highlight/atom-one-dark.min.css");
+    await addScript("./theme//highlight/highlight.min.js");
+    codeBlocks.forEach(codeBlock => {
+      let code = codeBlock.querySelector(".hljs");
+      let content = code.innerText;
+      let codeLanguage = codeBlock.querySelector(".protyle-action__language").innerText
+      let highlightedCode;
+      try {
+        highlightedCode = hljs.highlight(content,
+          { language: codeLanguage, ignoreIllegals: true }
+        ).value
+      } catch (err) {
+        // 不支持高亮的语言，就按plaintext渲染
+        highlightedCode = hljs.highlight(content,
+          { language: "plaintext", ignoreIllegals: true }
+        ).value
+      }
+
+      code.innerHTML = highlightedCode
+
+    })
+  }
+}
+
 // 对预览文档进行渲染
 async function main() {
   document.addEventListener('click', handleIframeInternalLink, true);
+  await highlight();
   await renderEmbedBlock();
   await renderKatex();
   await avRender();
