@@ -1,32 +1,32 @@
 ## 一、当前版本
 
-### V1.3.0
 
-* 白板中的嵌入文档支持代码高亮，见顶部预览图。
-* 处理在当前版本（SiYuan V3.0.16）中，隐藏白板所在文档标题的CSS代码片段失效的问题。
+### V1.3.1
 
-之前隐藏白板所在文档标题的CSS片段是：
+这版在上一版本(V1.3.0)的基础上，只更新了CSS片段来适配思源笔记当前最新版本（V3.1.5），其他并无升级。如果你已经下载了V1.3.0，那么只需要微调CSS片段即可，**无需下载更新**。
+
+1、处理问题：挂件铺满文档的过程中，左侧出现明显闪烁的输入光标。
+
+需要添加一个CSS片段。在<kbd>设置（Alt+P）</kbd>——<kbd>外观</kbd>——<kbd>代码片段</kbd>——<kbd>CSS</kbd>界面，添加以下CSS：
 
 ```css
-/* 白板挂件——隐藏当前文档的标题、面包屑 */
-.protyle-title.protyle-wysiwyg--attr:has(+ .protyle-wysiwyg.protyle-wysiwyg--attr[alias="whiteboard"]){
- visibility: hidden;
-}
-
-.protyle-breadcrumb:has(+ .protyle-content.protyle-content--transition > .protyle-wysiwyg.protyle-wysiwyg--attr[alias="whiteboard"]) {
-   visibility: hidden;
+.iframe ,iframe{
+    -webkit-user-modify: read-only;
 }
 ```
 
-由于新版笔记软件的改动，需要再加上：
+**备注：** 我用的笔记版本比较旧，大概是用顺手了懒得更新，只是隔一段时间试用一下新版，所以挂件在新版出现的一些适配问题可能会知道的比较晚。如果有用户发现挂件在新版的一些适配问题，可以提Issue反馈。在能力范围以内，我会尽快修复的。
 
-```css
-.protyle-top:has(+ .protyle-wysiwyg.protyle-wysiwyg--attr[alias="whiteboard"]){
- visibility: hidden;
-}
-```
 
-对于当前版本：**V1.3.0**
+2、微调隐藏面包屑和文档标题的CSS片段（将` visibility: hidden;`改为`display: none !important;`）以减少挂件所在文档中面包屑的闪烁。见下文中
+`三、使用前的设置`——`1、添加CSS代码片段`章节。
+
+
+---
+
+
+
+对于当前版本：**V1.3.1**
 
 如果你**不想默认开启自动保存功能**，可以使用VS Code之类的编辑器打开挂件文件夹`Whiteboard`​——`index.html`​，
 
@@ -69,16 +69,16 @@ window._isDarwin?document.dispatchEvent(new KeyboardEvent("keydown",{key:"S",met
 ```css
 /* 白板挂件——隐藏当前文档的标题、面包屑 */
 .protyle-title.protyle-wysiwyg--attr:has(+ .protyle-wysiwyg.protyle-wysiwyg--attr[alias="whiteboard"]){
- visibility: hidden;
+   display: none !important;
 }
 
 .protyle-breadcrumb:has(+ .protyle-content.protyle-content--transition > .protyle-wysiwyg.protyle-wysiwyg--attr[alias="whiteboard"]) {
-   visibility: hidden;
+   display: none !important;
 }
 
 /* 如果是新版本，比如SiYuan V3.0.16，还需要以下片段 */
 .protyle-top:has(+ .protyle-wysiwyg.protyle-wysiwyg--attr[alias="whiteboard"]){
- visibility: hidden;
+   display: none !important;
 }
 ```
 
@@ -211,18 +211,11 @@ D:\Siyuan\SiYuan.exe
 D:\Siyuan\SiYuan.exe  --port=6806
 ```
 
-## 六、参考与感谢
-
-* [Excalidraw项目](https://github.com/excalidraw/excalidraw)
-* [SiYuan](https://github.com/siyuan-note/siyuan)
-* 画板中的中文字体文件拷贝自 [superdraw](https://github.com/zuoez02/superdraw) 项目；
-* 感谢插件【开放 API】的作者[Zuoqiu-Yingyi](https://github.com/Zuoqiu-Yingyi)。
 
 ‍
-
 ‍
 
-## 七、更新记录
+## 六、更新记录
 
 ### V1.0.0
 
@@ -386,3 +379,38 @@ Tips:
 * 【保存】、【刷新】按钮字号调小，跟旁边的【素材库】保持一致，看起来协调一点。
 * 拖拽进白板的嵌入文档：文档边框颜色调淡一点（由`#1e1e1e`​调为`#c0c0c0`​）
 * 拖拽进白板的嵌入文档：边角默认用直角，不再跟随当前状态，避免出现文档模糊的问题。
+
+
+### V1.3.0
+
+* 白板中的嵌入文档支持代码高亮，见顶部预览图。
+* 处理在当前版本（SiYuan V3.0.16）中，隐藏白板所在文档标题的CSS代码片段失效的问题。
+
+之前隐藏白板所在文档标题的CSS片段是：
+
+```css
+/* 白板挂件——隐藏当前文档的标题、面包屑 */
+.protyle-title.protyle-wysiwyg--attr:has(+ .protyle-wysiwyg.protyle-wysiwyg--attr[alias="whiteboard"]){
+ display: none !important;
+}
+
+.protyle-breadcrumb:has(+ .protyle-content.protyle-content--transition > .protyle-wysiwyg.protyle-wysiwyg--attr[alias="whiteboard"]) {
+  display: none !important;
+}
+```
+
+由于新版笔记软件的改动，需要再加上：
+
+```css
+.protyle-top:has(+ .protyle-wysiwyg.protyle-wysiwyg--attr[alias="whiteboard"]){
+ display: none !important;
+}
+```
+
+
+## 七、参考与感谢
+
+* [Excalidraw项目](https://github.com/excalidraw/excalidraw)
+* [SiYuan](https://github.com/siyuan-note/siyuan)
+* 画板中的中文字体文件拷贝自 [superdraw](https://github.com/zuoez02/superdraw) 项目；
+* 感谢插件【开放 API】的作者[Zuoqiu-Yingyi](https://github.com/Zuoqiu-Yingyi)。
