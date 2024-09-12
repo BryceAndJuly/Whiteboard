@@ -1,32 +1,32 @@
 ## 一、当前版本
 
 
-### V1.3.1
+### V1.3.2
+* 保存时自动将白板中的文本内容写入到所在文档的`属性`——`备注`中。
 
-这版在上一版本(V1.3.0)的基础上，只更新了CSS片段来适配思源笔记当前最新版本（V3.1.5），其他并无升级。如果你已经下载了V1.3.0，那么只需要微调CSS片段即可，**无需下载更新**。
+这样做的好处是：在全局搜索、引用块搜索、嵌入块搜索中，除了通过白板的文档名、别名外，现在还可以通过白板中已输入的文本来检索并命中白板文档。
 
-1、处理问题：挂件铺满文档的过程中，左侧出现明显闪烁的输入光标。
+当然，如果你不希望白板中的文本参与到全局搜索中，可以手动关闭此功能。
 
-需要添加一个CSS片段。在<kbd>设置（Alt+P）</kbd>——<kbd>外观</kbd>——<kbd>代码片段</kbd>——<kbd>CSS</kbd>界面，添加以下CSS：
+打开挂件文件夹`Whiteboard`——`index.html`，搜索：
 
-```css
-.iframe ,iframe{
-    -webkit-user-modify: read-only;
-}
+```js
+ window._allowSetMemo = true;
+```
+
+改成：
+
+```js
+ window._allowSetMemo = false;
 ```
 
 **备注：** 我用的笔记版本比较旧，大概是用顺手了懒得更新，只是隔一段时间试用一下新版，所以挂件在新版出现的一些适配问题可能会知道的比较晚。如果有用户发现挂件在新版的一些适配问题，可以提Issue反馈。在能力范围以内，我会尽快修复的。
-
-
-2、微调隐藏面包屑和文档标题的CSS片段（将` visibility: hidden;`改为`display: none !important;`）以减少挂件所在文档中面包屑的闪烁。见下文中
-`三、使用前的设置`——`1、添加CSS代码片段`章节。
-
 
 ---
 
 
 
-对于当前版本：**V1.3.1**
+对于当前版本：**V1.3.2**
 
 如果你**不想默认开启自动保存功能**，可以使用VS Code之类的编辑器打开挂件文件夹`Whiteboard`​——`index.html`​，
 
@@ -96,6 +96,10 @@ window._isDarwin?document.dispatchEvent(new KeyboardEvent("keydown",{key:"S",met
 /* 白板文档作为嵌入块嵌入到其他文档时——隐藏底边可能出现的空白行 */
 .protyle-wysiwyg__embed > .iframe[custom-data-assets^="assets/ExcalidrawFiles/"] + .p{
      display:none;
+}
+/* 处理问题：挂件铺满文档的过程中，左侧出现明显闪烁的输入光标。 */
+.iframe ,iframe{
+    -webkit-user-modify: read-only;
 }
 ```
 
@@ -406,6 +410,24 @@ Tips:
  display: none !important;
 }
 ```
+
+### V1.3.1
+
+这版在上一版本(V1.3.0)的基础上，只更新了CSS片段来适配思源笔记当前最新版本（V3.1.5），其他并无升级。如果你已经下载了V1.3.0，那么只需要微调CSS片段即可，**无需下载更新**。
+
+1、处理问题：挂件铺满文档的过程中，左侧出现明显闪烁的输入光标。
+
+需要添加一个CSS片段。在<kbd>设置（Alt+P）</kbd>——<kbd>外观</kbd>——<kbd>代码片段</kbd>——<kbd>CSS</kbd>界面，添加以下CSS：
+
+```css
+.iframe ,iframe{
+    -webkit-user-modify: read-only;
+}
+```
+
+
+2、微调隐藏面包屑和文档标题的CSS片段（将` visibility: hidden;`改为`display: none !important;`）以减少挂件所在文档中面包屑的闪烁。见上文中
+`三、使用前的设置`——`1、添加CSS代码片段`章节。
 
 
 ## 七、参考与感谢

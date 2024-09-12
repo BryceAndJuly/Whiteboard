@@ -235,6 +235,8 @@
           }
         }, duration);
       }
+      // 保存时默认将白板中的文本内容写入到文档——备注中，方便全局检索
+      window._allowSetMemo = true;
       // 默认关闭悬浮预览
       window._allowPreview = !1;
       // 是否默认开启自动保存
