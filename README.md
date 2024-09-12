@@ -191,7 +191,7 @@ assets/ExcalidrawFiles/20231227015401-w0olmpi.excalidraw
 
 ### 1、手动更改画笔的粗细
 
-对于版本V1.3.0，打开挂件文件夹`Whiteboard`​——`assets`​——`index-c894b550.js`​,在该js文件中搜索：
+对于版本V1.3.2，打开挂件文件夹`Whiteboard`​——`assets`​——`index-c894b550.js`​,在该js文件中搜索：
 
 ```css
 simulatePressure:e.simulatePressure,size:e.strokeWidth*1.2,thinning
