@@ -5,3 +5,10 @@ pre code.hljs{display:block;overflow-x:auto;padding:1em}code.hljs{padding:3px 5p
     color: #DADADA !important;
     background: #2B2B2B !important;
 }
+/* V1.3.3——代码块样式适配 */
+.hljs {
+    flex: 1 1 0%;
+    white-space: pre-wrap;
+    word-break: break-word;
+    font-variant-ligatures: none;
+}
