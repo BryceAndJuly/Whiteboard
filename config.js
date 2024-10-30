@@ -11,8 +11,7 @@ let zh_CN = {
     "msgPreviewMode": "预览模式",
     "msgAutoSaveOff": "已关闭自动保存！",
     "msgAutosave": "编辑结束约2s后自动保存",
-    "msgRelevantResults": "未查找到相关结果！",
-    "msgResults": "未查找到相关结果！"
+    "msgNoRelevantResults": "未查找到相关结果！"
 }
 
 let en_UK = {
@@ -24,7 +23,7 @@ let en_UK = {
     "msgPreviewMode":  "Preview mode",
     "msgAutoSaveOff": "Autosave turned off!",
     "msgAutosave": "The editing process will be automatically saved about 2 seconds after completion.",
-    "msgRelevantResults":   "No relevant results found!"
+    "msgNoRelevantResults":   "No relevant results found!"
 }
 
 let es_ES = {
@@ -36,7 +35,7 @@ let es_ES = {
     "msgPreviewMode":   "Modo de vista previa",
     "msgAutoSaveOff": "¡Auto guardado desactivado!",
     "msgAutosave": "Se guardará automáticamente unos 2 segundos después de completar la edición.",
-    "msgRelevantResults": "¡No se encontraron resultados relevantes!"
+    "msgNoRelevantResults": "¡No se encontraron resultados relevantes!"
 }
 
 
