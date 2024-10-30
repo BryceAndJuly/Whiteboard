@@ -10,11 +10,21 @@
   },
   "description": {
     "default": "这是一个白板挂件，嵌入后会默认铺满文档区域",
-    "zh_CN": "这是一个白板挂件，嵌入后会默认铺满文档区域"
+    "zh_CN": "这是一个白板挂件，嵌入后会默认铺满文档区域",
+    "es_ES": "Este es un widget de pizarra, que llenará el área del documento de forma predeterminada después de incrustarlo.",
+    "en_EN": "This is a whiteboard widget. When embedded, it will fill the document area by default."
   },
   "readme": {
-    "default": "README.md"
+    "default": "README.md",
+    "zh_CN": "README.md",
+    "en_EN": "README_en_UK.md"
   },
+  "i18n": [
+    "zh_CN",
+    "en_UK",
+    "es_ES"
+  ],
+
   "funding": {
     "openCollective": "",
     "patreon": "",
