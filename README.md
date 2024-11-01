@@ -17,7 +17,7 @@
 
 对于当前版本：**V1.3.3**
 
-如果你**不想默认开启自动保存功能**，可以使用VS Code之类的编辑器打开挂件文件夹`Whiteboard`​——`index.html`​，
+如果你**不想默认开启自动保存功能**，可以使用VS Code之类的编辑器打开挂件文件夹`Whiteboard`​——`index.js`​，
 
 搜索：
 
@@ -426,7 +426,7 @@ Tips:
 
 当然，如果你不希望白板中的文本参与到全局搜索中，可以手动关闭此功能。
 
-打开挂件文件夹`Whiteboard`——`index.html`，搜索：
+打开挂件文件夹`Whiteboard`——`index.js`，搜索：
 
 ```js
  window._allowSetMemo = true;

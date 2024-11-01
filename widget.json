@@ -10,11 +10,18 @@
   },
   "description": {
     "default": "这是一个白板挂件，嵌入后会默认铺满文档区域",
-    "zh_CN": "这是一个白板挂件，嵌入后会默认铺满文档区域"
+    "zh_CN": "这是一个白板挂件，嵌入后会默认铺满文档区域",
+    "en_US": "This is a whiteboard widget. When embedded, it will fill the document area by default."
   },
   "readme": {
-    "default": "README.md"
+    "default": "README.md",
+    "zh_CN": "README.md",
+    "en_US": "README_en_US.md"
   },
+  "i18n": [
+    "zh_CN",
+    "en_US"
+  ],
   "funding": {
     "openCollective": "",
     "patreon": "",
