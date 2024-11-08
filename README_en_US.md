@@ -1,19 +1,37 @@
 ## 1. Current Version
 
-### V1.3.3
+### V1.4.0
 
-See preview image at the top.
+See the preview image at the top. The specific changes are as follows.
 
-* Adjusted some glyphs (letters and commonly used symbols) in the Chinese handwritten font `Whiteboard/Virgil.woff2`.
-* Fixed a style issue: in the latest version of the note-taking software (V3.1.8), code sections in documents embedded in the whiteboard were not wrapping properly.
+1. Optimize text wrapping in containers.
+2. According to the current mode (dark/light) of the whiteboard, the documents embedded in the whiteboard will automatically switch to the dark/light theme.
+3. Add English version instructions `README_en_US.md`,The prompt information in the upper left corner can be switched between Chinese and English according to the language currently set for the note.
+4. Remove the default domain name restriction for the `Web Embed` function,Support links starting with `https://` or `http://`.
+5. Add a CSS code snippet to hide the custom icon and header image of the document where the whiteboard is located.
+6. Replace the [Save] and [Refresh] buttons with icons.
 
-The font adjustment is subjective; if you don't prefer the updated version, you can revert to the previous font file.
 
-Regarding code block style, I found no issues in V3.0.3, but it may be impacted by updates, so adaptation is needed.
+Corresponding description:
+
+1. This change is migrated from the repository `Excalidraw` and resolves the issue of abnormal line breaks when pasting text into text containers such as boxes. For specific changes, you can refer to this `Pull request`. [https://github.com/excalidraw/excalidraw/pull/8715/files](https://github.com/excalidraw/excalidraw/pull/8715/files)
+2. Note: After switching the dark/light mode of the whiteboard, it is necessary to refresh the whiteboard or reopen it for the changes to take effect. The dark theme corresponds to the file:`Whiteboard/theme/dark.css`,The light theme corresponds to the file: `Whiteboard/theme/theme.css`
+3. In the note software's `Settings` - `Appearance` - `Language`, when the set language is Simplified Chinese or Traditional Chinese, the prompt in the upper left corner of the whiteboard is in Chinese. When set to other languages, the prompt in the upper left corner of the whiteboard is in English.
+4. If the website itself restricts embedding, it may lead to a loading failure.
+5. The newly added CSS code snippet is as follows:
+
+```css
+/* Whiteboard widget - Hide the custom icon and header image of the current document. */
+.protyle-background:has(~ .protyle-wysiwyg.protyle-wysiwyg--attr[alias="whiteboard"]){
+   display: none !important;
+}
+```
+
+
 
 ---
 
-For the current version: **V1.3.3**
+For the current version: **V1.4.0**
 
 If you **do not want auto-save to be enabled by default**, open the widget folder `Whiteboard` -> `index.js` in an editor like VS Code and search for:
 
@@ -27,7 +45,7 @@ Then change it to:
 window._autoSave = false;
 ```
 
-To **adjust the auto-save delay time** (default is 2000ms), open `Whiteboard` -> `assets` -> `index-c894b550.js` in the widget folder and search for:
+To **adjust the auto-save delay time** (default is 2000ms), open `Whiteboard` -> `assets` -> `index-4aa42790.js` in the widget folder and search for:
 
 ```js
 window._isDarwin?document.dispatchEvent(new KeyboardEvent("keydown",{key:"S",metaKey:!0,bubbles:!1})):document.dispatchEvent(new KeyboardEvent("keydown",{key:"S",ctrlKey:!0,bubbles:!1}))},2000));
@@ -58,6 +76,11 @@ When creating a whiteboard, the widget sets the document's `Alias` property to `
 .protyle-breadcrumb:has(+ .protyle-content.protyle-content--transition > .protyle-wysiwyg.protyle-wysiwyg--attr[alias="whiteboard"]) {
    display: none !important;
 }
+/* Whiteboard widget - Hide the custom icon and header image of the current document. */
+.protyle-background:has(~ .protyle-wysiwyg.protyle-wysiwyg--attr[alias="whiteboard"]){
+   display: none !important;
+}
+
 
 /* If it is a new version, such as SiYuan V3.0.16, the following snippet is also needed. */
 .protyle-top:has(+ .protyle-wysiwyg.protyle-wysiwyg--attr[alias="whiteboard"]){
@@ -92,7 +115,6 @@ Another optional style adjustment controls the floating window size if you feel 
 /* Floating Window */
 .block__popover {
     width: 735px;
-    border: 1px solid #94949482;
     min-height: 70vh;
     max-height: 75vh !important;
 }
@@ -144,7 +166,7 @@ The widget uses the block ID as the filename.
 * `Auto-save` is enabled by default, typically saving approximately 2 seconds after adding, deleting, or moving elements. To turn off auto-save by default or adjust the delay time, see the instructions at the top of this document.
 * For temporarily toggling auto-save, use `Alt+F` (versions after V1.0.8 use this shortcut; earlier versions used `Alt+S`). A message will appear in the top left corner.
 
-**Remember to click save after editing; otherwise, changes might be lost.** Personally, I press Ctrl+S often, so I haven't lost any data yet.
+**Remember to click save after editing; otherwise, changes might be lost.** Personally, I use the manual save mode and press Ctrl+S frequently, so I haven't lost any data yet.
 
 ### 3. Floating Preview of Block Hyperlinks
 
@@ -170,22 +192,33 @@ The widget uses the block ID as the filename.
 * If the jump fails, you can click the【Save】button first and then try again.
 
 
+## 5. Matters needing attention.
 
-## 5. Other Optional Configurations
+* When `automatic save` is triggered, the right-click pop-up menu of the mouse will be closed. If you think this interference is too great, you can close `automatic save` by default or temporarily. (The shortcut key to temporarily turn off automatic save is `Alt+F`).
+* Just after opening the whiteboard or refreshing the whiteboard, moving the mouse casually in the whiteboard will start rendering the embedded document.
+* The corners of the `Web Embedd` box are recommended to be right angles. The corner with a radian may cause the document to be blurred.
+* If the document rendered in the `Web Embedd` box appears blurred during page turning or mouse scrolling, you can move the mouse outside the box first to restore clarity.
+* If there is a `Mermaid` chart in the embedded document, it is recommended to keep the corresponding document within the visible area of the whiteboard when saving (by zooming out, etc.). In this way, when it is opened next time, the chart can be guaranteed to be rendered normally.
+* When rendering database tables in the whiteboard, although there is no scroll bar, you can use Shift + mouse wheel to scroll horizontally to view the data table.
+
+
+
+## 6. Other Optional Configurations
 
 ### 1. Adjust Brush Thickness Manually
 
-For V1.3.3, open `Whiteboard` -> `assets` -> `index-c894b550.js` and search for:
+For V1.4.0, open `Whiteboard` -> `assets` -> `index-4aa42790.js` and search for:
 
 ```css
 simulatePressure:e.simulatePressure,size:e.strokeWidth*1.2,thinning
 ```
 
-1.2 is the current value (already reduced). The initial default was over 4; adjust this value as desired.
+1.2 is the current value. The initial default was over 4; adjust this value as desired.
 
 ### 2. Set Fixed Port (Windows)
 
 If the `material library` of the whiteboard is used frequently, it is best to set a fixed port for starting the notebook. Because the content added to the material library is stored in LocalStorage. After setting this, the content that has been added to the material library will not disappear after the next startup.
+
 Right-click the notebook desktop icon -> `Properties` -> `Shortcut` -> `Target (T)`. In the input box of `Target (T)`, it is the path of the executable file of SiYuan Note. For example:
 
 ```css
@@ -198,7 +231,7 @@ Just set the port at the back. For example:
 D:\Siyuan\SiYuan.exe  --port=6806
 ```
 
-## 6. Update records
+## 7. Update records
 
 ### V1.0.8
 
@@ -354,9 +387,21 @@ Change it to:
  window._allowSetMemo = false;
 ```
 
+### V1.3.3
+
+See preview image at the top.
+
+* Adjusted some glyphs (letters and commonly used symbols) in the Chinese handwritten font `Whiteboard/Virgil.woff2`.
+* Fixed a style issue: in the latest version of the note-taking software (V3.1.8), code sections in documents embedded in the whiteboard were not wrapping properly.
+
+The font adjustment is subjective; if you don't prefer the updated version, you can revert to the previous font file.
+
+Regarding code block style, I found no issues in V3.0.3, but it may be impacted by updates, so adaptation is needed.
 
 
-## 7. References and Thanks
+
+
+## 8. References and Thanks
 
 * [Excalidraw](https://github.com/excalidraw/excalidraw)
 * [SiYuan](https://github.com/siyuan-note/siyuan)

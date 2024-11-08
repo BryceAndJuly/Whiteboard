@@ -14,6 +14,7 @@ let zh_CN = {
   "msgGetFileFailed":"画板文件获取失败，手动刷新后将新建空的白板",
   "msgSetAliasFailed":"设置文档别名失败",
   "msgReadFilePathFailed":"未能读取到块属性中白板文件的路径，将自动刷新",
+  "msgSetMemoFailed":"操作失败！未能将白板中的文本存入文档备注",
 }
 let en_US = {
   "msgSaved":"Saved",
@@ -31,6 +32,7 @@ let en_US = {
   "msgGetFileFailed":"Failed to get the canvas file, a new blank whiteboard will be created after manual refresh.",
   "msgSetAliasFailed":"Failed to set document alias.",
   "msgReadFilePathFailed":"Failed to read the path of the whiteboard file in the block attributes, will automatically refresh.",
+  "msgSetMemoFailed":"Operation failed! The text in the whiteboard cannot be saved in the document notes.",
 }
 
 // 笔记软件设置语言为简体中文、繁体中文时，左上角弹出中文提示，否者弹出英文提示
@@ -60,6 +62,8 @@ window.showMessage = function (msg, duration = 2000) {
 }
 // 保存时默认将白板中的文本内容写入到文档——备注中，方便全局检索
 window._allowSetMemo = true;
+// 当前使用的主题，深色/浅色
+window._currentThemePath=localStorage?.getItem("excalidraw-theme")==="dark"? "./theme/dark.css":"./theme/theme.css";
 // 默认关闭悬浮预览
 window._allowPreview = !1;
 // 是否默认开启自动保存
