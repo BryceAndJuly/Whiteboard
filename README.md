@@ -8,8 +8,7 @@
 2. 根据白板当前模式（深色/浅色），嵌入白板的文档自动切换深色/浅色主题。
 3. 新增英文版说明文档`README_en_US.md`，左上角的提示信息可根据笔记当前设置的语言来切换中文/英文。
 4. 【嵌入网页】功能解除默认的域名限制，支持`https://`或者`http://`开头的链接。
-5. 新增一个CSS代码片段，用于隐藏白板所在文档的自定义图标和题头图。
-6. 【保存】、【刷新】按钮换成图标。
+5. 【保存】、【刷新】按钮换成图标。
 
 
 对应的说明：
@@ -18,14 +17,7 @@
 2. 注意：白板深色/浅色模式切换后，需要刷新白板或者重新打开白板才能生效。深色主题对应文件：`Whiteboard/theme/dark.css`，浅色主题对应文件：`Whiteboard/theme/theme.css`
 3. 在笔记软件的`设置`——`外观`——`语言`，当设置的语言是简体或者繁体时，白板左上角的提示为中文。设置成其他语言时，白板左上角的提示为英文。
 4. 如果网站本身限制嵌入，可能会导致加载失败。
-5. 新增的CSS代码片段如下：
 
-```css
-/* 白板挂件——隐藏当前文档的自定义图标、题头图 */
-.protyle-background:has(~ .protyle-wysiwyg.protyle-wysiwyg--attr[alias="whiteboard"]){
-   display: none !important;
-}
-```
 
 ---
 
@@ -76,11 +68,6 @@ window._isDarwin?document.dispatchEvent(new KeyboardEvent("keydown",{key:"S",met
 }
 
 .protyle-breadcrumb:has(+ .protyle-content.protyle-content--transition > .protyle-wysiwyg.protyle-wysiwyg--attr[alias="whiteboard"]) {
-   display: none !important;
-}
-
-/* 白板挂件——隐藏当前文档的自定义图标、题头图 */
-.protyle-background:has(~ .protyle-wysiwyg.protyle-wysiwyg--attr[alias="whiteboard"]){
    display: none !important;
 }
 

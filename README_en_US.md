@@ -8,8 +8,7 @@ See the preview image at the top. The specific changes are as follows.
 2. According to the current mode (dark/light) of the whiteboard, the documents embedded in the whiteboard will automatically switch to the dark/light theme.
 3. Add English version instructions `README_en_US.md`,The prompt information in the upper left corner can be switched between Chinese and English according to the language currently set for the note.
 4. Remove the default domain name restriction for the `Web Embed` function,Support links starting with `https://` or `http://`.
-5. Add a CSS code snippet to hide the custom icon and header image of the document where the whiteboard is located.
-6. Replace the [Save] and [Refresh] buttons with icons.
+5. Replace the [Save] and [Refresh] buttons with icons.
 
 
 Corresponding description:
@@ -18,14 +17,6 @@ Corresponding description:
 2. Note: After switching the dark/light mode of the whiteboard, it is necessary to refresh the whiteboard or reopen it for the changes to take effect. The dark theme corresponds to the file:`Whiteboard/theme/dark.css`,The light theme corresponds to the file: `Whiteboard/theme/theme.css`
 3. In the note software's `Settings` - `Appearance` - `Language`, when the set language is Simplified Chinese or Traditional Chinese, the prompt in the upper left corner of the whiteboard is in Chinese. When set to other languages, the prompt in the upper left corner of the whiteboard is in English.
 4. If the website itself restricts embedding, it may lead to a loading failure.
-5. The newly added CSS code snippet is as follows:
-
-```css
-/* Whiteboard widget - Hide the custom icon and header image of the current document. */
-.protyle-background:has(~ .protyle-wysiwyg.protyle-wysiwyg--attr[alias="whiteboard"]){
-   display: none !important;
-}
-```
 
 
 
@@ -76,11 +67,6 @@ When creating a whiteboard, the widget sets the document's `Alias` property to `
 .protyle-breadcrumb:has(+ .protyle-content.protyle-content--transition > .protyle-wysiwyg.protyle-wysiwyg--attr[alias="whiteboard"]) {
    display: none !important;
 }
-/* Whiteboard widget - Hide the custom icon and header image of the current document. */
-.protyle-background:has(~ .protyle-wysiwyg.protyle-wysiwyg--attr[alias="whiteboard"]){
-   display: none !important;
-}
-
 
 /* If it is a new version, such as SiYuan V3.0.16, the following snippet is also needed. */
 .protyle-top:has(+ .protyle-wysiwyg.protyle-wysiwyg--attr[alias="whiteboard"]){
