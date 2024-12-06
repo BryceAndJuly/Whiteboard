@@ -1,27 +1,45 @@
 ## 一、当前版本
 
-### V1.4.0
+### V1.5.0
 
-见顶部预览图，具体改动如下：
+见顶部预览图
 
-1. 优化容器中的文本换行。
-2. 根据白板当前模式（深色/浅色），嵌入白板的文档自动切换深色/浅色主题。
-3. 新增英文版说明文档`README_en_US.md`，左上角的提示信息可根据笔记当前设置的语言来切换中文/英文。
-4. 【嵌入网页】功能解除默认的域名限制，支持`https://`或者`http://`开头的链接。
-5. 【保存】、【刷新】按钮换成图标。
+左上角主菜单新增两个功能：`保存块引用`、`修复块超链接`
+
+* `保存块引用`
+
+  * 获取白板中已嵌入的块超链接，以引用块的形式插入到白板挂件块后的无序列表中，建立白板对其他文档/块的引用关系。
+  * 引用关系建立后，白板文档以 `SiYuan .sy.zip`形式导出时能自动包含已嵌入白板的文档/块，保证导出白板时数据的完整性。
+* `修复块超链接`
+
+  * 一般在白板文档以 `SiYuan .sy.zip`形式被导入后，才用到该功能。
+  * 该功能生效的前提是：需要在白板文档以 `SiYuan .sy.zip`形式被**导出前**就使用`保存块引用`功能来更新白板对其他块的引用关系。
+  * 在导入过程中，文档/块的ID被软件重置，这通常会导致白板上已有的块超链接失效。该功能根据引用块中新旧块ID的对应关系，更新白板中的块超链接，达到修复失效块超链接的目的。
 
 
-对应的说明：
+白板文档中新增了引用块组成的无序列表，需要更新CSS片段来调整外观。
 
-1. 这个改动迁移自`Excalidraw`原仓库，解决了往方框等文字容器中粘贴文本时换行异常的问题。 具体改动可参考大佬提交的`Pull request` [https://github.com/excalidraw/excalidraw/pull/8715/files](https://github.com/excalidraw/excalidraw/pull/8715/files)
-2. 注意：白板深色/浅色模式切换后，需要刷新白板或者重新打开白板才能生效。深色主题对应文件：`Whiteboard/theme/dark.css`，浅色主题对应文件：`Whiteboard/theme/theme.css`
-3. 在笔记软件的`设置`——`外观`——`语言`，当设置的语言是简体或者繁体时，白板左上角的提示为中文。设置成其他语言时，白板左上角的提示为英文。
-4. 如果网站本身限制嵌入，可能会导致加载失败。
+其中第一个样式是新增的，后两个样式是在原CSS片段上稍作修改。完整的CSS片段已更新到下文的：`三、使用前的设置`——`1、添加CSS代码片段`
+
+```js
+/* 隐藏白板文档中的无序列表 */
+.iframe[custom-data-assets^="assets/ExcalidrawFiles/"] ~ .list[data-subtype="u"] {
+  display: none !important;
+}
+/* 在不聚焦的情况下，隐藏白板文档顶栏的面包屑 */
+.protyle-breadcrumb:has(button.protyle-breadcrumb__icon.ariaLabel.fn__none):has(+ .protyle-content.protyle-content--transition > .protyle-wysiwyg.protyle-wysiwyg--attr[alias="whiteboard"]) {
+    display: none !important;
+}
+/* 白板文档作为嵌入块嵌入到其他文档时——隐藏底边可能出现的空白行 */
+.protyle-wysiwyg__embed>.iframe[custom-data-assets^="assets/ExcalidrawFiles/"] ~ .p {
+    display: none;
+}
+```
 
 
 ---
 
-对于当前版本：**V1.4.0**
+对于当前版本：**V1.5.0**
 
 如果你**不想默认开启自动保存功能**，可以使用VS Code之类的编辑器打开挂件文件夹`Whiteboard`​——`index.js`​，
 
@@ -37,7 +55,7 @@ window._autoSave = true;
 window._autoSave = false;
 ```
 
-如果你想**调整自动保存的延时时间**（默认是2000ms），可以打开挂件文件夹`Whiteboard`​——`assets`​——`index-4aa42790.js`​
+如果你想**调整自动保存的延时时间**（默认是2000ms），可以打开挂件文件夹`Whiteboard`​——`assets`​——`index-0e2f08e2.js`​
 
 搜索：
 
@@ -67,19 +85,20 @@ window._isDarwin?document.dispatchEvent(new KeyboardEvent("keydown",{key:"S",met
    display: none !important;
 }
 
-.protyle-breadcrumb:has(+ .protyle-content.protyle-content--transition > .protyle-wysiwyg.protyle-wysiwyg--attr[alias="whiteboard"]) {
-   display: none !important;
+/* 隐藏白板文档中的无序列表 */
+.iframe[custom-data-assets^="assets/ExcalidrawFiles/"] ~ .list[data-subtype="u"] {
+  display: none !important;
+}
+/* 在不聚焦的情况下，隐藏白板文档顶栏的面包屑 */
+.protyle-breadcrumb:has(button.protyle-breadcrumb__icon.ariaLabel.fn__none):has(+ .protyle-content.protyle-content--transition > .protyle-wysiwyg.protyle-wysiwyg--attr[alias="whiteboard"]) {
+    display: none !important;
 }
 
 /* 如果是新版本，比如SiYuan V3.0.16，还需要以下片段 */
 .protyle-top:has(+ .protyle-wysiwyg.protyle-wysiwyg--attr[alias="whiteboard"]){
    display: none !important;
 }
-```
 
-为了美观，还需要隐藏掉挂件默认的边框以及处理拖拽线等：
-
-```css
 /* 挂件——去掉边框 */
 .b3-typography iframe, .protyle-wysiwyg iframe {
     border: none;   
@@ -89,8 +108,8 @@ window._isDarwin?document.dispatchEvent(new KeyboardEvent("keydown",{key:"S",met
     z-index: 3;
 }
 /* 白板文档作为嵌入块嵌入到其他文档时——隐藏底边可能出现的空白行 */
-.protyle-wysiwyg__embed > .iframe[custom-data-assets^="assets/ExcalidrawFiles/"] + .p{
-     display:none;
+.protyle-wysiwyg__embed>.iframe[custom-data-assets^="assets/ExcalidrawFiles/"] ~ .p {
+    display: none;
 }
 /* 处理问题：挂件铺满文档的过程中，左侧出现明显闪烁的输入光标。 */
 .iframe ,iframe{
@@ -196,7 +215,7 @@ assets/ExcalidrawFiles/20231227015401-w0olmpi.excalidraw
 
 ### 1、手动更改画笔的粗细
 
-对于版本V1.4.0，打开挂件文件夹`Whiteboard`​——`assets`​——`index-4aa42790.js`​,在该js文件中搜索：
+对于版本V1.5.0，打开挂件文件夹`Whiteboard`​——`assets`​——`index-0e2f08e2.js`​,在该js文件中搜索：
 
 ```css
 simulatePressure:e.simulatePressure,size:e.strokeWidth*1.2,thinning
@@ -225,9 +244,6 @@ D:\Siyuan\SiYuan.exe  --port=6806
 
 ## 七、更新记录
 
-### V1.0.7
-
-* 前面的版本打开白板时还是有几个重复的加载消耗，这个版本主要是删除掉那些冗余部分。这版打开应该会流畅些。
 
 ### V1.0.8
 
@@ -409,6 +425,27 @@ Tips:
 字形这个比较主观，如果不适应替换后的版本，可以替换回之前的字体文件。
 
 至于代码块样式，在V3.0.3其实没有这个问题，可能是受到版本改动的影响，所以需要适配一下。
+
+
+
+### V1.4.0
+
+见顶部预览图，具体改动如下：
+
+1. 优化容器中的文本换行。
+2. 根据白板当前模式（深色/浅色），嵌入白板的文档自动切换深色/浅色主题。
+3. 新增英文版说明文档`README_en_US.md`，左上角的提示信息可根据笔记当前设置的语言来切换中文/英文。
+4. 【嵌入网页】功能解除默认的域名限制，支持`https://`或者`http://`开头的链接。
+5. 【保存】、【刷新】按钮换成图标。
+
+
+对应的说明：
+
+1. 这个改动迁移自`Excalidraw`原仓库，解决了往方框等文字容器中粘贴文本时换行异常的问题。 具体改动可参考大佬提交的`Pull request` [https://github.com/excalidraw/excalidraw/pull/8715/files](https://github.com/excalidraw/excalidraw/pull/8715/files)
+2. 注意：白板深色/浅色模式切换后，需要刷新白板或者重新打开白板才能生效。深色主题对应文件：`Whiteboard/theme/dark.css`，浅色主题对应文件：`Whiteboard/theme/theme.css`
+3. 在笔记软件的`设置`——`外观`——`语言`，当设置的语言是简体或者繁体时，白板左上角的提示为中文。设置成其他语言时，白板左上角的提示为英文。
+4. 如果网站本身限制嵌入，可能会导致加载失败。
+
 
 
 

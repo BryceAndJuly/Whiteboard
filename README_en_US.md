@@ -1,28 +1,45 @@
 ## 1. Current Version
 
-### V1.4.0
+### V1.5.0
 
-See the preview image at the top. The specific changes are as follows.
+See the preview image at the top.
+Two new functions have been added to the main menu in the upper left corner:`SaveBlockRef` and `FixBrokenLinks`
 
-1. Optimize text wrapping in containers.
-2. According to the current mode (dark/light) of the whiteboard, the documents embedded in the whiteboard will automatically switch to the dark/light theme.
-3. Add English version instructions `README_en_US.md`,The prompt information in the upper left corner can be switched between Chinese and English according to the language currently set for the note.
-4. Remove the default domain name restriction for the `Web Embed` function,Support links starting with `https://` or `http://`.
-5. Replace the [Save] and [Refresh] buttons with icons.
+* `SaveBlockRef`
+
+  * Obtain the block hyperlinks that have been embedded in the whiteboard, and insert them in the form of reference blocks into the unordered list after the whiteboard widget block to establish the reference relationship of the whiteboard to other documents/blocks. 
+  * After the reference relationship is established, when the whiteboard document is exported in the form of `SiYuan.sy.zip`, the documents/blocks that have been embedded in the whiteboard can be automatically included to ensure the integrity of the data when the whiteboard is exported. 
+* `FixBrokenLinks`
+
+  * Generally, this function is only used after the whiteboard document is imported in the form of `SiYuan.sy.zip`.
+  * The prerequisite for this function to take effect is that the "Save Block Quotation" function needs to be used to update the reference relationship of the whiteboard to other blocks before the whiteboard document is exported in the form of `SiYuan.sy.zip`. 
+  * During the import process, the IDs of the documents/blocks are reset by the software, which usually causes the existing block hyperlinks on the whiteboard to become invalid. This function updates the block hyperlinks in the whiteboard according to the corresponding relationship between the old and new block IDs in the reference blocks, so as to achieve the purpose of fixing the invalid block hyperlinks. 
 
 
-Corresponding description:
+An unordered list composed of reference blocks has been added to the whiteboard document, and the CSS snippet needs to be updated to adjust its appearance.
 
-1. This change is migrated from the repository `Excalidraw` and resolves the issue of abnormal line breaks when pasting text into text containers such as boxes. For specific changes, you can refer to this `Pull request`. [https://github.com/excalidraw/excalidraw/pull/8715/files](https://github.com/excalidraw/excalidraw/pull/8715/files)
-2. Note: After switching the dark/light mode of the whiteboard, it is necessary to refresh the whiteboard or reopen it for the changes to take effect. The dark theme corresponds to the file:`Whiteboard/theme/dark.css`,The light theme corresponds to the file: `Whiteboard/theme/theme.css`
-3. In the note software's `Settings` - `Appearance` - `Language`, when the set language is Simplified Chinese or Traditional Chinese, the prompt in the upper left corner of the whiteboard is in Chinese. When set to other languages, the prompt in the upper left corner of the whiteboard is in English.
-4. If the website itself restricts embedding, it may lead to a loading failure.
+Among them, the first style is newly added, and the latter two styles are slightly modified on the original CSS snippet.
+The complete CSS snippet has been updated to the following section: "3. Pre-Usage Setup" - "1. Add CSS Snippet". 
 
+```css
+/* Hide the unordered list in the whiteboard document. */
+.iframe[custom-data-assets^="assets/ExcalidrawFiles/"] ~ .list[data-subtype="u"] {
+  display: none !important;
+}
+/* Hide the breadcrumbs on the top bar of the whiteboard document when it is not in focus. */
+.protyle-breadcrumb:has(button.protyle-breadcrumb__icon.ariaLabel.fn__none):has(+ .protyle-content.protyle-content--transition > .protyle-wysiwyg.protyle-wysiwyg--attr[alias="whiteboard"]) {
+    display: none !important;
+}
+/* When the whiteboard document is embedded as an embedded block in other documents - hide the possible blank lines at the bottom edge. */
+.protyle-wysiwyg__embed>.iframe[custom-data-assets^="assets/ExcalidrawFiles/"] ~ .p {
+    display: none;
+}
+```
 
 
 ---
 
-For the current version: **V1.4.0**
+For the current version: **V1.5.0**
 
 If you **do not want auto-save to be enabled by default**, open the widget folder `Whiteboard` -> `index.js` in an editor like VS Code and search for:
 
@@ -36,7 +53,7 @@ Then change it to:
 window._autoSave = false;
 ```
 
-To **adjust the auto-save delay time** (default is 2000ms), open `Whiteboard` -> `assets` -> `index-4aa42790.js` in the widget folder and search for:
+To **adjust the auto-save delay time** (default is 2000ms), open `Whiteboard` -> `assets` -> `index-0e2f08e2.js` in the widget folder and search for:
 
 ```js
 window._isDarwin?document.dispatchEvent(new KeyboardEvent("keydown",{key:"S",metaKey:!0,bubbles:!1})):document.dispatchEvent(new KeyboardEvent("keydown",{key:"S",ctrlKey:!0,bubbles:!1}))},2000));
@@ -63,20 +80,20 @@ When creating a whiteboard, the widget sets the document's `Alias` property to `
 .protyle-title.protyle-wysiwyg--attr:has(+ .protyle-wysiwyg.protyle-wysiwyg--attr[alias="whiteboard"]){
    display: none !important;
 }
-
-.protyle-breadcrumb:has(+ .protyle-content.protyle-content--transition > .protyle-wysiwyg.protyle-wysiwyg--attr[alias="whiteboard"]) {
-   display: none !important;
+/* Hide the unordered list in the whiteboard document. */
+.iframe[custom-data-assets^="assets/ExcalidrawFiles/"] ~ .list[data-subtype="u"] {
+  display: none !important;
 }
 
+/* Hide the breadcrumbs on the top bar of the whiteboard document when it is not in focus. */
+.protyle-breadcrumb:has(button.protyle-breadcrumb__icon.ariaLabel.fn__none):has(+ .protyle-content.protyle-content--transition > .protyle-wysiwyg.protyle-wysiwyg--attr[alias="whiteboard"]) {
+    display: none !important;
+}
 /* If it is a new version, such as SiYuan V3.0.16, the following snippet is also needed. */
 .protyle-top:has(+ .protyle-wysiwyg.protyle-wysiwyg--attr[alias="whiteboard"]){
    display: none !important;
 }
-```
 
-For better visuals, remove the default border and handle the dragging line as follows:
-
-```css
 /* Widget – Remove Border */
 .b3-typography iframe, .protyle-wysiwyg iframe {
     border: none;   
@@ -85,9 +102,9 @@ For better visuals, remove the default border and handle the dragging line as fo
 .layout__resize--lr {
     z-index: 3;
 }
-/* Hide possible blank line when embedding a whiteboard in other documents */
-.protyle-wysiwyg__embed > .iframe[custom-data-assets^="assets/ExcalidrawFiles/"] + .p{
-     display:none;
+/* When the whiteboard document is embedded as an embedded block in other documents - hide the possible blank lines at the bottom edge. */
+.protyle-wysiwyg__embed>.iframe[custom-data-assets^="assets/ExcalidrawFiles/"] ~ .p {
+    display: none;
 }
 /* Fix input cursor flicker when filling the document */
 .iframe ,iframe{
@@ -193,7 +210,7 @@ The widget uses the block ID as the filename.
 
 ### 1. Adjust Brush Thickness Manually
 
-For V1.4.0, open `Whiteboard` -> `assets` -> `index-4aa42790.js` and search for:
+For V1.5.0, open `Whiteboard` -> `assets` -> `index-0e2f08e2.js` and search for:
 
 ```css
 simulatePressure:e.simulatePressure,size:e.strokeWidth*1.2,thinning
@@ -383,6 +400,25 @@ See preview image at the top.
 The font adjustment is subjective; if you don't prefer the updated version, you can revert to the previous font file.
 
 Regarding code block style, I found no issues in V3.0.3, but it may be impacted by updates, so adaptation is needed.
+
+
+### V1.4.0
+
+See the preview image at the top. The specific changes are as follows.
+
+1. Optimize text wrapping in containers.
+2. According to the current mode (dark/light) of the whiteboard, the documents embedded in the whiteboard will automatically switch to the dark/light theme.
+3. Add English version instructions `README_en_US.md`,The prompt information in the upper left corner can be switched between Chinese and English according to the language currently set for the note.
+4. Remove the default domain name restriction for the `Web Embed` function,Support links starting with `https://` or `http://`.
+5. Replace the [Save] and [Refresh] buttons with icons.
+
+
+Corresponding description:
+
+1. This change is migrated from the repository `Excalidraw` and resolves the issue of abnormal line breaks when pasting text into text containers such as boxes. For specific changes, you can refer to this `Pull request`. [https://github.com/excalidraw/excalidraw/pull/8715/files](https://github.com/excalidraw/excalidraw/pull/8715/files)
+2. Note: After switching the dark/light mode of the whiteboard, it is necessary to refresh the whiteboard or reopen it for the changes to take effect. The dark theme corresponds to the file:`Whiteboard/theme/dark.css`,The light theme corresponds to the file: `Whiteboard/theme/theme.css`
+3. In the note software's `Settings` - `Appearance` - `Language`, when the set language is Simplified Chinese or Traditional Chinese, the prompt in the upper left corner of the whiteboard is in Chinese. When set to other languages, the prompt in the upper left corner of the whiteboard is in English.
+4. If the website itself restricts embedding, it may lead to a loading failure.
 
 
 
