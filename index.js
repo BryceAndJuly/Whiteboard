@@ -255,34 +255,33 @@ async function SaveBlockRef() {
       }
     })
   }
-  if (str.trim()) {
-    // 将块超链接保存到当前文档，以引用块的形式
-    let nextBlock = window.frameElement.parentElement.parentElement.nextSibling;
-    if (!nextBlock || nextBlock?.getAttribute('data-subtype') !== "u") {
-      let response = await request("/api/block/insertBlock", {
+  // 白板中没有块超链接时，需要清空块引用列表
+  if (!str.trim()) {
+    str = `* `;
+  }
+  // 将块超链接保存到当前文档，以引用块的形式
+  let nextBlock = window.frameElement.parentElement.parentElement.nextSibling;
+  if (!nextBlock || nextBlock?.getAttribute('data-subtype') !== "u") {
+    let response = await request("/api/block/insertBlock", {
+      "dataType": "markdown",
+      "data": str,
+      "previousID": widgetID,
+    })
+    if (response.code === 0) {
+      showMessage(window._languages["msgInsertList"]);
+    }
+  } else {
+    let targetBlockID = nextBlock.getAttribute("data-node-id");
+    if (targetBlockID) {
+      let res = await request("/api/block/updateBlock", {
         "dataType": "markdown",
         "data": str,
-        "previousID": widgetID,
+        "id": targetBlockID
       })
-      if (response.code === 0) {
-        showMessage(window._languages["msgInsertList"]);
-      }
-    } else {
-      let targetBlockID = nextBlock.getAttribute("data-node-id");
-      if (targetBlockID) {
-        let res = await request("/api/block/updateBlock", {
-          "dataType": "markdown",
-          "data": str,
-          "id": targetBlockID
-        })
-        if (res.code === 0) {
-          showMessage(window._languages["msgListUpdated"]);
-        }
+      if (res.code === 0) {
+        showMessage(window._languages["msgListUpdated"]);
       }
     }
-
-  } else {
-    showMessage(window._languages["msgNoLink"])
   }
 }
 
