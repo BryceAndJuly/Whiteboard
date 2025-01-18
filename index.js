@@ -49,7 +49,7 @@ let en_US = {
   "TipSaveBlockRef": "Save the reference relationships of the whiteboard to other documents/blocks.",
   "BtnFixBrokenLinks": "FixBrokenLinks",
   "TipFixBrokenLinks": "According to the reference relationships of the whiteboard to other documents/blocks, try to repair the invalid block hyperlinks.",
-  
+
   "msgNotEmbeddedBlock": "This operation is not supported in embedded blocks.",
   "msgInsertList": "The list of reference blocks has been successfully embedded.",
   "msgListUpdated": "The list of reference blocks has been updated.",
@@ -174,6 +174,9 @@ saveBtn.addEventListener('click', (e) => {
 }, false);
 
 function request(url, data = null) { return new Promise((resolve, reject) => { fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data), }).then((data) => resolve(data.json()), (error) => { reject(error); }).catch((err) => { console.error("请求失败:", err); }); }); };
+
+function debounce(e, t = 500) { let r = null; return function (...n) { clearTimeout(r), r = setTimeout((() => { e.apply(this, n) }), t) } }
+
 // 搜素关键字
 (async () => {
   const searchPanel = document.getElementById("searchPanel"),
@@ -208,7 +211,7 @@ function request(url, data = null) { return new Promise((resolve, reject) => { f
     }
     return t
   }
-  function debounce(e, t = 500) { let r = null; return function (...n) { clearTimeout(r), r = setTimeout((() => { e.apply(this, n) }), t) } }
+
   let itemsArr = [], currentIndex = -1;
   async function handleKeywordSubmit() {
     const e = keywordInput.value.trim();
@@ -371,3 +374,246 @@ window.addEventListener("FixBrokenLinks", () => {
   FixBrokenLinks().catch(err => { console.error(err) })
 })
 
+
+
+// 检索面板
+const searchBlocksPanel = document.getElementById('searchBlocksPanel');
+const deleteBtn = document.getElementById('delete');
+const keywordBtn = document.getElementById('keyword');
+const resultList = document.getElementById('result');
+const closeBtn = document.getElementById('close')
+
+
+// 快捷键——显示/隐藏检索面板
+document.addEventListener("keydown", (e => {
+  if (e.altKey && "p" === e.key) {
+    if (searchBlocksPanel.style.visibility === "hidden") {
+      searchBlocksPanel.style.visibility = "visible";
+      keywordBtn.focus();
+    } else {
+      searchBlocksPanel.style.visibility = "hidden";
+    }
+  }
+}), !1)
+
+// 关闭按钮
+closeBtn.addEventListener("click", () => {
+  searchBlocksPanel.style.visibility = "hidden";
+})
+
+
+// 清空输入框
+deleteBtn.addEventListener('click', () => {
+  keywordBtn.value = "";
+  resultList.innerHTML = "";
+  keywordBtn.focus();
+})
+
+let itemsArr = [], currentIndex = 0;
+// 检索文档、标题
+async function handleInput() {
+  resultList.innerHTML = "";
+  if (keywordBtn.value.trim()) {
+    let keyword = keywordBtn.value;
+    let res = await request("/api/search/searchRefBlock", {
+      "k": keyword,
+      "id": "10000000000000-buciyqd",
+      "beforeLen": 24,
+      "rootID": "10000000000000-buciyqd",
+      "isDatabase": false,
+      "isSquareBrackets": true,
+      "reqId": Date.now()
+    })
+    if (res.code === 0 && res?.data?.blocks?.length > 0) {
+      let docList = res.data.blocks;
+      let f = document.createDocumentFragment();
+      docList.forEach(item => {
+        let alias = "";
+        let memo = "";
+        let icon = ""
+        if (item.alias) {
+          alias = `<span class="alias"><svg class="icon"><use xlink:href="#iconA"></use></svg>${item.alias}</span>`
+        }
+        if (item.memo) {
+          memo = `<span class="memo"><svg class="icon"><use xlink:href="#iconM"></use></svg>${item.memo}</span>`
+        }
+        if (item.type === "NodeHeading") {
+          switch (item.subType) {
+            case "h1":
+              icon = `<svg class="icon"><use xlink:href="#iconHeadings"></use></svg>`
+              break;
+            case "h2":
+              icon = `<svg class="icon"><use xlink:href="#iconH2"></use></svg>`
+              break;
+            case "h3":
+              icon = `<svg class="icon"><use xlink:href="#iconH3"></use></svg>`
+              break;
+            case "h4":
+              icon = `<svg class="icon"><use xlink:href="#iconH4"></use></svg>`
+              break;
+            case "h5":
+              icon = `<svg class="icon"><use xlink:href="#iconH5"></use></svg>`
+              break;
+            case "h6":
+              icon = `<svg class="icon"><use xlink:href="#iconH6"></use></svg>`
+              break;
+            default:
+              icon = `<svg class="icon"><use xlink:href="#iconHeadings"></use></svg>`
+          }
+        } else {
+          switch (item.type) {
+            case "NodeDocument":
+              icon = `📄`
+              break;
+            case "NodeParagraph":
+              icon = `<svg class="icon"><use xlink:href="#iconParagraph"></use></svg>`
+              break;
+            case "NodeMathBlock":
+              icon = `<svg class="icon"><use xlink:href="#iconMath"></use></svg>`
+              break;
+            case "NodeTable":
+              icon = `<svg class="icon"><use xlink:href="#iconTable"></use></svg>`
+              break;
+            case "NodeCodeBlock":
+              icon = `<svg class="icon"><use xlink:href="#iconCode"></use></svg>`
+              break;
+            case "NodeHTMLBlock":
+              icon = `<svg class="icon"><use xlink:href="#iconHTML5"></use></svg>`
+              break;
+            case "NodeAttributeView":
+              icon = `<svg class="icon"><use xlink:href="#iconDatabase"></use></svg>`
+              break;
+            case "NodeBlockQueryEmbed":
+              icon = `<svg class="icon"><use xlink:href="#iconSQL"></use></svg>`
+              break;
+            case "NodeVideo":
+              icon = `<svg class="icon"><use xlink:href="#iconVideo"></use></svg>`
+              break;
+            case "NodeAudio":
+              icon = `<svg class="icon"><use xlink:href="#iconRecord"></use></svg>`
+              break;
+            case "NodeIFrame":
+              icon = `<svg class="icon"><use xlink:href="#iconLanguage"></use></svg>`
+              break;
+            case "NodeWidget":
+              icon = `<svg class="icon"><use xlink:href="#iconBoth"></use></svg>`
+              break;
+            case "NodeBlockquote":
+              icon = `<svg class="icon"><use xlink:href="#iconQuote"></use></svg>`
+              break;
+            case "NodeSuperBlock":
+              icon = `<svg class="icon"><use xlink:href="#iconSuper"></use></svg>`
+              break;
+            case "NodeList":
+              icon = `<svg class="icon"><use xlink:href="#iconList"></use></svg>`
+              break;
+            case "NodeListItem":
+              icon = `<svg class="icon"><use xlink:href="#iconListItem"></use></svg>`
+              break;
+          }
+        }
+        let dom = document.createElement('div');
+        dom.className = "searchItem";
+        dom.innerHTML = `${alias}${memo}<div class="path">${item.hPath}</div>
+                <div class="title"><span class="link" data-href="siyuan://blocks/${item.id}" >${icon}</span> ${item.content}</div> <div class="insertDoc" data-href="siyuan://blocks/${item.id}" >➕</div>`;
+        f.append(dom);
+
+      });
+      resultList.append(f);
+      // 更新搜索结果
+      itemsArr = resultList.querySelectorAll("div.searchItem");
+      currentIndex = 0;
+      itemsArr[currentIndex].classList.add("active");
+    } else {
+      resultList.innerHTML = "未查询到相关结果";
+    }
+  }
+
+}
+
+keywordBtn.addEventListener('input', debounce(handleInput));
+
+// 文档名、标题名前的图标，点击跳转到对应的块
+resultList.addEventListener("click", (e) => {
+  if (e.target.tagName === "SPAN" && e.target.className === "link") {
+    e.stopPropagation();
+    let url = e.target.getAttribute("data-href");
+    window.top.openFileByURL(url);
+  } else if (e.target.tagName === "svg") {
+    e.stopPropagation();
+    let url = e.target.parentElement.getAttribute("data-href");
+    window.top.openFileByURL(url);
+
+  } else if (e.target.tagName === "use") {
+    e.stopPropagation();
+    let url = e.target.parentElement.parentElement.getAttribute("data-href");
+    window.top.openFileByURL(url);
+  } else if (e.target.tagName === "DIV" && e.target.className === "insertDoc") {
+    e.stopPropagation();
+    let url = e.target.getAttribute("data-href");
+    window.dispatchEvent(new CustomEvent("createEmbedElement", { detail: { link: url } }));
+  }
+}, false)
+
+
+
+
+// 上、下箭头切换搜索结果
+keywordBtn.addEventListener("keydown", (e => {
+  if ("ArrowDown" === e.key) {
+    itemsArr[currentIndex].classList.remove("active");
+    if (currentIndex + 1 < itemsArr.length) {
+      currentIndex += 1;
+      itemsArr[currentIndex].classList.add('active');
+    } else {
+      currentIndex = 0;
+      itemsArr[currentIndex].classList.add('active');
+    }
+    let offsetTop = itemsArr[currentIndex].offsetTop;
+    resultList.scrollTo(0, offsetTop < 100 ? 0 : offsetTop - 100);
+  }
+
+  if ("ArrowUp" === e.key) {
+    e.stopPropagation();
+    e.preventDefault();
+    itemsArr[currentIndex].classList.remove("active");
+    if (currentIndex > 0) {
+      currentIndex -= 1;
+      itemsArr[currentIndex].classList.add('active');
+    } else {
+      currentIndex = itemsArr.length - 1;
+      itemsArr[currentIndex].classList.add('active');
+    }
+    let offsetTop = itemsArr[currentIndex].offsetTop;
+    resultList.scrollTo(0, offsetTop < 100 ? 0 : offsetTop - 100);
+
+  }
+  //  按Enter嵌入当前已选中的文档块或标题块
+  if ("Enter" === e.key) {
+    let selectedResult = resultList.querySelector("div.searchItem.active");
+    if (selectedResult) {
+      let url = selectedResult.querySelector("span.link")?.getAttribute("data-href");
+      if (url) { window.dispatchEvent(new CustomEvent("createEmbedElement", { detail: { link: url } })); }
+    }
+
+  }
+}), false);
+
+// 在笔记软件V3.1.20中，悬浮预览API的参数已修改，需要适配
+(() => {
+  window._isNewVersion = false;
+  let version = window?.top?.siyuan?.config?.system?.kernelVersion;
+  if (version) {
+    try {
+      let arr = version.split(".");
+      arr[1] = arr[1].padStart(2, '0');
+      arr[2] = arr[2].padStart(2, '0');
+      version = parseInt(arr.join(""));
+      if (version >= 30120) {
+        window._isNewVersion = true;
+      }
+    } catch (err) {
+      console.error(err)
+    }
+  }
+})()

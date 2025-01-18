@@ -1,45 +1,33 @@
 ## 一、当前版本
 
-### V1.5.0
+### V1.6.0
 
 见顶部预览图
 
-左上角主菜单新增两个功能：`保存块引用`、`修复块超链接`
-
-* `保存块引用`
-
-  * 获取白板中已嵌入的块超链接，以引用块的形式插入到白板挂件块后的无序列表中，建立白板对其他文档/块的引用关系。
-  * 引用关系建立后，白板文档以 `SiYuan .sy.zip`形式导出时能自动包含已嵌入白板的文档/块，保证导出白板时数据的完整性。
-* `修复块超链接`
-
-  * 一般在白板文档以 `SiYuan .sy.zip`形式被导入后，才用到该功能。
-  * 该功能生效的前提是：需要在白板文档以 `SiYuan .sy.zip`形式被**导出前**就使用`保存块引用`功能来更新白板对其他块的引用关系。
-  * 在导入过程中，文档/块的ID被软件重置，这通常会导致白板上已有的块超链接失效。该功能根据引用块中新旧块ID的对应关系，更新白板中的块超链接，达到修复失效块超链接的目的。
+* 白板右侧新增可由快捷键唤出的【引用块检索面板】，可通过此面板快速检索和嵌入检索到的内容块。
+* 兼容性处理 ：在当前最新版本（V3.1.20）中，API `addFloatLayer`参数改变导致白板中的悬浮预览功能失效。——[#13816](https://github.com/siyuan-note/siyuan/issues/13816)
+* 对于嵌入到白板中的文档，删除冗余的图标定义。修复列表图标的样式。
 
 
-白板文档中新增了引用块组成的无序列表，需要更新CSS片段来调整外观。
+**基本使用：**
 
-其中第一个样式是新增的，后两个样式是在原CSS片段上稍作修改。完整的CSS片段已更新到下文的：`三、使用前的设置`——`1、添加CSS代码片段`
+* 鼠标单击白板空白处获得焦点后，可通过快捷键`Alt`+`P`开启/关闭【引用块检索面板】
+* 该面板打开后输入框自动获得焦点，可直接输入关键词，多个关键词以空格隔开。输入关键词约0.5s后，搜索结果显示在下方列表中，自动选中第一个搜索结果。
+* 此时可通过键盘的上/下方向键来切换选中的搜索结果。按下`Enter`键，可将当前选中的搜索结果以嵌入文档的形式嵌入到白板的左上角。可通过上、下方向键和`Enter`键连续嵌入多个搜索结果。
+* 点击【清空】按钮后，输入框清空关键词并自动获得焦点，可继续输入新的关键词来进行检索。
 
-```js
-/* 隐藏白板文档中的无序列表 */
-.iframe[custom-data-assets^="assets/ExcalidrawFiles/"] ~ .list[data-subtype="u"] {
-  display: none !important;
-}
-/* 在不聚焦的情况下，隐藏白板文档顶栏的面包屑 */
-.protyle-breadcrumb:has(button.protyle-breadcrumb__icon.ariaLabel.fn__none):has(+ .protyle-content.protyle-content--transition > .protyle-wysiwyg.protyle-wysiwyg--attr[alias="whiteboard"]) {
-    display: none !important;
-}
-/* 白板文档作为嵌入块嵌入到其他文档时——隐藏底边可能出现的空白行 */
-.protyle-wysiwyg__embed>.iframe[custom-data-assets^="assets/ExcalidrawFiles/"] ~ .p {
-    display: none;
-}
-```
+**其他：**
 
+* 在笔记软件的`设置`——`编辑器`——`[[ 仅搜索文档`，若开启此项，则白板上的【引用块检索面板】的搜索结果只保留文档块。
+* 在【引用块检索面板】搜索和在文档中使用`【【+关键字`搜索引用块用的是同款API：`/api/search/searchRefBlock`，因此在笔记软件的`设置`——`搜索`——`块级类型`中的设置能直接影响【引用块检索面板】中检索结果的类型。
+* 在搜索结果的列表中
 
+  * 点击搜索结果前面的图标，可跳转到对应的内容块。
+  * 点击搜索结果后面的`+`图标，可将对应的搜索结果以嵌入文档的形式嵌入到白板的左上角。
+  
 ---
 
-对于当前版本：**V1.5.0**
+对于当前版本：**V1.6.0**
 
 如果你**不想默认开启自动保存功能**，可以使用VS Code之类的编辑器打开挂件文件夹`Whiteboard`​——`index.js`​，
 
@@ -55,7 +43,7 @@ window._autoSave = true;
 window._autoSave = false;
 ```
 
-如果你想**调整自动保存的延时时间**（默认是2000ms），可以打开挂件文件夹`Whiteboard`​——`assets`​——`index-0e2f08e2.js`​
+如果你想**调整自动保存的延时时间**（默认是2000ms），可以打开挂件文件夹`Whiteboard`​——`assets`​——`index-e7ad6f98.js`​
 
 搜索：
 
@@ -215,7 +203,7 @@ assets/ExcalidrawFiles/20231227015401-w0olmpi.excalidraw
 
 ### 1、手动更改画笔的粗细
 
-对于版本V1.5.0，打开挂件文件夹`Whiteboard`​——`assets`​——`index-0e2f08e2.js`​,在该js文件中搜索：
+对于版本V1.6.0，打开挂件文件夹`Whiteboard`​——`assets`​——`index-e7ad6f98.js`​,在该js文件中搜索：
 
 ```css
 simulatePressure:e.simulatePressure,size:e.strokeWidth*1.2,thinning
@@ -446,6 +434,43 @@ Tips:
 3. 在笔记软件的`设置`——`外观`——`语言`，当设置的语言是简体或者繁体时，白板左上角的提示为中文。设置成其他语言时，白板左上角的提示为英文。
 4. 如果网站本身限制嵌入，可能会导致加载失败。
 
+
+
+### V1.5.0
+
+见顶部预览图
+
+左上角主菜单新增两个功能：`保存块引用`、`修复块超链接`
+
+* `保存块引用`
+
+  * 获取白板中已嵌入的块超链接，以引用块的形式插入到白板挂件块后的无序列表中，建立白板对其他文档/块的引用关系。
+  * 引用关系建立后，白板文档以 `SiYuan .sy.zip`形式导出时能自动包含已嵌入白板的文档/块，保证导出白板时数据的完整性。
+* `修复块超链接`
+
+  * 一般在白板文档以 `SiYuan .sy.zip`形式被导入后，才用到该功能。
+  * 该功能生效的前提是：需要在白板文档以 `SiYuan .sy.zip`形式被**导出前**就使用`保存块引用`功能来更新白板对其他块的引用关系。
+  * 在导入过程中，文档/块的ID被软件重置，这通常会导致白板上已有的块超链接失效。该功能根据引用块中新旧块ID的对应关系，更新白板中的块超链接，达到修复失效块超链接的目的。
+
+
+白板文档中新增了引用块组成的无序列表，需要更新CSS片段来调整外观。
+
+其中第一个样式是新增的，后两个样式是在原CSS片段上稍作修改。完整的CSS片段已更新到下文的：`三、使用前的设置`——`1、添加CSS代码片段`
+
+```js
+/* 隐藏白板文档中的无序列表 */
+.iframe[custom-data-assets^="assets/ExcalidrawFiles/"] ~ .list[data-subtype="u"] {
+  display: none !important;
+}
+/* 在不聚焦的情况下，隐藏白板文档顶栏的面包屑 */
+.protyle-breadcrumb:has(button.protyle-breadcrumb__icon.ariaLabel.fn__none):has(+ .protyle-content.protyle-content--transition > .protyle-wysiwyg.protyle-wysiwyg--attr[alias="whiteboard"]) {
+    display: none !important;
+}
+/* 白板文档作为嵌入块嵌入到其他文档时——隐藏底边可能出现的空白行 */
+.protyle-wysiwyg__embed>.iframe[custom-data-assets^="assets/ExcalidrawFiles/"] ~ .p {
+    display: none;
+}
+```
 
 
 

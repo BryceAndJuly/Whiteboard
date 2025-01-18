@@ -18,18 +18,21 @@
   font-display: swap;
   font-weight: 400;
 }
+
 @font-face {
   font-family: "Assistant";
   src: url("./Assistant-Medium.woff2");
   font-display: swap;
   font-weight: 500;
 }
+
 @font-face {
   font-family: "Assistant";
   src: url("./Assistant-SemiBold.woff2");
   font-display: swap;
   font-weight: 600;
 }
+
 @font-face {
   font-family: "Assistant";
   src: url("./Assistant-Bold.woff2");
@@ -39,158 +42,277 @@
 
 /* 零散的样式，合并到font.css */
 body,
-      html {
-        margin: 0;
-        -webkit-text-size-adjust: 100%;
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-      }
-      .visually-hidden {
-        position: absolute !important;
-        height: 1px;
-        width: 1px;
-        overflow: hidden;
-        clip: rect(1px, 1px, 1px, 1px);
-        white-space: nowrap;
-        user-select: none;
-      }
-      #root {
-        height: 100%;
-        -webkit-touch-callout: none;
-        -webkit-user-select: none;
-        -khtml-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-      }
-      @media screen and (min-width: 1200px) {
-        #root {
-          -webkit-touch-callout: default;
-          -webkit-user-select: auto;
-          -khtml-user-select: auto;
-          -moz-user-select: auto;
-          -ms-user-select: auto;
-          user-select: auto;
-        }
-      }
-      /* Mermaid to Excalidraw */
-      button.dropdown-menu-button.App-toolbar__extra-tools-trigger.zen-mode-transition+.dropdown-menu.App-toolbar__extra-tools-dropdown button:last-child {
-        display: none !important;
-      }
-      /* 右键菜单的粘贴按钮失效，暂时不想花时间去修复了 */
-      .excalidraw .popover>ul.context-menu>li[data-testid="paste"],
-      .excalidraw .popover>ul.context-menu>li[data-testid="paste"]+hr.context-menu-item-separator {
-        display: none;
-      }
-      /* 在线素材库 */
-      .layer-ui__library .library-menu-items__no-items,
-      .layer-ui__library a.library-menu-browse-button,
-      .layer-ui__library .library-menu-items-container__header.library-menu-items-container__header--excal,
-      .layer-ui__library div[style="margin: 1rem 0px; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; font-size: 0.9rem;"] {
-        display: none !important;
-      }
-      /* 隐藏——右下角——帮助按钮 */
-      div[style="display: flex; gap: 0.5rem; align-items: center;"] {
-        display: none !important;
-      }
-      button.help-icon {
-        display: none !important;
-      }
-      /* 隐藏——左上角菜单中的链接 */
-      .Island.dropdown-menu-container>a {
-        display: none !important;
-      }
-      /* 样式——保存按钮 */
-      #saveBtn {
-        position: fixed;
-        width: 36px;
-        height: 36px;
-        top: 34px;
-        left: 84px;
-        transform: translate(-50%, -50%);
-        z-index: 3;
-        text-align: center;
-        line-height: 36px;
-        font-size: 12px;
-        border-radius: 8px;
-        cursor: pointer;
-        user-select: none;
-        background-color: transparent;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-      #refreshBtn {
-        position: fixed;
-        width: 36px;
-        height: 36px;
-        top: 34px;
-        right: 84px;
-        transform: translate(-50%, -50%);
-        z-index: 3;
-        text-align: center;
-        line-height: 36px;
-        font-size: 12px;
-        border-radius: 8px;
-        cursor: pointer;
-        user-select: none;
-        background-color: transparent;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-      html:not(.dark) #saveBtn,
-      html:not(.dark) #refreshBtn{
-        border: 1px solid #2323291c;
-      }
-      html:not(.dark) #saveBtn:hover,
-      html:not(.dark) #refreshBtn:hover {
-        background-color: #F1F0FF;
-      }
-      html.dark #saveBtn,
-      html.dark #refreshBtn {
-        background-color: #232329;
-      }
-      html.dark #saveBtn:hover,
-      html.dark #refreshBtn:hover {
-        background-color: #363541;
-      }
-      .message {
-        height: auto;
-        max-width: 400px;
-        padding: 0px 10px 0px 10px;
-        background-color: transparent;
-        color: #B8B8B8;
-        margin-bottom: 5px;
-        border-radius: 5px;
-        user-select: none;
-      }
-      #myMessage {
-        width: 277px;
-        max-height: 400px;
-        padding: 0px 15px;
-        position: fixed;
-        text-align: left;
-        line-height: 25px;
-        top: 17px;
-        left: 96px;
-        font-size: 12px;
-        border-radius: 7px;
-        z-index: 2;
-        display: flex;
-        flex-direction: column;
-        align-items: start;
-      }
-        
-      @media screen and (max-width:1217px){#myMessage{top: 60px;left: -2px;}}
-      @media screen and (max-width:853px){#saveBtn{top: 81px;left: 31px;}#refreshBtn{top: 81px;right: 17px;}#myMessage{top: 101px;left: -2px;}}
+html {
+  margin: 0;
+  -webkit-text-size-adjust: 100%;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+  white-space: nowrap;
+  user-select: none;
+}
+
+#root {
+  height: 100%;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+@media screen and (min-width: 1200px) {
+  #root {
+    -webkit-touch-callout: default;
+    -webkit-user-select: auto;
+    -khtml-user-select: auto;
+    -moz-user-select: auto;
+    -ms-user-select: auto;
+    user-select: auto;
+  }
+}
+
+/* Mermaid to Excalidraw */
+button.dropdown-menu-button.App-toolbar__extra-tools-trigger.zen-mode-transition+.dropdown-menu.App-toolbar__extra-tools-dropdown button:last-child {
+  display: none !important;
+}
+
+/* 右键菜单的粘贴按钮失效，暂时不想花时间去修复了 */
+.excalidraw .popover>ul.context-menu>li[data-testid="paste"],
+.excalidraw .popover>ul.context-menu>li[data-testid="paste"]+hr.context-menu-item-separator {
+  display: none;
+}
+
+/* 在线素材库 */
+.layer-ui__library .library-menu-items__no-items,
+.layer-ui__library a.library-menu-browse-button,
+.layer-ui__library .library-menu-items-container__header.library-menu-items-container__header--excal,
+.layer-ui__library div[style="margin: 1rem 0px; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; font-size: 0.9rem;"] {
+  display: none !important;
+}
+
+/* 隐藏——右下角——帮助按钮 */
+div[style="display: flex; gap: 0.5rem; align-items: center;"] {
+  display: none !important;
+}
+
+button.help-icon {
+  display: none !important;
+}
+
+/* 隐藏——左上角菜单中的链接 */
+.Island.dropdown-menu-container>a {
+  display: none !important;
+}
+
+/* 样式——保存按钮 */
+#saveBtn {
+  position: fixed;
+  width: 36px;
+  height: 36px;
+  top: 34px;
+  left: 84px;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  text-align: center;
+  line-height: 36px;
+  font-size: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  user-select: none;
+  background-color: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#refreshBtn {
+  position: fixed;
+  width: 36px;
+  height: 36px;
+  top: 34px;
+  right: 84px;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  text-align: center;
+  line-height: 36px;
+  font-size: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  user-select: none;
+  background-color: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+html:not(.dark) #saveBtn,
+html:not(.dark) #refreshBtn {
+  border: 1px solid #2323291c;
+}
+
+html:not(.dark) #saveBtn:hover,
+html:not(.dark) #refreshBtn:hover {
+  background-color: #F1F0FF;
+}
+
+html.dark #saveBtn,
+html.dark #refreshBtn {
+  background-color: #232329;
+}
+
+html.dark #saveBtn:hover,
+html.dark #refreshBtn:hover {
+  background-color: #363541;
+}
+
+.message {
+  height: auto;
+  max-width: 400px;
+  padding: 0px 10px 0px 10px;
+  background-color: transparent;
+  color: #B8B8B8;
+  margin-bottom: 5px;
+  border-radius: 5px;
+  user-select: none;
+}
+
+#myMessage {
+  width: 277px;
+  max-height: 400px;
+  padding: 0px 15px;
+  position: fixed;
+  text-align: left;
+  line-height: 25px;
+  top: 17px;
+  left: 96px;
+  font-size: 12px;
+  border-radius: 7px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+}
+
+@media screen and (max-width:1217px) {
+  #myMessage {
+    top: 60px;
+    left: -2px;
+  }
+}
+
+@media screen and (max-width:853px) {
+  #saveBtn {
+    top: 81px;
+    left: 31px;
+  }
+
+  #refreshBtn {
+    top: 81px;
+    right: 17px;
+  }
+
+  #myMessage {
+    top: 101px;
+    left: -2px;
+  }
+}
 
 
-      /* 搜索面板 */
-      .ExcalidrawItem:hover {
-        background-color: #8ad4df !important
-      }
-      .ExcalidrawItem.active {
-        background-color: #8ad4df !important
-      }
+/* 搜索面板 */
+.ExcalidrawItem:hover {
+  background-color: #8ad4df !important
+}
+
+.ExcalidrawItem.active {
+  background-color: #8ad4df !important
+}
+
+
+/* 检索面板——相关样式 */
+.top {
+  display: flex;
+}
+
+input#keyword {
+  flex: 1;
+  margin: 0 3px;
+}
+
+.path {
+  color: #005599;
+  font-size: .75rem;
+  margin-bottom: 4px;
+  margin-top: 4px;
+}
+
+.searchItem {
+  margin: 8px 6px;
+  padding: 4px;
+  border: 1px dashed #808080a8;
+  border-radius: 6px;
+  position: relative;
+}
+
+.memo,
+.alias {
+  color: #b16700;
+  font-size: .75rem;
+}
+
+.link {
+  cursor: pointer;
+}
+
+span.alias {
+  margin-right: 6px;
+}
+
+.icon {
+  width: 16px;
+  height: 16px;
+  align-self: center;
+  flex-shrink: 0;
+  margin-right: 4px;
+}
+
+.active {
+  background-color: #ffd8a2bd;
+}
+
+.resultList {
+  height: calc(100% - 27px);
+  overflow-y: auto;
+}
+
+.title {
+  color: black;
+}
+
+.insertDoc {
+  position: absolute;
+  right: 10px;
+  bottom: 11px;
+  font-size: 20px;
+  cursor: pointer;
+  user-select: none;
+  transform-origin: center;
+}
+
+.insertDoc:hover {
+  background-color: #ffd5d5;
+  border-radius: 47%;
+}
+
+.insertDoc:active {
+  transform: scale(1.2)
+}

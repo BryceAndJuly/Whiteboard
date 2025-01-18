@@ -1,45 +1,33 @@
 ## 1. Current Version
 
-### V1.5.0
+### V1.6.0
 
 See the preview image at the top.
-Two new functions have been added to the main menu in the upper left corner:`SaveBlockRef` and `FixBrokenLinks`
 
-* `SaveBlockRef`
-
-  * Obtain the block hyperlinks that have been embedded in the whiteboard, and insert them in the form of reference blocks into the unordered list after the whiteboard widget block to establish the reference relationship of the whiteboard to other documents/blocks. 
-  * After the reference relationship is established, when the whiteboard document is exported in the form of `SiYuan.sy.zip`, the documents/blocks that have been embedded in the whiteboard can be automatically included to ensure the integrity of the data when the whiteboard is exported. 
-* `FixBrokenLinks`
-
-  * Generally, this function is only used after the whiteboard document is imported in the form of `SiYuan.sy.zip`.
-  * The prerequisite for this function to take effect is that the "Save Block Quotation" function needs to be used to update the reference relationship of the whiteboard to other blocks before the whiteboard document is exported in the form of `SiYuan.sy.zip`. 
-  * During the import process, the IDs of the documents/blocks are reset by the software, which usually causes the existing block hyperlinks on the whiteboard to become invalid. This function updates the block hyperlinks in the whiteboard according to the corresponding relationship between the old and new block IDs in the reference blocks, so as to achieve the purpose of fixing the invalid block hyperlinks. 
+* A  `Reference Block Search Panel` that can be invoked by shortcut keys has been added to the right side of the whiteboard. Through this panel, you can quickly search for and embed the retrieved content blocks.
+* Compatibility measures: In the current latest version (V3.1.20), changes to the parameters of the API `addFloatLayer` have rendered the floating preview feature in the whiteboard inoperative.——[#13816](https://github.com/siyuan-note/siyuan/issues/13816)
+* For the documents embedded in the whiteboard, delete redundant icon definitions. Fix the style of list icons.
 
 
-An unordered list composed of reference blocks has been added to the whiteboard document, and the CSS snippet needs to be updated to adjust its appearance.
+**Basic Usage:**
 
-Among them, the first style is newly added, and the latter two styles are slightly modified on the original CSS snippet.
-The complete CSS snippet has been updated to the following section: "3. Pre-Usage Setup" - "1. Add CSS Snippet". 
+* After clicking on the blank area of the whiteboard with the mouse to gain focus, you can open or close the `Reference Block Search Panel` using the shortcut key `Alt` + `P`.
+* Once the panel is opened, the input box automatically gets focused. You can directly input keywords, separating multiple keywords with spaces. Approximately 0.5 seconds after entering the keywords, the search results will be displayed in the list below, with the first search result automatically selected.
+* At this point, you can use the up/down arrow keys on the keyboard to switch the selected search results. Pressing the `Enter` key will embed the currently selected search result in the form of an embedded document into the upper - left corner of the whiteboard. Multiple search results can be embedded in succession by using the up and down arrow keys along with the `Enter` key.
+* After clicking the `Clear` button, the keywords in the input box are cleared and the input box automatically gains focus. You can then continue to enter new keywords for retrieval.
 
-```css
-/* Hide the unordered list in the whiteboard document. */
-.iframe[custom-data-assets^="assets/ExcalidrawFiles/"] ~ .list[data-subtype="u"] {
-  display: none !important;
-}
-/* Hide the breadcrumbs on the top bar of the whiteboard document when it is not in focus. */
-.protyle-breadcrumb:has(button.protyle-breadcrumb__icon.ariaLabel.fn__none):has(+ .protyle-content.protyle-content--transition > .protyle-wysiwyg.protyle-wysiwyg--attr[alias="whiteboard"]) {
-    display: none !important;
-}
-/* When the whiteboard document is embedded as an embedded block in other documents - hide the possible blank lines at the bottom edge. */
-.protyle-wysiwyg__embed>.iframe[custom-data-assets^="assets/ExcalidrawFiles/"] ~ .p {
-    display: none;
-}
-```
+**Other tips:**
 
+* In the note - taking software, in the `Settings` - `Editor` - `[[Search Documents Only` option, if this option is enabled, the search results of the `Reference Block Search Panel` on the whiteboard will only retain document blocks.
+* Searching in the `Reference Block Search Panel` and searching for reference blocks in the document using `【【+keyword` utilize the same API: `/api/search/searchRefBlock`. Therefore, the settings in `Settings` - `Search` - `Block - level Types` of the note - taking software can directly affect the types of search results in the `Reference Block Search Panel`.
+* In the list of search results
+
+  * Clicking on the icon in front of the search result allows you to jump to the corresponding content block.
+  * When you click the `+` icon behind the search result, the corresponding search result can be embedded in the upper - left corner of the whiteboard in the form of an embedded document.
 
 ---
 
-For the current version: **V1.5.0**
+For the current version: **V1.6.0**
 
 If you **do not want auto-save to be enabled by default**, open the widget folder `Whiteboard` -> `index.js` in an editor like VS Code and search for:
 
@@ -53,7 +41,7 @@ Then change it to:
 window._autoSave = false;
 ```
 
-To **adjust the auto-save delay time** (default is 2000ms), open `Whiteboard` -> `assets` -> `index-0e2f08e2.js` in the widget folder and search for:
+To **adjust the auto-save delay time** (default is 2000ms), open `Whiteboard` -> `assets` -> `index-e7ad6f98.js` in the widget folder and search for:
 
 ```js
 window._isDarwin?document.dispatchEvent(new KeyboardEvent("keydown",{key:"S",metaKey:!0,bubbles:!1})):document.dispatchEvent(new KeyboardEvent("keydown",{key:"S",ctrlKey:!0,bubbles:!1}))},2000));
@@ -210,7 +198,7 @@ The widget uses the block ID as the filename.
 
 ### 1. Adjust Brush Thickness Manually
 
-For V1.5.0, open `Whiteboard` -> `assets` -> `index-0e2f08e2.js` and search for:
+For V1.6.0, open `Whiteboard` -> `assets` -> `index-e7ad6f98.js` and search for:
 
 ```css
 simulatePressure:e.simulatePressure,size:e.strokeWidth*1.2,thinning
@@ -421,6 +409,41 @@ Corresponding description:
 4. If the website itself restricts embedding, it may lead to a loading failure.
 
 
+### V1.5.0
+
+See the preview image at the top.
+Two new functions have been added to the main menu in the upper left corner:`SaveBlockRef` and `FixBrokenLinks`
+
+* `SaveBlockRef`
+
+  * Obtain the block hyperlinks that have been embedded in the whiteboard, and insert them in the form of reference blocks into the unordered list after the whiteboard widget block to establish the reference relationship of the whiteboard to other documents/blocks. 
+  * After the reference relationship is established, when the whiteboard document is exported in the form of `SiYuan.sy.zip`, the documents/blocks that have been embedded in the whiteboard can be automatically included to ensure the integrity of the data when the whiteboard is exported. 
+* `FixBrokenLinks`
+
+  * Generally, this function is only used after the whiteboard document is imported in the form of `SiYuan.sy.zip`.
+  * The prerequisite for this function to take effect is that the "Save Block Quotation" function needs to be used to update the reference relationship of the whiteboard to other blocks before the whiteboard document is exported in the form of `SiYuan.sy.zip`. 
+  * During the import process, the IDs of the documents/blocks are reset by the software, which usually causes the existing block hyperlinks on the whiteboard to become invalid. This function updates the block hyperlinks in the whiteboard according to the corresponding relationship between the old and new block IDs in the reference blocks, so as to achieve the purpose of fixing the invalid block hyperlinks. 
+
+
+An unordered list composed of reference blocks has been added to the whiteboard document, and the CSS snippet needs to be updated to adjust its appearance.
+
+Among them, the first style is newly added, and the latter two styles are slightly modified on the original CSS snippet.
+The complete CSS snippet has been updated to the following section: "3. Pre-Usage Setup" - "1. Add CSS Snippet". 
+
+```css
+/* Hide the unordered list in the whiteboard document. */
+.iframe[custom-data-assets^="assets/ExcalidrawFiles/"] ~ .list[data-subtype="u"] {
+  display: none !important;
+}
+/* Hide the breadcrumbs on the top bar of the whiteboard document when it is not in focus. */
+.protyle-breadcrumb:has(button.protyle-breadcrumb__icon.ariaLabel.fn__none):has(+ .protyle-content.protyle-content--transition > .protyle-wysiwyg.protyle-wysiwyg--attr[alias="whiteboard"]) {
+    display: none !important;
+}
+/* When the whiteboard document is embedded as an embedded block in other documents - hide the possible blank lines at the bottom edge. */
+.protyle-wysiwyg__embed>.iframe[custom-data-assets^="assets/ExcalidrawFiles/"] ~ .p {
+    display: none;
+}
+```
 
 
 ## 8. References and Thanks
