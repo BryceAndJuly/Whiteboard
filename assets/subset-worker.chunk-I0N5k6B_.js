@@ -1,0 +1,2 @@
+import{Commands as t,subsetToBinary as o}from"./subset-shared.chunk-D4cgYcOB.js";const r=import.meta.url?new URL(import.meta.url):void 0;typeof window>"u"&&typeof self<"u"&&(self.onmessage=async e=>{switch(e.data.command){case t.Subset:const a=await o(e.data.arrayBuffer,e.data.codePoints);self.postMessage(a,{transfer:[a]});break}});export{r as WorkerUrl};
+//# sourceMappingURL=subset-worker.chunk-I0N5k6B_.js.map

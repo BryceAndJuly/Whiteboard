@@ -1,0 +1,252 @@
+html.dark {
+    background-color: #121212;
+    color: #fff;
+}
+
+body,
+html {
+    margin: 0;
+    -webkit-text-size-adjust: 100%;
+
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.visually-hidden {
+    position: absolute !important;
+    height: 1px;
+    width: 1px;
+    overflow: hidden;
+    clip: rect(1px, 1px, 1px, 1px);
+    white-space: nowrap;
+    user-select: none;
+}
+
+#root {
+    height: 100%;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+@media screen and (min-width: 1200px) {
+    #root {
+        -webkit-touch-callout: default;
+        -webkit-user-select: auto;
+        -khtml-user-select: auto;
+        -moz-user-select: auto;
+        -ms-user-select: auto;
+        user-select: auto;
+    }
+}
+
+
+/* 保存 */
+#saveBtn {
+    position: fixed;
+    width: 36px;
+    height: 36px;
+    top: 34px;
+    left: 84px;
+    transform: translate(-50%, -50%);
+    z-index: 3;
+    text-align: center;
+    line-height: 36px;
+    font-size: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    user-select: none;
+    background-color: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  /* 刷新 */
+  #refreshBtn {
+    position: fixed;
+    width: 36px;
+    height: 36px;
+    top: 34px;
+    right: 84px;
+    transform: translate(-50%, -50%);
+    z-index: 3;
+    text-align: center;
+    line-height: 36px;
+    font-size: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    user-select: none;
+    background-color: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  html:not(.dark) #saveBtn,
+  html:not(.dark) #refreshBtn {
+    border: 1px solid #2323291c;
+  }
+  
+  html:not(.dark) #saveBtn:hover,
+  html:not(.dark) #refreshBtn:hover {
+    background-color: #F1F0FF;
+  }
+  
+  html.dark #saveBtn,
+  html.dark #refreshBtn {
+    background-color: #232329;
+  }
+  
+  html.dark #saveBtn:hover,
+  html.dark #refreshBtn:hover {
+    background-color: #363541;
+  }
+  
+  /* 左上角消息弹窗 */
+  .message {
+    height: auto;
+    max-width: 400px;
+    padding: 0px 10px 0px 10px;
+    background-color: transparent;
+    color: #B8B8B8;
+    margin-bottom: 5px;
+    border-radius: 5px;
+    user-select: none;
+  }
+  
+  #myMessage {
+    width: 277px;
+    max-height: 400px;
+    padding: 0px 15px;
+    position: fixed;
+    text-align: left;
+    line-height: 25px;
+    top: 17px;
+    left: 96px;
+    font-size: 12px;
+    border-radius: 7px;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+  }
+  
+  @media screen and (max-width:1217px) {
+    #myMessage {
+      top: 60px;
+      left: -2px;
+    }
+  }
+  
+  @media screen and (max-width:853px) {
+    #saveBtn {
+      top: 81px;
+      left: 31px;
+    }
+  
+    #refreshBtn {
+      top: 81px;
+      right: 17px;
+    }
+  
+    #myMessage {
+      top: 101px;
+      left: -2px;
+    }
+  }
+  
+  
+
+/* 检索面板——相关样式 */
+.top {
+  display: flex;
+}
+
+input#keyword {
+  flex: 1;
+  margin: 0 3px;
+}
+
+.path {
+  color: #005599;
+  font-size: .75rem;
+  margin-bottom: 4px;
+  margin-top: 4px;
+}
+
+.searchItem {
+  margin: 8px 6px;
+  padding: 4px;
+  border: 1px dashed #808080a8;
+  border-radius: 6px;
+  position: relative;
+}
+
+.memo,
+.alias {
+  color: #b16700;
+  font-size: .75rem;
+}
+
+.link {
+  cursor: pointer;
+}
+
+span.alias {
+  margin-right: 6px;
+}
+
+.icon {
+  width: 16px;
+  height: 16px;
+  align-self: center;
+  flex-shrink: 0;
+  margin-right: 4px;
+}
+
+.active {
+  background-color: #ffd8a2bd;
+}
+
+.resultList {
+  height: calc(100% - 27px);
+  overflow-y: auto;
+  color: black;
+}
+
+.title {
+  color: black;
+  word-wrap: break-word;
+}
+
+.insertDoc {
+  position: absolute;
+  right: 10px;
+  bottom: 11px;
+  font-size: 20px;
+  cursor: pointer;
+  user-select: none;
+  transform-origin: center;
+  opacity: 0.4;
+}
+
+.insertDoc:hover {
+  background-color: #ffd5d5;
+  border-radius: 47%;
+}
+
+.insertDoc:active {
+  transform: scale(1.2)
+}
+
+button#delete {
+  cursor: pointer;
+}
+
+button#close {
+  cursor: pointer;
+}

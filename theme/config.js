@@ -1,63 +1,93 @@
 // 请求函数
-function request(url, data = null) {return new Promise((resolve, reject) => {fetch(url, {method: "POST",headers: {"Content-Type": "application/json"},body: JSON.stringify(data),}).then((data) => resolve(data.json()), (error) => {reject(error); }).catch((err) => {console.error("请求失败:", err);});});}
+function request(url, data = null) { return new Promise((resolve, reject) => { fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data), }).then((data) => resolve(data.json()), (error) => { reject(error); }).catch((err) => { console.error("请求失败:", err); }); }); }
+
+
+async function renderBody() {
+  let blockLnk = document.getElementById("link").getAttribute("content");
+  let svgDOM = document.getElementById("svg");
+  let id = blockLnk.trim().split('siyuan://blocks/')[1];
+  let doc = "";
+  let htmlStr = "";
+  let res = await request("/api/filetree/getDoc", { id });
+  if (res?.code === 0 && res?.data?.content) {
+    // 判断是否是文档块，是的话要另外获取标题
+    if (res?.data?.type === "NodeDocument") {
+      htmlStr = res.data.content.replaceAll(`"assets/`, `"${window.top.location.origin}/assets/`).replaceAll(`contenteditable="true"`, `contenteditable="false"`);
+      let response = await request("/api/block/getDocInfo", { id });
+      // 读取标题成功,添加文档标题
+      if (response?.code === 0 && response?.data?.name && htmlStr) {
+        doc = `<h1>${response.data.name}</h1>` + htmlStr;
+      }
+    } else {
+      doc = res.data.content.replaceAll(`"assets/`, `"${window.top.location.origin}/assets/`).replaceAll(`contenteditable="true"`, `contenteditable="false"`);
+    }
+  } else {
+    doc = "<h2>加载失败，请检查链接是否正确！</h2><h2>Loading failed. Please check if the link is correct!</h2>"
+  }
+  svgDOM.insertAdjacentHTML("afterend", doc);
+}
+
 
 // 内嵌块中的超链接跳转
-function handleIframeInternalLink(e) {
-  // 文档中的超链接
-  if (
-    e.target.tagName === 'SPAN' &&
-    e.target.getAttribute('data-type') === 'a'
-  ) {
-    let url = e.target.getAttribute('data-href')
-    if (url) {
-      e.stopPropagation();
-      try {
-        if (url.startsWith("siyuan://blocks/")) {
-          window.top.openFileByURL(url)
-        } else {
-          window.top.open(url);
+function handleIframeInternalLink() {
+  document.addEventListener('click', (e) => {
+    // 文档中的超链接
+    if (
+      e.target.tagName === 'SPAN' &&
+      e.target.getAttribute('data-type') === 'a'
+    ) {
+      let url = e.target.getAttribute('data-href')
+      if (url) {
+        e.stopPropagation();
+        try {
+          if (url.startsWith("siyuan://blocks/")) {
+            window.top.openFileByURL(url)
+          } else {
+            window.top.open(url);
+          }
+        } catch (err) {
+          console.error(err);
         }
-      } catch (err) {
-        console.error(err);
       }
     }
-  }
-  // 数据表格中的超链接
-  if (
-    e.target.tagName === 'SPAN' &&
-    e.target.getAttribute('data-type') === 'url'
-  ) {
-    let url = e.target.getAttribute('data-href')
-    if (url) {
-      e.stopPropagation();
-      try {
-        if (url.startsWith("siyuan://blocks/")) {
-          window.top.openFileByURL(url)
-        } else {
-          window.top.open(url);
+    // 数据表格中的超链接
+    if (
+      e.target.tagName === 'SPAN' &&
+      e.target.getAttribute('data-type') === 'url'
+    ) {
+      let url = e.target.getAttribute('data-href')
+      if (url) {
+        e.stopPropagation();
+        try {
+          if (url.startsWith("siyuan://blocks/")) {
+            window.top.openFileByURL(url)
+          } else {
+            window.top.open(url);
+          }
+        } catch (err) {
+          console.error(err);
         }
-      } catch (err) {
-        console.error(err);
       }
     }
-  }
 
-  //   引用块
-  if (
-    e.target.tagName === 'SPAN' &&
-    e.target.getAttribute('data-type') === 'block-ref'
+    //   引用块
+    if (
+      e.target.tagName === 'SPAN' &&
+      e.target.getAttribute('data-type') === 'block-ref'
 
-  ) {
-    let id = e.target.getAttribute('data-id')
-    if (id) {
-      e.stopPropagation()
-      try {
-        window.top.openFileByURL(`siyuan://blocks/${id}`)
-      } catch (err) {
-        window.top.open(`siyuan://blocks/${id}`);
+    ) {
+      let id = e.target.getAttribute('data-id')
+      if (id) {
+        e.stopPropagation()
+        try {
+          window.top.openFileByURL(`siyuan://blocks/${id}`)
+        } catch (err) {
+          window.top.open(`siyuan://blocks/${id}`);
+        }
       }
     }
-  }
+
+  }, true);
 }
 
 // 加载渲染所需的依赖库
@@ -140,12 +170,12 @@ async function renderKatex() {
       for (let element of MathBlockElements) {
         let katexHTML = katex.renderToString(
           window.top.Lute.UnEscapeHTMLStr(element.getAttribute("data-content")), {
-            displayMode: true,
-            output: "html",
-            macros: {},
-            trust: true,
-            strict: "ignore"
-          });
+          displayMode: true,
+          output: "html",
+          macros: {},
+          trust: true,
+          strict: "ignore"
+        });
         element.insertAdjacentHTML("afterbegin", '<div spin="1">' + katexHTML + '</div>');
       }
     }
@@ -219,72 +249,72 @@ function getColIconByType(type) {
 // 数据表格——所需工具函数2
 function getCalcValue(column) {
   if (!column.calc || !column.calc.result) {
-      return "";
+    return "";
   }
   let resultCalc = column.calc.result.number;
   if (column.calc.operator === "Earliest" || column.calc.operator === "Latest" ||
-      (column.calc.operator === "Range" && ["date", "created", "updated"].includes(column.type))) {
-      resultCalc = column.calc.result[column.type];
+    (column.calc.operator === "Range" && ["date", "created", "updated"].includes(column.type))) {
+    resultCalc = column.calc.result[column.type];
   }
   let value = "";
   switch (column.calc.operator) {
-      case "Count all":
-          value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.calcResultCountAll}`;
-          break;
-      case "Count values":
-          value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.calcResultCountValues}`;
-          break;
-      case "Count unique values":
-          value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.calcResultCountUniqueValues}`;
-          break;
-      case "Count empty":
-          value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.calcResultCountEmpty}`;
-          break;
-      case "Count not empty":
-          value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.calcResultCountNotEmpty}`;
-          break;
-      case "Percent empty":
-          value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.calcResultPercentEmpty}`;
-          break;
-      case "Percent not empty":
-          value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.calcResultPercentNotEmpty}`;
-          break;
-      case "Sum":
-          value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.calcResultSum}`;
-          break;
-      case "Average":
-          value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.calcResultAverage}`;
-          break;
-      case "Median":
-          value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.calcResultMedian}`;
-          break;
-      case "Min":
-          value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.calcResultMin}`;
-          break;
-      case "Max":
-          value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.calcResultMax}`;
-          break;
-      case "Range":
-          value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.calcResultRange}`;
-          break;
-      case "Earliest":
-          value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.calcOperatorEarliest}`;
-          break;
-      case "Latest":
-          value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.calcOperatorLatest}`;
-          break;
-      case "Checked":
-          value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.checked}`;
-          break;
-      case "Unchecked":
-          value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.unchecked}`;
-          break;
-      case "Percent checked":
-          value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.percentChecked}`;
-          break;
-      case "Percent unchecked":
-          value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.percentUnchecked}`;
-          break;
+    case "Count all":
+      value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.calcResultCountAll}`;
+      break;
+    case "Count values":
+      value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.calcResultCountValues}`;
+      break;
+    case "Count unique values":
+      value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.calcResultCountUniqueValues}`;
+      break;
+    case "Count empty":
+      value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.calcResultCountEmpty}`;
+      break;
+    case "Count not empty":
+      value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.calcResultCountNotEmpty}`;
+      break;
+    case "Percent empty":
+      value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.calcResultPercentEmpty}`;
+      break;
+    case "Percent not empty":
+      value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.calcResultPercentNotEmpty}`;
+      break;
+    case "Sum":
+      value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.calcResultSum}`;
+      break;
+    case "Average":
+      value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.calcResultAverage}`;
+      break;
+    case "Median":
+      value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.calcResultMedian}`;
+      break;
+    case "Min":
+      value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.calcResultMin}`;
+      break;
+    case "Max":
+      value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.calcResultMax}`;
+      break;
+    case "Range":
+      value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.calcResultRange}`;
+      break;
+    case "Earliest":
+      value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.calcOperatorEarliest}`;
+      break;
+    case "Latest":
+      value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.calcOperatorLatest}`;
+      break;
+    case "Checked":
+      value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.checked}`;
+      break;
+    case "Unchecked":
+      value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.unchecked}`;
+      break;
+    case "Percent checked":
+      value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.percentChecked}`;
+      break;
+    case "Percent unchecked":
+      value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.percentUnchecked}`;
+      break;
   }
   return value;
 };
@@ -292,74 +322,74 @@ function getCalcValue(column) {
 function renderCell(cellValue) {
   let text = "";
   if (["text", "template"].includes(cellValue.type)) {
-      text = `<span class="av__celltext">${cellValue ? (cellValue[cellValue.type].content || "") : ""}</span>`;
+    text = `<span class="av__celltext">${cellValue ? (cellValue[cellValue.type].content || "") : ""}</span>`;
   } else if (["url", "email", "phone"].includes(cellValue.type)) {
-      const urlContent = cellValue ? cellValue[cellValue.type].content : "";
-      // https://github.com/siyuan-note/siyuan/issues/9291
-      let urlAttr = "";
-      if (cellValue.type === "url") {
-          urlAttr = ` data-href="${urlContent}"`;
-      }
-      text = `<span class="av__celltext av__celltext--url" data-type="${cellValue.type}"${urlAttr}>${urlContent}</span>`;
+    const urlContent = cellValue ? cellValue[cellValue.type].content : "";
+    // https://github.com/siyuan-note/siyuan/issues/9291
+    let urlAttr = "";
+    if (cellValue.type === "url") {
+      urlAttr = ` data-href="${urlContent}"`;
+    }
+    text = `<span class="av__celltext av__celltext--url" data-type="${cellValue.type}"${urlAttr}>${urlContent}</span>`;
   } else if (cellValue.type === "block") {
-      if (cellValue?.isDetached) {
-          text = `<span class="av__celltext">${cellValue.block.content || ""}</span>
+    if (cellValue?.isDetached) {
+      text = `<span class="av__celltext">${cellValue.block.content || ""}</span>
 <span class="b3-chip b3-chip--info b3-chip--small" data-type="block-more">${window.top.siyuan.languages.more}</span>`;
-      } else {
-          text = `<span data-type="block-ref" data-id="${cellValue.block.id}" data-subtype="s" class="av__celltext av__celltext--ref">${cellValue.block.content || "Untitled"}</span>
+    } else {
+      text = `<span data-type="block-ref" data-id="${cellValue.block.id}" data-subtype="s" class="av__celltext av__celltext--ref">${cellValue.block.content || "Untitled"}</span>
 <span class="b3-chip b3-chip--info b3-chip--small popover__block" data-id="${cellValue.block.id}" data-type="block-more">${window.top.siyuan.languages.update}</span>`;
-      }
+    }
   } else if (cellValue.type === "number") {
-      text = `<span class="av__celltext" data-content="${cellValue?.number.isNotEmpty ? cellValue?.number.content : ""}">${cellValue?.number.formattedContent || cellValue?.number.content || ""}</span>`;
+    text = `<span class="av__celltext" data-content="${cellValue?.number.isNotEmpty ? cellValue?.number.content : ""}">${cellValue?.number.formattedContent || cellValue?.number.content || ""}</span>`;
   } else if (cellValue.type === "mSelect" || cellValue.type === "select") {
-      cellValue?.mSelect?.forEach((item) => {
-          text += `<span class="b3-chip" style="background-color:var(--b3-font-background${item.color});color:var(--b3-font-color${item.color})">${item.content}</span>`;
-      });
+    cellValue?.mSelect?.forEach((item) => {
+      text += `<span class="b3-chip" style="background-color:var(--b3-font-background${item.color});color:var(--b3-font-color${item.color})">${item.content}</span>`;
+    });
   } else if (cellValue.type === "date") {
-      const dataValue = cellValue ? cellValue.date : null;
-      text = `<span class="av__celltext" data-value='${JSON.stringify(dataValue)}'>`;
-      if (dataValue && dataValue.isNotEmpty) {
-          text += dayjs(dataValue.content).format(dataValue.isNotTime ? "YYYY-MM-DD" : "YYYY-MM-DD HH:mm");
-      }
-      if (dataValue && dataValue.hasEndDate && dataValue.isNotEmpty && dataValue.isNotEmpty2) {
-          text += `<svg class="av__cellicon"><use xlink:href="#iconForward"></use></svg>${dayjs(dataValue.content2).format(dataValue.isNotTime ? "YYYY-MM-DD" : "YYYY-MM-DD HH:mm")}`;
-      }
-      text += "</span>";
+    const dataValue = cellValue ? cellValue.date : null;
+    text = `<span class="av__celltext" data-value='${JSON.stringify(dataValue)}'>`;
+    if (dataValue && dataValue.isNotEmpty) {
+      text += dayjs(dataValue.content).format(dataValue.isNotTime ? "YYYY-MM-DD" : "YYYY-MM-DD HH:mm");
+    }
+    if (dataValue && dataValue.hasEndDate && dataValue.isNotEmpty && dataValue.isNotEmpty2) {
+      text += `<svg class="av__cellicon"><use xlink:href="#iconForward"></use></svg>${dayjs(dataValue.content2).format(dataValue.isNotTime ? "YYYY-MM-DD" : "YYYY-MM-DD HH:mm")}`;
+    }
+    text += "</span>";
   } else if (["created", "updated"].includes(cellValue.type)) {
-      const dataValue = cellValue ? cellValue[cellValue.type] : null;
-      text = `<span class="av__celltext" data-value='${JSON.stringify(dataValue)}'>`;
-      if (dataValue && dataValue.isNotEmpty) {
-          text += dayjs(dataValue.content).format("YYYY-MM-DD HH:mm");
-      }
-      text += "</span>";
+    const dataValue = cellValue ? cellValue[cellValue.type] : null;
+    text = `<span class="av__celltext" data-value='${JSON.stringify(dataValue)}'>`;
+    if (dataValue && dataValue.isNotEmpty) {
+      text += dayjs(dataValue.content).format("YYYY-MM-DD HH:mm");
+    }
+    text += "</span>";
   } else if (cellValue.type === "mAsset") {
-      cellValue?.mAsset?.forEach((item) => {
-          if (item.type === "image") {
-              text += `<img class="av__cellassetimg" src="${item.content}">`;
-          } else {
-              text += `<span class="b3-chip av__celltext--url" data-url="${item.content}">${item.name}</span>`;
-          }
-      });
-  } else if (cellValue.type === "checkbox") {
-      text += `<svg class="av__checkbox"><use xlink:href="#icon${cellValue?.checkbox?.checked ? "Check" : "Uncheck"}"></use></svg>`;
-  } else if (cellValue.type === "rollup") {
-      cellValue?.rollup?.contents?.forEach((item) => {
-          const rollupText = ["select", "mSelect", "mAsset", "checkbox", "relation"].includes(item.type) ? renderCell(item) : renderRollup(item);
-          if (rollupText) {
-              text += rollupText + ", ";
-          }
-      });
-      if (text && text.endsWith(", ")) {
-          text = text.substring(0, text.length - 2);
+    cellValue?.mAsset?.forEach((item) => {
+      if (item.type === "image") {
+        text += `<img class="av__cellassetimg" src="${item.content}">`;
+      } else {
+        text += `<span class="b3-chip av__celltext--url" data-url="${item.content}">${item.name}</span>`;
       }
+    });
+  } else if (cellValue.type === "checkbox") {
+    text += `<svg class="av__checkbox"><use xlink:href="#icon${cellValue?.checkbox?.checked ? "Check" : "Uncheck"}"></use></svg>`;
+  } else if (cellValue.type === "rollup") {
+    cellValue?.rollup?.contents?.forEach((item) => {
+      const rollupText = ["select", "mSelect", "mAsset", "checkbox", "relation"].includes(item.type) ? renderCell(item) : renderRollup(item);
+      if (rollupText) {
+        text += rollupText + ", ";
+      }
+    });
+    if (text && text.endsWith(", ")) {
+      text = text.substring(0, text.length - 2);
+    }
   } else if (cellValue.type === "relation") {
-      cellValue?.relation?.contents?.forEach((item, index) => {
-          text += `<span class="av__celltext--ref" style="margin-right: 8px" data-id="${cellValue?.relation?.blockIDs[index]}">${ item?.block?.content || item || "Untitled"}</span>`;
-      });
+    cellValue?.relation?.contents?.forEach((item, index) => {
+      text += `<span class="av__celltext--ref" style="margin-right: 8px" data-id="${cellValue?.relation?.blockIDs[index]}">${item?.block?.content || item || "Untitled"}</span>`;
+    });
   }
   if (["text", "template", "url", "email", "phone", "number", "date", "created", "updated"].includes(cellValue.type) &&
-      cellValue && cellValue[cellValue.type].content) {
-      text += `<span ${cellValue.type !== "number" ? "" : 'style="right:auto;left:5px"'} data-type="copy" class="block__icon"><svg><use xlink:href="#iconCopy"></use></svg></span>`;
+    cellValue && cellValue[cellValue.type].content) {
+    text += `<span ${cellValue.type !== "number" ? "" : 'style="right:auto;left:5px"'} data-type="copy" class="block__icon"><svg><use xlink:href="#iconCopy"></use></svg></span>`;
   }
   return text;
 };
@@ -367,35 +397,35 @@ function renderCell(cellValue) {
 function renderRollup(cellValue) {
   let text = "";
   if (["text"].includes(cellValue.type)) {
-      text = cellValue ? (cellValue[cellValue.type].content || "") : "";
+    text = cellValue ? (cellValue[cellValue.type].content || "") : "";
   } else if (["url", "email", "phone"].includes(cellValue.type)) {
-      const urlContent = cellValue ? cellValue[cellValue.type].content : "";
-      if (urlContent) {
-          let urlAttr = "";
-          if (cellValue.type === "url") {
-              urlAttr = ` data-href="${urlContent}"`;
-          }
-          text = `<span class="av__celltext av__celltext--url" data-type="${cellValue.type}"${urlAttr}>${urlContent}</span>`;
+    const urlContent = cellValue ? cellValue[cellValue.type].content : "";
+    if (urlContent) {
+      let urlAttr = "";
+      if (cellValue.type === "url") {
+        urlAttr = ` data-href="${urlContent}"`;
       }
+      text = `<span class="av__celltext av__celltext--url" data-type="${cellValue.type}"${urlAttr}>${urlContent}</span>`;
+    }
   } else if (cellValue.type === "block") {
-      if (cellValue?.isDetached) {
-          text = `<span class="av__celltext">${cellValue.block?.content || ""}</span>`;
-      } else {
-          text = `<span data-type="block-ref" data-id="${cellValue.block?.id}" data-subtype="s" class="av__celltext av__celltext--ref">${cellValue.block?.content || "Untitled"}</span>`;
-      }
+    if (cellValue?.isDetached) {
+      text = `<span class="av__celltext">${cellValue.block?.content || ""}</span>`;
+    } else {
+      text = `<span data-type="block-ref" data-id="${cellValue.block?.id}" data-subtype="s" class="av__celltext av__celltext--ref">${cellValue.block?.content || "Untitled"}</span>`;
+    }
   } else if (cellValue.type === "number") {
-      text = cellValue?.number.formattedContent || cellValue?.number.content.toString() || "";
+    text = cellValue?.number.formattedContent || cellValue?.number.content.toString() || "";
   } else if (cellValue.type === "date") {
-      const dataValue = cellValue ? cellValue.date : null;
-      if (dataValue && dataValue.isNotEmpty) {
-          text += dayjs(dataValue.content).format(dataValue.isNotTime ? "YYYY-MM-DD" : "YYYY-MM-DD HH:mm");
-      }
-      if (dataValue && dataValue.hasEndDate && dataValue.isNotEmpty && dataValue.isNotEmpty2) {
-          text += `<svg class="av__cellicon"><use xlink:href="#iconForward"></use></svg>${dayjs(dataValue.content2).format(dataValue.isNotTime ? "YYYY-MM-DD" : "YYYY-MM-DD HH:mm")}`;
-      }
-      if (text) {
-          text = `<span class="av__celltext">${text}</span>`;
-      }
+    const dataValue = cellValue ? cellValue.date : null;
+    if (dataValue && dataValue.isNotEmpty) {
+      text += dayjs(dataValue.content).format(dataValue.isNotTime ? "YYYY-MM-DD" : "YYYY-MM-DD HH:mm");
+    }
+    if (dataValue && dataValue.hasEndDate && dataValue.isNotEmpty && dataValue.isNotEmpty2) {
+      text += `<svg class="av__cellicon"><use xlink:href="#iconForward"></use></svg>${dayjs(dataValue.content2).format(dataValue.isNotTime ? "YYYY-MM-DD" : "YYYY-MM-DD HH:mm")}`;
+    }
+    if (text) {
+      text = `<span class="av__celltext">${text}</span>`;
+    }
   }
   return text;
 };
@@ -625,7 +655,8 @@ async function highlight() {
 
 // 对预览文档进行渲染
 async function main() {
-  document.addEventListener('click', handleIframeInternalLink, true);
+  await renderBody();
+  await handleIframeInternalLink()
   await highlight();
   await renderEmbedBlock();
   await renderKatex();
@@ -633,4 +664,4 @@ async function main() {
   await renderMermaid();
 }
 
-main().catch(err=>{console.error(err);})
+main().catch(err => { console.error(err); })
