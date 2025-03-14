@@ -1,7 +1,10 @@
 ## 1. Current Version
+### V2.0.2
+* Fix the issue: In V2.0.0, when multiple whiteboards are opened simultaneously, the whiteboard data interferes with each other due to the LocalStorage cache. 
+
 ### V2.0.1
-I've just discovered an issue: when multiple whiteboards are opened simultaneously, the data of the whiteboards interfere with each other due to the LocalStorage cache.
-Please stay on version V1.6.0 and do not update for now until this issue is fixed!!! 
+I've just discovered an issue: when multiple whiteboards are opened simultaneously, the data of the whiteboards interfere with each other due to the LocalStorage cache. 
+Please stay on version V1.6.0 and do not update for now until this issue is fixed!!!
 
 ### V2.0.0
 
@@ -25,7 +28,7 @@ Please stay on version V1.6.0 and do not update for now until this issue is fixe
 
 ---
 
-For the current version: **V2.0.0**
+For the current version: **V2.0.2**
 
 If you **do not want auto-save to be enabled by default**, open the widget folder `Whiteboard` -> `custom.js` in an editor like VS Code and search for:
 
@@ -231,7 +234,7 @@ You can use the shortcut keys `Alt` + `P` to open/close the **Content Block Retr
 
 ### 1. Adjust Brush Thickness Manually
 
-For V2.0.0, open `Whiteboard` -> `assets` -> `index-CkG_Q7os.js` and search for:
+For V2.0.2, open `Whiteboard` -> `assets` -> `index-UoVVh7ym.js` and search for:
 
 ```css
 n={simulatePressure:e.simulatePressure,size:e.strokeWidth*1.2,thinning
