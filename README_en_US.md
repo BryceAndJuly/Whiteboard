@@ -1,4 +1,7 @@
 ## 1. Current Version
+### V2.0.1
+I've just discovered an issue: when multiple whiteboards are opened simultaneously, the data of the whiteboards interfere with each other due to the LocalStorage cache.
+Please stay on version V1.6.0 and do not update for now until this issue is fixed!!! 
 
 ### V2.0.0
 
