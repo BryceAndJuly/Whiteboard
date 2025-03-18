@@ -250,3 +250,8 @@ button#delete {
 button#close {
   cursor: pointer;
 }
+
+/* 禅模式——不隐藏【素材库】 */
+:root[dir=ltr] .excalidraw .layer-ui__wrapper .zen-mode-transition.transition-right {
+  transform: none !important;
+}

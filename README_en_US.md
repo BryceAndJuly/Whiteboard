@@ -1,4 +1,7 @@
 ## 1. Current Version
+### V2.0.3
+Fix the issue: In version `2.0.2`, When the link added to an element is an external link (such as a link starting with `https://` or `http://`), clicking the link icon in the upper right corner of the element fails to perform the jump. Instead, it is necessary to click the element first and then click the link input box displayed above to make the jump.
+
 ### V2.0.2
 * Fix the issue: In V2.0.0, when multiple whiteboards are opened simultaneously, the whiteboard data interferes with each other due to the LocalStorage cache. 
 
@@ -28,7 +31,7 @@ Please stay on version V1.6.0 and do not update for now until this issue is fixe
 
 ---
 
-For the current version: **V2.0.2**
+For the current version: **V2.0.3**
 
 If you **do not want auto-save to be enabled by default**, open the widget folder `Whiteboard` -> `custom.js` in an editor like VS Code and search for:
 
@@ -234,7 +237,7 @@ You can use the shortcut keys `Alt` + `P` to open/close the **Content Block Retr
 
 ### 1. Adjust Brush Thickness Manually
 
-For V2.0.2, open `Whiteboard` -> `assets` -> `index-UoVVh7ym.js` and search for:
+For V2.0.3, open `Whiteboard` -> `assets` -> `index-ZsssFvwm.js` and search for:
 
 ```css
 n={simulatePressure:e.simulatePressure,size:e.strokeWidth*1.2,thinning

@@ -1,4 +1,7 @@
 ## 一、当前版本
+### V2.0.3
+修复问题：在V2.0.2中，当元素添加的链接为外链（比如以`https://`或`http://`开头的链接），点击元素右上角的链接图标未能跳转，需要单击元素后点击上方显示的链接输入框才能跳转。
+
 ### V2.0.2
 * 修复问题：在V2.0.0中，同时打开多个白板时，因LocalStorage缓存导致白板数据互相干扰。
 
@@ -8,7 +11,7 @@
 
 ### V2.0.0
 
-* **Excaliraw 版本更新：V0.17.0——&gt;V0.18.0 ，** 具体更新内容可参考：[https://github.com/excalidraw/excalidraw/releases](https://github.com/excalidraw/excalidraw/releases)
+* **Excalidraw 版本更新：V0.17.0——&gt;V0.18.0 ，** 具体更新内容可参考：[https://github.com/excalidraw/excalidraw/releases](https://github.com/excalidraw/excalidraw/releases)
 
   * 在该版本中，官方已添加【文本检索】、【元素链接】这两项功能，所以旧版挂件的【文本检索】和【元素链接】功能已废弃。
 
@@ -28,7 +31,7 @@
 
 ---
 
-对于当前版本：**V2.0.2**
+对于当前版本：**V2.0.3**
 
 如果你**不想默认开启自动保存功能**，可以使用VS Code之类的编辑器打开挂件文件夹`Whiteboard`——`custom.js`，
 
@@ -164,7 +167,7 @@ assets/ExcalidrawFiles/20231227015401-w0olmpi.excalidraw
 * 默认开启`自动保存`，一般在增、删或移动元素后约2s触发保存。如果想默认关闭自动保存或者调整延时时间，可以参考文档顶部描述的方法。
 * 如果是临时手动开启/关闭自动保存，可以使用快捷键`Alt+F`（挂件V1.0.8后的版本使用该快捷键，之前的使用`Alt+S`），左上角会有提示。
 
-**编辑完后记得【点击保存】、记得【点击保存】、记得【点击保存】，不然什么都没了。**     我自己使用的是手动保存模式，而且勤按Ctrl+S，所以目前还没丢过内容。
+**编辑完后记得点击【保存】、记得点击【保存】、记得点击【保存】，不然什么都没了。**     我自己使用的是手动保存模式，而且勤按Ctrl+S，所以目前还没丢过内容。
 
 ### 3、块超链接的悬浮预览
 
@@ -233,7 +236,7 @@ assets/ExcalidrawFiles/20231227015401-w0olmpi.excalidraw
 
 ### 1、手动更改画笔的粗细
 
-对于版本V2.0.2，打开挂件文件夹`Whiteboard`——`assets`——`index-UoVVh7ym.js`,在该js文件中搜索：
+对于版本V2.0.3，打开挂件文件夹`Whiteboard`——`assets`——`index-ZsssFvwm.js`,在该js文件中搜索：
 
 ```css
 n={simulatePressure:e.simulatePressure,size:e.strokeWidth*1.2,thinning
