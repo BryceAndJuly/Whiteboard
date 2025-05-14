@@ -218,11 +218,6 @@
     background-color: #f6f6f6;
 }
 
-/* 任务列表——待办列表——前方勾选的方框 */
-/* .protyle-wysiwyg [data-node-id].li>.protyle-action.protyle-action--task svg {
-    zoom: 1.2;
-} */
-
 /* 挂件——去掉边框 */
 .b3-typography iframe,
 .protyle-wysiwyg iframe {

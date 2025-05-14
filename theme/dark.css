@@ -178,34 +178,23 @@
     filter: invert(1)
 }
 
-
-
-
 /* ================================================================================== */
-
-
-
 /* 文档*/
 .protyle-wysiwyg {
     transition: none;
     font-size: 16px;
-    /* background-color: #1e1e1e; */
 }
-
 /* 取消过渡 */
 .protyle-content--transition .protyle-wysiwyg {
     transition: none
 }
-
 .protyle-title {
     transition: none
 }
-
 /* 块滚动条 */
 .protyle-scroll {
     display: none;
 }
-
 
 /* 引用块 */
 .protyle-wysiwyg [data-node-id] span[data-type~=block-ref],
@@ -218,7 +207,6 @@
     border-bottom: 1px dashed gray;
     cursor: pointer;
 }
-
 /* 悬浮窗口 */
 .block__popover {
     /* width: 735px; */
@@ -226,42 +214,29 @@
     min-height: 70vh;
     max-height: 75vh !important;
 }
-
-
-
 /* 引述块——组成超级快 */
 .protyle-wysiwyg [data-node-id].sb[data-sb-layout=col]>div {
     margin-right: 8px;
     border: none;
 }
-
-
 /* 挂件——白色边框 */
 .b3-typography iframe,
 .protyle-wysiwyg iframe {
     border: none;
 }
-
-
-
 /* 折叠后的代码块高度 */
 .protyle-wysiwyg [data-node-id][fold="1"]:not(.li):not([data-type=NodeHeading]).code-block {
     height: 46px;
 }
-
-
-
 /* 行内备注 */
 .tooltip--memo {
     font-size: 16px;
     line-height: 1.5;
     padding: 10px;
 }
-
 .protyle-task--done>div[data-node-id].p {
     color: inherit;
 }
-
 /* 引述块 */
 .b3-typography blockquote,
 .b3-typography .bq,
@@ -269,95 +244,65 @@
 .protyle-wysiwyg .bq {
     color: var(--b3-theme-on-backgroundt);
 }
-
-
-
-
-
-
 /* 白板相关样式======================================= */
 /* 白板挂件——隐藏当前文档的标题、面包屑 */
 .protyle-title.protyle-wysiwyg--attr:has(+ .protyle-wysiwyg.protyle-wysiwyg--attr[alias="whiteboard"]) {
     display: none !important;
 }
-
 /* 隐藏白板文档中的无序列表 */
 .iframe[custom-data-assets^="assets/ExcalidrawFiles/"]~.list[data-subtype="u"] {
     display: none !important;
 }
-
 /* 在不聚焦的情况下，隐藏白板文档顶栏的面包屑 */
 .protyle-breadcrumb:has(button.protyle-breadcrumb__icon.ariaLabel.fn__none):has(+ .protyle-content.protyle-content--transition > .protyle-wysiwyg.protyle-wysiwyg--attr[alias="whiteboard"]) {
     display: none !important;
 }
-
 /* 如果是新版本，比如SiYuan V3.0.16，还需要以下片段 */
 .protyle-top:has(+ .protyle-wysiwyg.protyle-wysiwyg--attr[alias="whiteboard"]) {
     display: none !important;
 }
-
 /* 挂件——去掉边框 */
 .b3-typography iframe,
 .protyle-wysiwyg iframe {
     border: none;
 }
-
 /* 处理在白板文档中，文档树右侧（调整页面宽度）的拖拽线被遮挡的问题 */
 .layout__resize--lr {
     z-index: 3;
 }
-
 /* 白板文档作为嵌入块嵌入到其他文档时——隐藏底边可能出现的空白行 */
 .protyle-wysiwyg__embed>.iframe[custom-data-assets^="assets/ExcalidrawFiles/"]~.p {
     display: none;
 }
-
 /* 处理问题：挂件铺满文档的过程中，左侧出现明显闪烁的输入光标。 */
 .iframe,
 iframe {
     -webkit-user-modify: read-only;
 }
-
 /* ------------------------------------------------------------- */
-
-
 
 /* 代码块顶部工具栏——更多 */
 .protyle-icon--last {
     border-radius: var(--b3-border-radius);
 }
-
 /* 引用块 */
 .protyle-wysiwyg [data-node-id] span[data-type~=block-ref]:not(.av__celltext),
 .protyle-wysiwyg [data-node-id] span[data-type~=file-annotation-ref] {
     opacity: 1;
     transition: none;
 }
-
-
-/* 格子背景 */
-/* .protyle-wysiwyg {
-    background-image: linear-gradient(90deg, rgb(255, 255, 255, 0.05) 2%, transparent 0px), linear-gradient(1turn, rgb(255, 255, 255, 0.05) 2%, transparent 0px);
-    background-size: 30px 30px;
-    background-position: 50% center;
-    text-align: justify;
-} */
-
 /* 代码块顶部操作栏 */
 .code-block:hover span.protyle-icon.protyle-icon--first.protyle-action__copy {
     display: none;
 }
-
 .code-block:hover span.b3-tooltips__nw.b3-tooltips.protyle-icon.protyle-icon--last.protyle-action__menu {
     display: none;
 }
-
 /* 代码块——背景色 */
 .hljs {
     color: #e9e9f4;
     background: #282936;
 }
-
 /* 数据库表格——自定义样式----------------------------------------------------------- */
 
 /* 单元格垂直居中 */
@@ -365,29 +310,23 @@ iframe {
     display: flex;
     align-items: center;
 }
-
 /* 图片显示大一点 */
 img.av__cellassetimg {
     max-height: 86px;
 }
-
 /* 数据表格——勾选框 */
 .av__cell.av__cell-check {
     background: #72c37266;
 }
-
 /* 第一列 */
 .av__colsticky {
     background-color: inherit !important;
 }
-
 /* footer */
 .av__row--footer {
     background-color: inherit;
 }
-
 /* ============================================================================================== */
-
 
 /* 文档中的自定义图标 */
 img.emoji {

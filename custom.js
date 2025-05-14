@@ -491,7 +491,7 @@ keywordBtn.addEventListener("keydown", (e => {
       itemsArr[currentIndex].classList.add('active');
     }
     let offsetTop = itemsArr[currentIndex].offsetTop;
-    let gap = resultList.offsetHeight - 50;
+    let gap = resultList.offsetHeight - 100;
     resultList.scrollTo(0, offsetTop < gap ? 0 : offsetTop - gap);
   }
 
@@ -507,7 +507,7 @@ keywordBtn.addEventListener("keydown", (e => {
       itemsArr[currentIndex].classList.add('active');
     }
     let offsetTop = itemsArr[currentIndex].offsetTop;
-    let gap = resultList.offsetHeight - 50;
+    let gap = resultList.offsetHeight - 100;
     resultList.scrollTo(0, offsetTop < gap ? 0 : offsetTop - gap);
 
   }
@@ -566,3 +566,17 @@ document.addEventListener("keydown", (e => {
     }
   }
 }), !0);
+
+
+// 检索面板使用深色主题
+function setColor() {
+  if (localStorage?.getItem("excalidraw-theme") === "dark") {
+    try {
+      let pannel = document.getElementById("searchBlocksPanel");
+      pannel.classList.add("dark");
+    } catch (err) {
+      console.error(err);
+    }
+  }
+}
+setColor();
