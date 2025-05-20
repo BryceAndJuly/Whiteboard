@@ -327,3 +327,10 @@ img.av__cellassetimg {
 img.emoji {
     max-height: 20px;
 }
+
+
+/* 行内文字样式——设置了颜色，背景色的行内文字 */
+.p span[data-type="text"] {
+    padding: 2px 3px;
+    border-radius: 3px;
+}

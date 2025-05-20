@@ -28,7 +28,7 @@
     catch (t) { console.error(t) }
   </script>
   <link rel="stylesheet" href="./custom.css">
-  <meta name="version" content="2025-03-14T22:51:16Z-48999dc" />
+  <meta name="version" content="2025-05-20T12:52:00Z-48999dc" />
   <script type="module" crossorigin src="./assets/index-ZsssFvwm.js"></script>
   <link rel="stylesheet" crossorigin href="./assets/index-DaQqI7hZ.css">
 </head>
@@ -192,6 +192,37 @@
     </button></div>
     <div id="result" class="resultList"></div>
   </div>
+  <div id="searchIframeText" style="visibility: hidden;">
+    <input id="keywordInIframe" type="text"
+        style="outline: none;border: none;background-color: #4E4E4E; color: rgb(231, 231, 231);border-bottom-left-radius: 6px;border-top-left-radius: 6px;padding-left: 4px;">
+    <div style="flex:1;display: flex;justify-content: space-around;align-items: center;">
+        <span style="font-size: 12px;user-select: none;min-width: 40px;"><span id="currentIframeIndex">0</span>/<span id="sum">0</span></span>
+        <button id="previousItem" class="topBarBtn" title="上一个(previous)">
+            <svg t="1747722688645" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                xmlns="http://www.w3.org/2000/svg" p-id="15928" width="20" height="20">
+                <path
+                    d="M832 168.281708C832 139.429599 795.917107 116.844012 769.96391 133.881117 592.197735 250.790906 389.380829 360.017406 211.680862 476.927195 185.661456 494.029576 185.33042 528.691272 211.349827 545.793654 389.116001 662.703443 590.741178 772.336915 768.573562 889.246701 781.616365 897.863168 794.394342 897.536787 804.722656 892.184134 819.685472 887.35369 832 874.167885 832 852.365613L832 168.281708Z"
+                    fill="#A9A9A9" p-id="15929"></path>
+            </svg>
+        </button>
+        <button id="nextItem" class="topBarBtn" title="下一个(next)">
+            <svg t="1747722725048" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                xmlns="http://www.w3.org/2000/svg" p-id="17017" width="20" height="20">
+                <path
+                    d="M192 168.281708C192 139.429599 228.082893 116.844012 254.03609 133.881117 431.802265 250.790906 634.619171 360.017406 812.319138 476.927195 838.338544 494.029576 838.66958 528.691272 812.650173 545.793654 634.883999 662.703443 433.258822 772.336915 255.426438 889.246701 242.383635 897.863168 229.605658 897.536787 219.277344 892.184134 204.314528 887.35369 192 874.167885 192 852.365613L192 168.281708Z"
+                    fill="#A9A9A9" p-id="17018"></path>
+            </svg>
+        </button>
+        <button id="closeSearch" class="topBarBtn" title="关闭(close)">
+            <svg t="1747721569359" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                xmlns="http://www.w3.org/2000/svg" p-id="3465" width="20" height="20">
+                <path
+                    d="M300.8 240.448l211.2 211.2 211.2-211.2 60.352 60.352-211.2 211.2 211.2 211.2-60.352 60.352-211.2-211.2-211.2 211.2-60.352-60.352 211.2-211.2-211.2-211.2 60.352-60.352z"
+                    p-id="3466" fill="#A9A9A9"></path>
+            </svg>
+        </button>
+    </div>
+</div>
   <script src="./custom.js"></script>
 </body>
 </html>

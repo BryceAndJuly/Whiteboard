@@ -301,18 +301,6 @@ const resultList = document.getElementById('result');
 const closeBtn = document.getElementById('close')
 
 
-// 快捷键——显示/隐藏检索面板
-document.addEventListener("keydown", (e => {
-  if (e.altKey && "p" === e.key) {
-    if (searchBlocksPanel.style.visibility === "hidden") {
-      searchBlocksPanel.style.visibility = "visible";
-      keywordBtn.focus();
-    } else {
-      searchBlocksPanel.style.visibility = "hidden";
-    }
-  }
-}), !1)
-
 // 关闭按钮
 closeBtn.addEventListener("click", () => {
   searchBlocksPanel.style.visibility = "hidden";
@@ -555,6 +543,24 @@ document.addEventListener("keydown", (e => {
       showMessage(window._languages["msgAutoSaveOn"])
     }
   }
+  // 快捷键——显示/隐藏检索面板
+  if (e.altKey && "p" === e.key) {
+    if (searchBlocksPanel.style.visibility === "hidden") {
+      searchBlocksPanel.style.visibility = "visible";
+      keywordBtn.focus();
+    } else {
+      searchBlocksPanel.style.visibility = "hidden";
+    }
+  }
+  // 快捷键——显示/隐藏iframe中搜索、高亮文本的面板
+  if (e.altKey && "o" === e.key) {
+    if (searchIframeTextPanel.style.visibility === "hidden") {
+      searchIframeTextPanel.style.visibility = "visible";
+      keywordInput.focus();
+    } else {
+      searchIframeTextPanel.style.visibility = "hidden";
+    }
+  }
   // 全屏
   if (e.altKey && "y" === e.key) {
     if (window?.frameElement?.parentElement?.parentElement?.parentElement?.parentElement?.parentElement?.classList?.contains("protyle")) {
@@ -580,3 +586,98 @@ function setColor() {
   }
 }
 setColor();
+
+
+
+
+// 搜索、高亮iframe中的关键词
+const searchIframeTextPanel = document.getElementById("searchIframeText")
+const keywordInput = document.getElementById('keywordInIframe');
+const previousItemBtn = document.getElementById('previousItem');
+const nextItemBtn = document.getElementById("nextItem");
+const closeSearchBtn = document.getElementById("closeSearch")
+const sum = document.getElementById('sum');
+const currentIframeIndex = document.getElementById('currentIframeIndex')
+let currentPageNum = 0;
+window._searchList = [];
+
+
+function searchIframeText() {
+  currentPageNum = 0;
+  // 搜索结果的数量重置
+  currentIframeIndex.innerText = 0;
+  sum.innerText = 0;
+  window._searchList = [];
+  let articles = document.querySelectorAll("iframe");
+  if (articles.length > 0) {
+    articles.forEach(article => {
+      article.contentWindow._searchText(keywordInput.value);
+    });
+    sum.innerText = window._searchList.length;
+    if (window._searchList.length > 0) {
+      // 搜索后自动跳转到第一个搜索结果
+      window._scrollToContent(window._searchList[currentPageNum], { animate: true });
+      currentPageNum = 0;
+      currentIframeIndex.innerText = currentPageNum + 1;
+    }
+  }
+}
+function closeSearch() {
+  keywordInput.value = "";
+  window._searchList = [];
+  currentIframeIndex.innerText = 0;
+  sum.innerText = 0;
+  let articles = document.querySelectorAll("iframe");
+  if (articles.length > 0) {
+    articles.forEach(article => {
+      // 取消iframe中的高亮
+      article.contentWindow._cancelHighligh();
+    });
+  }
+  searchIframeTextPanel.style.visibility = "hidden";
+
+}
+function toNextItem() {
+  if (window._searchList.length > 0) {
+    if (currentPageNum < window._searchList.length - 1) {
+      currentPageNum = currentPageNum + 1;
+      currentIframeIndex.innerText = currentPageNum + 1;
+      window._scrollToContent(window._searchList[currentPageNum], { animate: true });
+    } else {
+      currentPageNum = 0;
+      currentIframeIndex.innerText = currentPageNum + 1;
+      window._scrollToContent(window._searchList[currentPageNum], { animate: true });
+    }
+  }
+}
+function toPreviousItem() {
+  if (window._searchList.length > 0) {
+    if (currentPageNum > 0) {
+      currentPageNum = currentPageNum - 1;
+      currentIframeIndex.innerText = currentPageNum + 1;
+      window._scrollToContent(window._searchList[currentPageNum], { animate: true });
+    } else {
+      currentPageNum = window._searchList.length - 1;
+      currentIframeIndex.innerText = currentPageNum + 1;
+      window._scrollToContent(window._searchList[currentPageNum], { animate: true });
+    }
+  }
+}
+// 检索关键字
+keywordInput.addEventListener("input", debounce(searchIframeText))
+// 关闭检索框
+closeSearchBtn.addEventListener("click", closeSearch)
+//按钮——切换到下一个搜索结果
+nextItemBtn.addEventListener("click", toNextItem)
+// 按钮——切换到上一个搜索结果
+previousItemBtn.addEventListener("click", toPreviousItem)
+// 输入框中按Enter
+keywordInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    e.stopPropagation();
+    toNextItem();
+  }
+})
+
+

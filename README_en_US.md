@@ -1,21 +1,27 @@
+## Top Pin  
+* It is recommended to read through this document before use.  
+* If this widget is accidentally embedded in a document that already contains other content, please refer to: [How to undo after accidentally inserting a widget?](https://github.com/BryceAndJuly/Whiteboard/issues/48)
+
 ## 1. Current Version
+### V2.0.5
 
-### V2.0.4
+See the top preview image:  
 
-See the preview image at the top:
+A [Text Search Panel] is newly added in the upper right corner, specially designed for searching and highlighting text within iframes, similar to text search in web pages.  
 
-* Add a refresh button to the upper right corner of the content block embedded in the whiteboard. This makes it convenient to reload the content block individually after updating the content, instead of reloading the entire whiteboard.
-  * You need to click on [Click to start interaction] in the center of the card or double-click on the edge area of the card to enter the card before you can click this button.
-* For the content block embedded in the whiteboard, the background color is set to transparent by default, so that the background color set for the element takes effect.
-* The `Content Block Retrieval Panel` (Alt+P) has a newly added dark mode, which takes effect when the theme of the whiteboard is in dark mode (it is directly set to dark, not the System mode). 
+* Before searching, it is recommended to load all iframe elements of the whiteboard. You can use the shortcut key (Shift+1) for the whiteboard's [Zoom to Fit All Elements] function.  
+  * Since iframes are lazy-loaded, they need to be in the visible area to load, and text search is performed within the loaded iframe elements.  
+  * Click on the blank area of the whiteboard and then press the shortcut key (Shift+1) to make all elements visible.  
+* Click on the blank area of the whiteboard and then press the shortcut key (Alt+o) to open/close the [Text Search Panel] in the upper right corner. Once opened, it automatically gains focus, allowing you to directly enter a single keyword for searching.  
+* After entering a single keyword, if there are matching results, it will default to jumping to the first iframe containing the keyword. At this point, the focus remains in the input box; pressing `Enter` will switch to the next iframe.  
 
-> New Notes:
-> * After dragging a content block from the notes into the whiteboard to generate a card, before dragging the card for the first time, you need to click on the `edge area` of the card (the area other than the `Click to start interaction` in the middle) to re-select it.
-> * If you mistakenly embed this widget in a document that already has other content, you can refer to: [How to undo after mistakenly inserting a widget?](https://github.com/BryceAndJuly/Whiteboard/issues/48) 
+> Notes:  
+> * The number of search results refers to the number of iframe cards containing the keyword, not the number of keyword matches. An iframe may contain multiple instances of the keyword, and you may need to manually scroll the page to view all highlighted parts.
+
 
 ---
 
-For the current version: **V2.0.4**
+For the current version: **V2.0.5**
 
 If you **do not want auto-save to be enabled by default**, open the widget folder `Whiteboard` -> `custom.js` in an editor like VS Code and search for:
 
@@ -186,6 +192,7 @@ Two new functions have been added to the main menu in the upper left corner:`Sav
   * The document is in edit state.
   * When the mouse hovers over a block, the block mark is displayed in the upper left corner of the block. Hold down the left mouse button on the block mark and drag it to the whiteboard.
 
+> * After dragging a content block from the notes into the whiteboard to generate a card, before dragging the card for the first time, you need to click on the `edge area` of the card (the area other than the `Click to start interaction` in the middle) to re-select it.
 
 ### 6. Content Block Retrieval Panel
 
@@ -219,7 +226,7 @@ You can use the shortcut keys `Alt` + `P` to open/close the **Content Block Retr
 
 ### 1. Adjust Brush Thickness Manually
 
-For V2.0.4, open `Whiteboard` -> `assets` -> `index-ZsssFvwm.js` and search for:
+For V2.0.5, open `Whiteboard` -> `assets` -> `index-ZsssFvwm.js` and search for:
 
 ```css
 n={simulatePressure:e.simulatePressure,size:e.strokeWidth*1.2,thinning
@@ -300,6 +307,14 @@ Please stay on version V1.6.0 and do not update for now until this issue is fixe
 ### V2.0.3
 Fix the issue: In version `2.0.2`, When the link added to an element is an external link (such as a link starting with `https://` or `http://`), clicking the link icon in the upper right corner of the element fails to perform the jump. Instead, it is necessary to click the element first and then click the link input box displayed above to make the jump.
 
+### V2.0.4
+
+See the preview image at the top:
+
+* Add a refresh button to the upper right corner of the content block embedded in the whiteboard. This makes it convenient to reload the content block individually after updating the content, instead of reloading the entire whiteboard.
+  * You need to click on [Click to start interaction] in the center of the card or double-click on the edge area of the card to enter the card before you can click this button.
+* For the content block embedded in the whiteboard, the background color is set to transparent by default, so that the background color set for the element takes effect.
+* The `Content Block Retrieval Panel` (Alt+P) has a newly added dark mode, which takes effect when the theme of the whiteboard is in dark mode (it is directly set to dark, not the System mode). 
 
 
 ## 8. References and Thanks
