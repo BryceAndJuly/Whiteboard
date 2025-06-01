@@ -3,9 +3,20 @@
 * 如果在已有其他内容的文档中误嵌入该挂件，可参考：[误操作插入挂件后如何撤销?](https://github.com/BryceAndJuly/Whiteboard/issues/48)
 
 ## 一、当前版本
-### V2.0.5
-见顶部预览图：
+### V2.0.6
 
+修复问题：
+
+* 在`V2.0.5`中，当白板的iframe包含外链时，文本搜索（Alt+o）出错。
+
+  > 备注：目前，该功能的搜索范围仅限于白板内已嵌入的文档/内容块。
+  >
+* 在`V2.0.5`中，通过快捷键Alt+o关闭文本搜索框后，未自动取消iframe中的关键词高亮。
+
+  > 备注：在`V2.0.5`，仍能通过`文本搜索框`右侧的关闭按钮`X`来关闭搜索框并取消高亮。
+  >
+
+### V2.0.5
 右上角新增【文本搜索面板】，专用于搜索、高亮iframe中的文本。类似于网页中的文本检索。
 
 * 搜索前，建议先加载白板的所有iframe元素，可使用白板【缩放以适应所有元素】功能的快捷键（Shift+1）。
@@ -21,7 +32,7 @@
 
 ---
 
-对于当前版本：**V2.0.5**
+对于当前版本：**V2.0.6**
 
 如果你**不想默认开启自动保存功能**，可以使用VS Code之类的编辑器打开挂件文件夹`Whiteboard`——`custom.js`，
 
@@ -229,7 +240,7 @@ assets/ExcalidrawFiles/20231227015401-w0olmpi.excalidraw
 
 ### 1、手动更改画笔的粗细
 
-对于版本V2.0.5，打开挂件文件夹`Whiteboard`——`assets`——`index-ZsssFvwm.js`,在该js文件中搜索：
+对于版本V2.0.6，打开挂件文件夹`Whiteboard`——`assets`——`index-ZsssFvwm.js`,在该js文件中搜索：
 
 ```css
 n={simulatePressure:e.simulatePressure,size:e.strokeWidth*1.2,thinning

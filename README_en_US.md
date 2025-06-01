@@ -3,9 +3,19 @@
 * If this widget is accidentally embedded in a document that already contains other content, please refer to: [How to undo after accidentally inserting a widget?](https://github.com/BryceAndJuly/Whiteboard/issues/48)
 
 ## 1. Current Version
-### V2.0.5
 
-See the top preview image:  
+### V2.0.6
+
+Fix the issues:  
+
+* In V2.0.5, when the whiteboard's iframe contains external links, the text search (Alt+o) malfunctions.  
+  > Note: Currently, the search scope of this feature is limited to the documents/content blocks embedded within the whiteboard.  
+
+* In V2.0.5, after closing the text search box via the shortcut key Alt+o, the keyword highlighting in the iframe is not automatically removed.  
+  > Note: In V2.0.5, the search box can still be closed and the highlighting removed via the "X" close button on the right side of the text search box.
+
+
+### V2.0.5
 
 A [Text Search Panel] is newly added in the upper right corner, specially designed for searching and highlighting text within iframes, similar to text search in web pages.  
 
@@ -21,7 +31,7 @@ A [Text Search Panel] is newly added in the upper right corner, specially design
 
 ---
 
-For the current version: **V2.0.5**
+For the current version: **V2.0.6**
 
 If you **do not want auto-save to be enabled by default**, open the widget folder `Whiteboard` -> `custom.js` in an editor like VS Code and search for:
 
@@ -226,7 +236,7 @@ You can use the shortcut keys `Alt` + `P` to open/close the **Content Block Retr
 
 ### 1. Adjust Brush Thickness Manually
 
-For V2.0.5, open `Whiteboard` -> `assets` -> `index-ZsssFvwm.js` and search for:
+For V2.0.6, open `Whiteboard` -> `assets` -> `index-ZsssFvwm.js` and search for:
 
 ```css
 n={simulatePressure:e.simulatePressure,size:e.strokeWidth*1.2,thinning

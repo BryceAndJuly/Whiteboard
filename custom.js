@@ -558,7 +558,7 @@ document.addEventListener("keydown", (e => {
       searchIframeTextPanel.style.visibility = "visible";
       keywordInput.focus();
     } else {
-      searchIframeTextPanel.style.visibility = "hidden";
+      closeSearch();
     }
   }
   // 全屏
@@ -611,7 +611,7 @@ function searchIframeText() {
   let articles = document.querySelectorAll("iframe");
   if (articles.length > 0) {
     articles.forEach(article => {
-      article.contentWindow._searchText(keywordInput.value);
+      try { article.contentWindow._searchText(keywordInput.value); } catch (err) { }
     });
     sum.innerText = window._searchList.length;
     if (window._searchList.length > 0) {
@@ -631,7 +631,7 @@ function closeSearch() {
   if (articles.length > 0) {
     articles.forEach(article => {
       // 取消iframe中的高亮
-      article.contentWindow._cancelHighligh();
+      try { article.contentWindow._cancelHighligh(); } catch (err) { }
     });
   }
   searchIframeTextPanel.style.visibility = "hidden";
