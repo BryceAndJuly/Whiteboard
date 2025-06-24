@@ -3,35 +3,16 @@
 * If this widget is accidentally embedded in a document that already contains other content, please refer to: [How to undo after accidentally inserting a widget?](https://github.com/BryceAndJuly/Whiteboard/issues/48)
 
 ## 1. Current Version
+### V2.0.7
 
-### V2.0.6
+Testing environment: SiYuan V3.2.0 preview version, Windows 11 Home Chinese version 24H2
 
-Fix the issues:  
-
-* In V2.0.5, when the whiteboard's iframe contains external links, the text search (Alt+o) malfunctions.  
-  > Note: Currently, the search scope of this feature is limited to the documents/content blocks embedded within the whiteboard.  
-
-* In V2.0.5, after closing the text search box via the shortcut key Alt+o, the keyword highlighting in the iframe is not automatically removed.  
-  > Note: In V2.0.5, the search box can still be closed and the highlighting removed via the "X" close button on the right side of the text search box.
-
-
-### V2.0.5
-
-A [Text Search Panel] is newly added in the upper right corner, specially designed for searching and highlighting text within iframes, similar to text search in web pages.  
-
-* Before searching, it is recommended to load all iframe elements of the whiteboard. You can use the shortcut key (Shift+1) for the whiteboard's [Zoom to Fit All Elements] function.  
-  * Since iframes are lazy-loaded, they need to be in the visible area to load, and text search is performed within the loaded iframe elements.  
-  * Click on the blank area of the whiteboard and then press the shortcut key (Shift+1) to make all elements visible.  
-* Click on the blank area of the whiteboard and then press the shortcut key (Alt+o) to open/close the [Text Search Panel] in the upper right corner. Once opened, it automatically gains focus, allowing you to directly enter a single keyword for searching.  
-* After entering a single keyword, if there are matching results, it will default to jumping to the first iframe containing the keyword. At this point, the focus remains in the input box; pressing `Enter` will switch to the next iframe.  
-
-> Notes:  
-> * The number of search results refers to the number of iframe cards containing the keyword, not the number of keyword matches. An iframe may contain multiple instances of the keyword, and you may need to manually scroll the page to view all highlighted parts.
-
+- **Fixed Issue:**  When clicking the [Click to Start Interaction] button in the center of a card (or double-clicking the edge area of the card) to enter the card for content blocks embedded in the whiteboard, using the mouse wheel often fails to scroll the page.
+- **Improvement:** Supports rendering the gallery view of databases in the whiteboard.
 
 ---
 
-For the current version: **V2.0.6**
+For the current version: **V2.0.7**
 
 If you **do not want auto-save to be enabled by default**, open the widget folder `Whiteboard` -> `custom.js` in an editor like VS Code and search for:
 
@@ -236,7 +217,7 @@ You can use the shortcut keys `Alt` + `P` to open/close the **Content Block Retr
 
 ### 1. Adjust Brush Thickness Manually
 
-For V2.0.6, open `Whiteboard` -> `assets` -> `index-ZsssFvwm.js` and search for:
+For V2.0.7, open `Whiteboard` -> `assets` -> `index-ZsssFvwm.js` and search for:
 
 ```css
 n={simulatePressure:e.simulatePressure,size:e.strokeWidth*1.2,thinning
@@ -326,6 +307,29 @@ See the preview image at the top:
 * For the content block embedded in the whiteboard, the background color is set to transparent by default, so that the background color set for the element takes effect.
 * The `Content Block Retrieval Panel` (Alt+P) has a newly added dark mode, which takes effect when the theme of the whiteboard is in dark mode (it is directly set to dark, not the System mode). 
 
+
+### V2.0.5
+
+A [Text Search Panel] is newly added in the upper right corner, specially designed for searching and highlighting text within iframes, similar to text search in web pages.  
+
+* Before searching, it is recommended to load all iframe elements of the whiteboard. You can use the shortcut key (Shift+1) for the whiteboard's [Zoom to Fit All Elements] function.  
+  * Since iframes are lazy-loaded, they need to be in the visible area to load, and text search is performed within the loaded iframe elements.  
+  * Click on the blank area of the whiteboard and then press the shortcut key (Shift+1) to make all elements visible.  
+* Click on the blank area of the whiteboard and then press the shortcut key (Alt+o) to open/close the [Text Search Panel] in the upper right corner. Once opened, it automatically gains focus, allowing you to directly enter a single keyword for searching.  
+* After entering a single keyword, if there are matching results, it will default to jumping to the first iframe containing the keyword. At this point, the focus remains in the input box; pressing `Enter` will switch to the next iframe.  
+
+> Notes:  
+> * The number of search results refers to the number of iframe cards containing the keyword, not the number of keyword matches. An iframe may contain multiple instances of the keyword, and you may need to manually scroll the page to view all highlighted parts.
+
+### V2.0.6
+
+Fix the issues:  
+
+* In V2.0.5, when the whiteboard's iframe contains external links, the text search (Alt+o) malfunctions.  
+  > Note: Currently, the search scope of this feature is limited to the documents/content blocks embedded within the whiteboard.  
+
+* In V2.0.5, after closing the text search box via the shortcut key Alt+o, the keyword highlighting in the iframe is not automatically removed.  
+  > Note: In V2.0.5, the search box can still be closed and the highlighting removed via the "X" close button on the right side of the text search box.
 
 ## 8. References and Thanks
 

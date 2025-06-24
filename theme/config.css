@@ -126,3 +126,11 @@ span.b3-chip.b3-chip--info.b3-chip--small[data-type="block-more"] {
 .av__gallery-cover--6 {
     aspect-ratio: 1;
 }
+/* 在iframe中，点击交互后，鼠标滚轮无法滚动页面 */
+body:hover {
+    box-shadow: 0px 0px 0px transparent;
+}
+/* 数据表格——隐藏复制按钮 */
+.av span.block__icon[data-type="copy"] {
+    display: none;
+}
