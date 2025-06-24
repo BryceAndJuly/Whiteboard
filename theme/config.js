@@ -20,11 +20,10 @@ async function renderBody() {
       doc = res.data.content.replaceAll(`"assets/`, `"${window.top.location.origin}/assets/`).replaceAll(`contenteditable="true"`, `contenteditable="false"`);
     }
   } else {
-    doc = "<h2>加载失败，请检查链接是否正确！</h2><h2>Loading failed. Please check if the link is correct!</h2>"
+    doc = "<h2>加载失败，未找到该内容块！</h2><h2>Failed to load. The content block was not found!</h2>"
   }
   document.body.insertAdjacentHTML("afterbegin", doc);
 }
-
 
 // 内嵌块中的超链接跳转
 function handleIframeInternalLink() {
@@ -179,7 +178,6 @@ async function renderKatex() {
     }
   }
 }
-
 // 渲染Mermaid图表
 async function renderMermaid() {
   const mermaidElements = Array.from(document.querySelectorAll('.render-node[data-subtype="mermaid"]'));
@@ -208,7 +206,7 @@ async function renderMermaid() {
     }, 0)
   }
 }
-// 数据表格——所需工具函数1
+// 数据表格——函数1
 function getColIconByType(type) {
   switch (type) {
     case "text":
@@ -244,7 +242,7 @@ function getColIconByType(type) {
       return "iconCheck";
   }
 };
-// 数据表格——所需工具函数2
+// 数据表格——函数2
 function getCalcValue(column) {
   if (!column.calc || !column.calc.result) {
     return "";
@@ -257,66 +255,69 @@ function getCalcValue(column) {
   let value = "";
   switch (column.calc.operator) {
     case "Count all":
-      value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.calcResultCountAll}`;
+      value = `${window.top.siyuan.languages.calcResultCountAll}:<span>${resultCalc.formattedContent}</span>`;
       break;
     case "Count values":
-      value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.calcResultCountValues}`;
+      value = `${window.top.siyuan.languages.calcResultCountValues}:<span>${resultCalc.formattedContent}</span>`;
       break;
     case "Count unique values":
-      value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.calcResultCountUniqueValues}`;
+      value = `${window.top.siyuan.languages.calcResultCountUniqueValues}:<span>${resultCalc.formattedContent}</span>`;
       break;
     case "Count empty":
-      value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.calcResultCountEmpty}`;
+      value = `${window.top.siyuan.languages.calcResultCountEmpty}:<span>${resultCalc.formattedContent}</span>`;
       break;
     case "Count not empty":
-      value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.calcResultCountNotEmpty}`;
+      value = `${window.top.siyuan.languages.calcResultCountNotEmpty}:<span>${resultCalc.formattedContent}</span>`;
       break;
     case "Percent empty":
-      value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.calcResultPercentEmpty}`;
+      value = `${window.top.siyuan.languages.calcResultPercentEmpty}:<span>${resultCalc.formattedContent}</span>`;
       break;
     case "Percent not empty":
-      value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.calcResultPercentNotEmpty}`;
+      value = `${window.top.siyuan.languages.calcResultPercentNotEmpty}:<span>${resultCalc.formattedContent}</span>`;
       break;
     case "Sum":
-      value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.calcResultSum}`;
+      value = `${window.top.siyuan.languages.calcResultSum}:<span>${resultCalc.formattedContent}</span>`;
       break;
     case "Average":
-      value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.calcResultAverage}`;
+      value = `${window.top.siyuan.languages.calcResultAverage}:<span>${resultCalc.formattedContent}</span>`;
       break;
     case "Median":
-      value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.calcResultMedian}`;
+      value = `${window.top.siyuan.languages.calcResultMedian}:<span>${resultCalc.formattedContent}</span>`;
       break;
     case "Min":
-      value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.calcResultMin}`;
+      value = `${window.top.siyuan.languages.calcResultMin}:<span>${resultCalc.formattedContent}</span>`;
       break;
     case "Max":
-      value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.calcResultMax}`;
+      value = `${window.top.siyuan.languages.calcResultMax}<span>${resultCalc.formattedContent}</span>`;
       break;
     case "Range":
-      value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.calcResultRange}`;
+      value = `${window.top.siyuan.languages.calcResultRange}:<span>${resultCalc.formattedContent}</span>`;
       break;
     case "Earliest":
-      value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.calcOperatorEarliest}`;
+      value = `${window.top.siyuan.languages.calcOperatorEarliest}:<span>${resultCalc.formattedContent}</span>`;
       break;
     case "Latest":
-      value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.calcOperatorLatest}`;
+      value = `${window.top.siyuan.languages.calcOperatorLatest}:<span>${resultCalc.formattedContent}</span>`;
       break;
     case "Checked":
-      value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.checked}`;
+      value = `${window.top.siyuan.languages.checked}:<span>${resultCalc.formattedContent}</span>`;
       break;
     case "Unchecked":
-      value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.unchecked}`;
+      value = `${window.top.siyuan.languages.unchecked}:<span>${resultCalc.formattedContent}</span>`;
       break;
     case "Percent checked":
-      value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.percentChecked}`;
+      value = `${window.top.siyuan.languages.percentChecked}:<span>${resultCalc.formattedContent}</span>`;
       break;
     case "Percent unchecked":
-      value = `<span>${resultCalc.formattedContent}</span>${window.top.siyuan.languages.percentUnchecked}`;
+      value = `${window.top.siyuan.languages.percentUnchecked}:<span>${resultCalc.formattedContent}</span>`;
+      break;
+    case "Percent unique values":
+      value = `${window.top.siyuan.languages.calcOperatorPercentUniqueValues}:<span>${resultCalc.formattedContent}</span>`;
       break;
   }
   return value;
 };
-// 数据表格——所需工具函数3
+// 数据表格——函数3
 function renderCell(cellValue) {
   let text = "";
   if (["text", "template"].includes(cellValue.type)) {
@@ -391,7 +392,7 @@ function renderCell(cellValue) {
   }
   return text;
 };
-// 数据表格——所需工具函数4
+// 数据表格——函数4
 function renderRollup(cellValue) {
   let text = "";
   if (["text"].includes(cellValue.type)) {
@@ -427,7 +428,7 @@ function renderRollup(cellValue) {
   }
   return text;
 };
-// 数据表格——所需工具函数5
+// 数据表格——函数5
 function unicode2Emoji(unicode, className = "", needSpan = false, lazy = false) {
   if (!unicode) {
     return "";
@@ -453,7 +454,133 @@ function unicode2Emoji(unicode, className = "", needSpan = false, lazy = false) 
   return emoji;
 };
 
-// 渲染数据表格——数据库的表格视图
+// 画廊视图——函数
+function cellValueIsEmpty(value) {
+  if (value.type === "checkbox") {
+    return false;
+  }
+  if (["text", "number", "block", "url", "phone", "email", "template"].includes(value.type)) {
+    return !value[value.type]?.content;
+  }
+  if (["mSelect", "mAsset", "select"].includes(value.type)) {
+    if (value[(value.type === "select" ? "mSelect" : value.type)]?.length > 0) {
+      return false;
+    }
+    return true;
+  }
+  if (["date", "created", "updated"].includes(value.type)) {
+    return !value[value.type]?.isNotEmpty &&
+      !value[value.type]?.isNotEmpty2;
+  }
+  if (value.type === "relation") {
+    if (value.relation?.blockIDs && value.relation.blockIDs.length > 0) {
+      return false;
+    }
+    return true;
+  }
+  if (value.type === "rollup") {
+    if (value.rollup?.contents && value.rollup.contents.length > 0) {
+      return false;
+    }
+    return true;
+  }
+
+}
+
+function escapeAttr(html) {
+  if (!html) {
+    return html;
+  }
+  return html.replace(/"/g, "&quot;").replace(/'/g, "&apos;");
+}
+
+function escapeAriaLabel(html) {
+  if (!html) {
+    return html;
+  }
+  return html.replace(/"/g, "&quot;").replace(/'/g, "&apos;")
+    .replace(/</g, "&amp;lt;").replace(/&lt;/g, "&amp;lt;");
+}
+
+function getViewIcon(type) {
+  switch (type) {
+    case "table":
+      return "iconTable";
+    case "gallery":
+      return "iconGallery";
+  }
+}
+
+function escapeHtml(html) {
+  if (!html) {
+    return html;
+  }
+  return html.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+}
+
+// 添加icon
+function addAttributeViewIcon() {
+  const icon = `<svg style="position: absolute; width: 0; height: 0; overflow: hidden;" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<symbol id="iconTable" viewBox="0 0 32 32">
+  <path d="M22.801 2.286h-22.801v27.429h32v-27.429h-9.199zM19.372 5.714v4.571h-6.801v-4.571h6.801zM19.372 13.714v4.571h-6.801v-4.571h6.801zM3.429 5.714h5.714v4.571h-5.714v-4.571zM3.429 13.714h5.714v4.571h-5.714v-4.571zM3.429 26.286v-4.571h5.714v4.571h-5.714zM12.571 26.286v-4.571h6.801v4.571h-6.801zM28.571 26.286h-5.77v-4.571h5.77v4.571zM28.571 18.286h-5.77v-4.571h5.77v4.571zM22.801 10.286v-4.571h5.77v4.571h-5.77z"></path>
+</symbol>
+<symbol id="iconGallery" viewBox="0 0 32 32">
+  <path d="M1 13v-12h12v12h-12zM4 10h6v-6h-6v6zM1 31v-12h12v12h-12zM4 28h6v-6h-6v6zM19 13v-12h12v12h-12zM22 10h6v-6h-6v6zM19 31v-12h12v12h-12zM22 28h6v-6h-6v6z"></path>
+</symbol>
+ <symbol id="iconKey" viewBox="0 0 32 32">
+    <path d="M9.561 23.727q-3.22 0-5.473-2.254t-2.254-5.474 2.254-5.473 5.473-2.254q2.125 0 3.896 1.063t2.801 2.801h13.909v7.727h-2.576v3.864h-7.727v-3.864h-3.606q-1.030 1.739-2.801 2.801t-3.896 1.063zM9.561 21.151q2.125 0 3.413-1.304t1.545-2.56h7.92v3.864h2.576v-3.864h2.576v-2.576h-13.072q-0.258-1.256-1.545-2.56t-3.413-1.304-3.638 1.513-1.513 3.638 1.513 3.638 3.638 1.513zM9.561 18.576q1.063 0 1.819-0.757t0.757-1.819-0.757-1.819-1.819-0.757-1.819 0.757-0.757 1.819 0.757 1.819 1.819 0.757z"></path>
+ </symbol>
+ <symbol id="iconListItem" viewBox="0 0 32 32">
+    <path d="M7.778 17.683v-3.403h24.222v3.403h-24.222z"></path>
+    <path d="M5.4 16c0 1.49-1.209 2.7-2.7 2.7-1.49 0-2.7-1.21-2.7-2.7s1.21-2.7 2.7-2.7c1.491 0 2.7 1.21 2.7 2.7z"></path>
+</symbol>
+<symbol id="iconAlignLeft" viewBox="0 0 32 32">
+    <path d="M0 0h32v3.583h-32v-3.583zM0 32v-3.583h32v3.583h-32zM0 17.75v-3.5h32v3.5h-32zM21.333 7.083v3.583h-21.333v-3.583h21.333zM21.333 21.333v3.583h-21.333v-3.583h21.333z"></path>
+</symbol>
+<symbol id="iconNumber" viewBox="0 0 32 32">
+    <path d="M31 12.25v-3.75h-7.5v-7.5h-3.75v7.5h-7.5v-7.5h-3.75v7.5h-7.5v3.75h7.5v7.5h-7.5v3.75h7.5v7.5h3.75v-7.5h7.5v7.5h3.75v-7.5h7.5v-3.75h-7.5v-7.5h7.5zM19.75 19.75h-7.5v-7.5h7.5v7.5z"></path>
+  </symbol>
+  <symbol id="iconList" viewBox="0 0 32 32">
+    <path d="M7.777 3.929h24.223v3.403h-24.223v-3.403zM7.777 17.701v-3.403h24.223v3.403h-24.223zM7.777 28.071v-3.403h24.223v3.403h-24.223zM2.592 23.777q1.053 0 1.823 0.77t0.77 1.823-0.77 1.823-1.823 0.77-1.823-0.77-0.77-1.823 0.77-1.823 1.823-0.77zM2.592 3.038q1.053 0 1.823 0.729t0.77 1.863-0.77 1.863-1.823 0.729-1.823-0.729-0.77-1.863 0.77-1.863 1.823-0.729zM2.592 13.408q1.053 0 1.823 0.729t0.77 1.863-0.77 1.863-1.823 0.729-1.823-0.729-0.77-1.863 0.77-1.863 1.823-0.729z"></path>
+  </symbol>
+  <symbol id="iconCalendar" viewBox="0 0 32 32">
+    <path d="M26.5 4h-1.5v-3h-3v3h-12v-3h-3v3h-1.5c-1.665 0-2.985 1.35-2.985 3l-0.015 21c0 1.65 1.335 3 3 3h21c1.65 0 3-1.35 3-3v-21c0-1.65-1.35-3-3-3zM26.5 28h-21v-15h21v15zM26.5 10h-21v-3h21v3zM11.5 19h-3v-3h3v3zM17.5 19h-3v-3h3v3zM23.5 19h-3v-3h3v3zM11.5 25h-3v-3h3v3zM17.5 25h-3v-3h3v3zM23.5 25h-3v-3h3v3z"></path>
+  </symbol>
+  <symbol id="iconImage" viewBox="0 0 32 32">
+    <path d="M29.091 2.909h-26.182c-1.455 0-2.909 1.455-2.909 2.909v20.364c0 1.6 1.309 2.909 2.909 2.909h26.182c1.455 0 2.909-1.455 2.909-2.909v-20.364c0-1.455-1.455-2.909-2.909-2.909zM29.091 26.065c-0.029 0.044-0.087 0.087-0.116 0.116h-26.065v-20.247l0.116-0.116h25.935c0.044 0.029 0.087 0.087 0.116 0.116v20.131zM14.545 21.105l-3.636-4.378-5.091 6.545h20.364l-6.545-8.727z"></path>
+  </symbol>
+  <symbol id="iconLink" viewBox="0 0 32 32">
+    <path d="M24.038 7.962q3.305 0 5.634 2.366t2.329 5.671-2.329 5.671-5.634 2.366h-6.46v-3.080h6.46q2.028 0 3.493-1.465t1.465-3.493-1.465-3.493-3.493-1.465h-6.46v-3.080h6.46zM9.615 17.577v-3.155h12.77v3.155h-12.77zM3.005 16q0 2.028 1.465 3.493t3.493 1.465h6.46v3.080h-6.46q-3.305 0-5.634-2.366t-2.329-5.671 2.329-5.671 5.634-2.366h6.46v3.080h-6.46q-2.028 0-3.493 1.465t-1.465 3.493z"></path>
+  </symbol>
+  <symbol id="iconEmail" viewBox="0 0 32 32">
+    <path d="M16 0.925c-8.28 0-15 6.72-15 15s6.72 15 15 15h7.5v-3h-7.5c-6.51 0-12-5.49-12-12s5.49-12 12-12 12 5.49 12 12v2.145c0 1.185-1.065 2.355-2.25 2.355s-2.25-1.17-2.25-2.355v-2.145c0-4.14-3.36-7.5-7.5-7.5s-7.5 3.36-7.5 7.5 3.36 7.5 7.5 7.5c2.070 0 3.96-0.84 5.31-2.205 0.975 1.335 2.655 2.205 4.44 2.205 2.955 0 5.25-2.4 5.25-5.355v-2.145c0-8.28-6.72-15-15-15zM16 20.425c-2.49 0-4.5-2.010-4.5-4.5s2.010-4.5 4.5-4.5 4.5 2.010 4.5 4.5-2.010 4.5-4.5 4.5z"></path>
+  </symbol>
+  <symbol id="iconPhone" viewBox="0 0 32 32">
+    <path d="M6.9 4.333c0.1 1.483 0.35 2.933 0.75 4.317l-2 2c-0.683-2-1.117-4.117-1.267-6.317h2.517zM23.333 24.367c1.417 0.4 2.867 0.65 4.333 0.75v2.483c-2.2-0.15-4.317-0.583-6.333-1.25l2-1.983zM8.5 1h-5.833c-0.917 0-1.667 0.75-1.667 1.667 0 15.65 12.683 28.333 28.333 28.333 0.917 0 1.667-0.75 1.667-1.667v-5.817c0-0.917-0.75-1.667-1.667-1.667-2.067 0-4.083-0.333-5.95-0.95-0.167-0.067-0.35-0.083-0.517-0.083-0.433 0-0.85 0.167-1.183 0.483l-3.667 3.667c-4.717-2.417-8.583-6.267-10.983-10.983l3.667-3.667c0.467-0.467 0.6-1.117 0.417-1.7-0.617-1.867-0.95-3.867-0.95-5.95 0-0.917-0.75-1.667-1.667-1.667z"></path>
+  </symbol>
+  <symbol id="iconMath" viewBox="0 0 32 32">
+    <path d="M26.343 32c1.668 0 2.748-1.032 2.748-2.602s-1.080-2.625-2.725-2.625h-15.402v-0.282l5.636-8.018c0.891-1.266 1.173-1.945 1.173-2.766 0-0.843-0.327-1.593-1.339-2.977l-5.236-7.243v-0.259h15.098c1.575 0 2.677-1.055 2.677-2.602 0-1.545-1.102-2.625-2.677-2.625h-19.864c-2.114 0-3.359 1.077-3.359 2.932 0 0.936 0.423 1.85 1.455 3.257l7.023 9.727-7.068 10.011c-1.361 1.97-1.573 2.439-1.573 3.352 0 1.689 1.291 2.72 3.43 2.72h20.005z"></path>
+  </symbol>
+  <symbol id="iconOpen" viewBox="0 0 32 32">
+    <path d="M1 27.979l22.693-22.693h-14.121v-4.286h21.429v21.429h-4.286v-14.121l-22.693 22.693-3.021-3.021z"></path>
+  </symbol>
+  <symbol id="iconSearch" viewBox="0 0 32 32">
+    <path d="M11.925 20.161q3.432 0 5.834-2.402t2.402-5.834-2.402-5.834-5.834-2.402-5.834 2.402-2.402 5.834 2.402 5.834 5.834 2.402zM22.906 20.161l9.094 9.094-2.745 2.745-9.094-9.094v-1.458l-0.515-0.515q-3.26 2.831-7.721 2.831-4.976 0-8.45-3.432t-3.475-8.408 3.475-8.45 8.45-3.475 8.407 3.475 3.432 8.45q0 1.802-0.858 4.075t-1.973 3.646l0.515 0.515h1.458z"></path>
+  </symbol>
+  <symbol id="iconOrderedList" viewBox="0 0 32 32">
+    <path d="M8.375 17.659v-3.319h23.625v3.319h-23.625zM8.375 27.773v-3.319h23.625v3.319h-23.625zM8.375 4.227h23.625v3.319h-23.625v-3.319zM0 14.341v-1.738h5.057v1.58l-3.081 3.477h3.081v1.738h-5.057v-1.58l3.002-3.477h-3.002zM1.659 9.284v-5.057h-1.659v-1.738h3.319v6.795h-1.659zM0 24.454v-1.738h5.057v6.795h-5.057v-1.738h3.319v-0.79h-1.659v-1.738h1.659v-0.79h-3.319z"></path>
+  </symbol>
+  <symbol id="iconClock" viewBox="0 0 32 32">
+    <path d="M20.95 23.050l2.1-2.1-5.55-5.55v-6.9h-3v8.1l6.45 6.45zM16 31q-3.113 0-5.85-1.181t-4.763-3.206-3.206-4.762-1.181-5.85 1.181-5.85 3.206-4.763 4.763-3.206 5.85-1.181 5.85 1.181 4.762 3.206 3.206 4.763 1.181 5.85-1.181 5.85-3.206 4.762-4.762 3.206-5.85 1.181zM16 28q4.988 0 8.494-3.506t3.506-8.494-3.506-8.494-8.494-3.506-8.494 3.506-3.506 8.494 3.506 8.494 8.494 3.506z"></path>
+  </symbol>
+</defs></svg>`
+  const svg = document.getElementById("svg");
+  svg.insertAdjacentHTML("afterend", icon)
+
+}
+
+// 渲染数据表格——数据库的表格视图、画廊视图
 async function avRender() {
   let avElements = Array.from(document.querySelectorAll('[data-type="NodeAttributeView"]'));
   if (avElements.length === 0) {
@@ -461,41 +588,44 @@ async function avRender() {
   }
   await addScript("./theme/dayjs.js");
   if (avElements.length > 0) {
+    addAttributeViewIcon();
     avElements.forEach((e) => {
-      request("/api/av/renderAttributeView", {
-        id: e.getAttribute("data-av-id")
-      }).then(response => {
-        const data = response.data.view;
-        if (!e.dataset.pageSize) {
-          e.dataset.pageSize = data.pageSize.toString();
-        }
-        let tableHTML = '<div class="av__row av__row--header"><div class="av__firstcol av__colsticky"><svg><use xlink:href="#iconUncheck"></use></svg></div>';
-        let calcHTML = "";
-        let pinIndex = -1;
-        let pinMaxIndex = -1;
-        let indexWidth = 0;
-        const eWidth = e.clientWidth;
-        data.columns.forEach((item, index) => {
-          if (!item.hidden) {
-            if (item.pin) {
-              pinIndex = index;
-            }
-            if (indexWidth < eWidth - 200) {
-              indexWidth += parseInt(item.width) || 200;
-              pinMaxIndex = index;
-            }
+      // 表格视图
+      if (e.getAttribute("data-av-type") === "table") {
+        request("/api/av/renderAttributeView", {
+          id: e.getAttribute("data-av-id")
+        }).then(response => {
+          const data = response.data.view;
+          if (!e.dataset.pageSize) {
+            e.dataset.pageSize = data.pageSize.toString();
           }
-        });
-        pinIndex = Math.min(pinIndex, pinMaxIndex);
-        if (pinIndex > -1) {
-          tableHTML = '<div class="av__row av__row--header"><div class="av__colsticky"><div class="av__firstcol"><svg><use xlink:href="#iconUncheck"></use></svg></div>';
-          calcHTML = '<div class="av__colsticky">';
-        }
-        data.columns.forEach((column, index) => {
-          if (column.hidden) {
-            return;
+          let tableHTML = '<div class="av__row av__row--header"><div class="av__firstcol av__colsticky"><svg><use xlink:href="#iconUncheck"></use></svg></div>';
+          let calcHTML = "";
+          let pinIndex = -1;
+          let pinMaxIndex = -1;
+          let indexWidth = 0;
+          const eWidth = e.clientWidth;
+          data.columns.forEach((item, index) => {
+            if (!item.hidden) {
+              if (item.pin) {
+                pinIndex = index;
+              }
+              if (indexWidth < eWidth - 200) {
+                indexWidth += parseInt(item.width) || 200;
+                pinMaxIndex = index;
+              }
+            }
+          });
+          pinIndex = Math.min(pinIndex, pinMaxIndex);
+          if (pinIndex > -1) {
+            tableHTML = '<div class="av__row av__row--header"><div class="av__colsticky"><div class="av__firstcol"><svg><use xlink:href="#iconUncheck"></use></svg></div>';
+            calcHTML = '<div class="av__colsticky">';
           }
-          tableHTML += `<div class="av__cell av__cell--header" data-col-id="${column.id}"  draggable="true" 
+          data.columns.forEach((column, index) => {
+            if (column.hidden) {
+              return;
+            }
+            tableHTML += `<div class="av__cell av__cell--header" data-col-id="${column.id}"  draggable="true" 
                   data-icon="${column.icon}" data-dtype="${column.type}" data-wrap="${column.wrap}" data-pin="${column.pin}" 
                   style="width: ${column.width || "200px"};">
                       ${column.icon ? unicode2Emoji(column.icon, "av__cellheadericon", true) : `<svg class="av__cellheadericon"><use xlink:href="#${getColIconByType(column.type)}"></use></svg>`}
@@ -503,38 +633,38 @@ async function avRender() {
                       ${column.pin ? '<svg class="av__cellheadericon av__cellheadericon--pin"><use xlink:href="#iconPin"></use></svg>' : ""}
                       <div class="av__widthdrag"></div>
                   </div>`;
-          if (pinIndex === index) {
-            tableHTML += "</div>";
-          }
-          calcHTML += `<div class="av__calc${column.calc && column.calc.operator !== "" ? " av__calc--ashow" : ""}" data-col-id="${column.id}" data-dtype="${column.type}" data-operator="${column.calc?.operator || ""}"  
+            if (pinIndex === index) {
+              tableHTML += "</div>";
+            }
+            calcHTML += `<div class="av__calc${column.calc && column.calc.operator !== "" ? " av__calc--ashow" : ""}" data-col-id="${column.id}" data-dtype="${column.type}" data-operator="${column.calc?.operator || ""}"  
                   style="width: ${index === 0 ? ((parseInt(column.width || "200") + 24) + "px") : (column.width || "200px")}">${getCalcValue(column) || '<svg><use xlink:href="#iconDown"></use></svg>' + window.top.siyuan.languages.calc}</div>`;
-          if (pinIndex === index) {
-            calcHTML += "</div>";
-          }
-        });
-        tableHTML += `<div class="block__icons" style="min-height: auto">
+            if (pinIndex === index) {
+              calcHTML += "</div>";
+            }
+          });
+          tableHTML += `<div class="block__icons" style="min-height: auto">
               <div class="block__icon block__icon--show" data-type="av-header-add"><svg><use xlink:href="#iconAdd"></use></svg></div>
               <div class="fn__space"></div>
               <div class="block__icon block__icon--show"  data-type="av-header-more"><svg><use xlink:href="#iconMore"></use></svg></div>
               </div>
               </div>`;
-        data.rows.forEach((row) => {
-          tableHTML += `<div class="av__row" data-id="${row.id}">`;
-          if (pinIndex > -1) {
-            tableHTML += '<div class="av__colsticky"><div class="av__firstcol"><svg><use xlink:href="#iconUncheck"></use></svg></div>';
-          } else {
-            tableHTML += '<div class="av__firstcol av__colsticky"><svg><use xlink:href="#iconUncheck"></use></svg></div>';
-          }
+          data.rows.forEach((row) => {
+            tableHTML += `<div class="av__row" data-id="${row.id}">`;
+            if (pinIndex > -1) {
+              tableHTML += '<div class="av__colsticky"><div class="av__firstcol"><svg><use xlink:href="#iconUncheck"></use></svg></div>';
+            } else {
+              tableHTML += '<div class="av__firstcol av__colsticky"><svg><use xlink:href="#iconUncheck"></use></svg></div>';
+            }
 
-          row.cells.forEach((cell, index) => {
-            if (data.columns[index].hidden) {
-              return;
-            }
-            let checkClass = "";
-            if (cell.valueType === "checkbox") {
-              checkClass = cell.value?.checkbox?.checked ? " av__cell-check" : " av__cell-uncheck";
-            }
-            tableHTML += `<div class="av__cell${checkClass}" data-id="${cell.id}" data-col-id="${data.columns[index].id}"
+            row.cells.forEach((cell, index) => {
+              if (data.columns[index].hidden) {
+                return;
+              }
+              let checkClass = "";
+              if (cell.valueType === "checkbox") {
+                checkClass = cell.value?.checkbox?.checked ? " av__cell-check" : " av__cell-uncheck";
+              }
+              tableHTML += `<div class="av__cell${checkClass}" data-id="${cell.id}" data-col-id="${data.columns[index].id}"
                           ${cell.valueType === "block" ? 'data-block-id="' + (cell.value.block.id || "") + '"' : ""} data-wrap="${data.columns[index].wrap}" 
                           ${cell.value?.isDetached ? ' data-detached="true"' : ""} 
                           style="width: ${data.columns[index].width || "200px"};
@@ -542,50 +672,32 @@ async function avRender() {
                           ${cell.bgColor ? `background-color:${cell.bgColor};` : ""}
                           ${cell.color ? `color:${cell.color};` : ""}">${renderCell(cell.value)}</div>`;
 
-            if (pinIndex === index) {
-              tableHTML += "</div>";
-            }
+              if (pinIndex === index) {
+                tableHTML += "</div>";
+              }
+            });
+            tableHTML += "<div></div></div>";
           });
-          tableHTML += "<div></div></div>";
-        });
-        let tabHTML = "";
-        response.data.views.forEach((item) => {
-          tabHTML += `<div data-id="${item.id}" class="item${item.id === response.data.viewID ? " item--focus" : ""}">
+          let tabHTML = "";
+          response.data.views.forEach((item) => {
+            tabHTML += `<div data-id="${item.id}" class="item${item.id === response.data.viewID ? " item--focus" : ""}">
                       ${item.icon ? unicode2Emoji(item.icon, "item__graphic", true) : '<svg class="item__graphic"><use xlink:href="#iconTable"></use></svg>'}
                       <span class="item__text">${item.name}</span>
                       </div>`;
-        });
-        e.firstElementChild.outerHTML = `<div class="av__container" style="--av-background:${e.style.backgroundColor || "var(--b3-theme-background)"}">
+          });
+          e.firstElementChild.outerHTML = `<div class="av__container" style="--av-background:${e.style.backgroundColor || "var(--b3-theme-background)"}">
               <div class="av__header">
                   <div class="fn__flex av__views">
                       <div class="layout-tab-bar fn__flex">
                           ${tabHTML}
                       </div>
                       <div class="fn__space"></div>
-                      <span data-type="av-add" class="block__icon">
-                          <svg><use xlink:href="#iconAdd"></use></svg>
-                      </span>
                       <div class="fn__flex-1"></div>
                       <div class="fn__space"></div>
-                      <span data-type="av-switcher" class="block__icon${response.data.views.length > 0 ? "" : " fn__none"}">
-                          <svg><use xlink:href="#iconDown"></use></svg>
-                      </span>
                       <div class="fn__space"></div>
-                      <span data-type="av-filter" class="block__icon${data.filters.length > 0 ? " block__icon--active" : ""}">
-                          <svg><use xlink:href="#iconFilter"></use></svg>
-                      </span>
                       <div class="fn__space"></div>
-                      <span data-type="av-sort" class="block__icon${data.sorts.length > 0 ? " block__icon--active" : ""}">
-                          <svg><use xlink:href="#iconSort"></use></svg>
-                      </span>
                       <div class="fn__space"></div>
-                      <span data-type="av-more" class="block__icon">
-                          <svg><use xlink:href="#iconMore"></use></svg>
-                      </span>
                       <div class="fn__space"></div>
-                      <span data-type="av-add-more" class="block__icon">
-                          <svg><use xlink:href="#iconAdd"></use></svg>
-                      </span>
                       <div class="fn__space"></div>
                       ${response.data.isMirror ? ` <span class="block__icon block__icon--show ariaLabel" aria-label="${window.top.siyuan.languages.mirrorTip}">
               <svg><use xlink:href="#iconSplitLR"></use></svg></span><div class="fn__space"></div>` : ""}
@@ -596,32 +708,113 @@ async function avRender() {
               <div class="av__scroll">
                   <div class="av__body">
                       ${tableHTML}
-                      <div class="av__row--util">
-                          <div class="av__colsticky">
-                              <button class="b3-button" data-type="av-add-bottom">
-                                  <svg><use xlink:href="#iconAdd"></use></svg>
-                                  ${window.top.siyuan.languages.addAttr}
-                              </button>
-                              <span class="fn__space"></span>
-                              <button class="b3-button${data.rowCount > data.rows.length ? "" : " fn__none"}">
-                                  <svg data-type="av-load-more"><use xlink:href="#iconArrowDown"></use></svg>
-                                  <span data-type="av-load-more">
-                                      ${window.top.siyuan.languages.loadMore}
-                                  </span>
-                                  <svg data-type="set-page-size" data-size="${data.pageSize}"><use xlink:href="#iconMore"></use></svg>
-                              </button>
-                          </div>
-                      </div>
                       <div class="av__row--footer">${calcHTML}</div>
                   </div>
               </div>
               </div>`.replaceAll(`"assets/`, `"${window.top.location.origin}/assets/`);
-      })
+        })
+      }
+      // 画廊视图
+      else if (e.getAttribute("data-av-type") === "gallery") {
+        request("/api/av/renderAttributeView", {
+          "id": e.getAttribute("data-av-id"),
+          "viewID": e.getAttribute("custom-sy-av-view"),
+          "query": ""
+        }).then(response => {
+          const view = response.data.view;
+          let galleryHTML = "";
+          view.cards.forEach((item, rowIndex) => {
+            galleryHTML += `<div data-id="${item.id}" draggable="true" class="av__gallery-item">`;
+            if (view.coverFrom !== 0) {
+              const coverClass = "av__gallery-cover av__gallery-cover--" + view.cardAspectRatio;
+              if (item.coverURL) {
+                if (item.coverURL.startsWith("background")) {
+                  galleryHTML += `<div class="${coverClass}"><div class="av__gallery-img${view.fitImage ? " av__gallery-img--fit" : ""}" style="${item.coverURL}"></div></div>`;
+                } else {
+                  galleryHTML += `<div class="${coverClass}"><div class="av__gallery-img${view.fitImage ? " av__gallery-img--fit" : ""}" style="background-image:url('${item.coverURL}')"></div></div>`;
+                }
+              } else if (item.coverContent) {
+                galleryHTML += `<div class="${coverClass}"><div class="av__gallery-content">${item.coverContent}</div><div></div></div>`;
+              } else {
+                galleryHTML += `<div class="${coverClass}"></div>`;
+              }
+            }
+            galleryHTML += `<div class="av__gallery-fields${view.wrapField ? " av__gallery-fields--wrap" : ""}">`;
+            item.values.forEach((cell, fieldsIndex) => {
+              if (view.fields[fieldsIndex].hidden) {
+                return;
+              }
+              let checkClass = "";
+              if (cell.valueType === "checkbox") {
+                checkClass = cell.value?.checkbox?.checked ? " av__cell-check" : " av__cell-uncheck";
+              }
+              const isEmpty = cellValueIsEmpty(cell.value);
+              galleryHTML += `<div class="av__cell${checkClass} ariaLabel" 
+data-empty="${isEmpty}" 
+aria-label="${isEmpty ? window.top.siyuan.languages.edit + " " : ""}${escapeAttr(view.fields[fieldsIndex].name)}" 
+data-position="5west"
+data-id="${cell.id}" 
+data-field-id="${view.fields[fieldsIndex].id}"
+${cell.valueType === "block" ? 'data-block-id="' + (cell.value.block.id || "") + '"' : ""} 
+data-dtype="${cell.valueType}" 
+${cell.value?.isDetached ? ' data-detached="true"' : ""} 
+style="${cell.bgColor ? `background-color:${cell.bgColor};` : ""}
+${cell.color ? `color:${cell.color};` : ""}">${renderCell(cell.value, rowIndex, view.showIcon, "gallery")}</div>`;
+            });
+            galleryHTML += `</div>
+   
+</div>`;
+          });
+          let tabHTML = "";
+          let viewData;
+          response.data.views.forEach((item) => {
+            tabHTML += `<div data-position="north" data-av-type="${item.type}" data-id="${item.id}" data-page="${item.pageSize}" data-desc="${escapeAriaLabel(item.desc || "")}" class="ariaLabel item${item.id === response.data.viewID ? " item--focus" : ""}">
+    ${item.icon ? unicode2Emoji(item.icon, "item__graphic", true) : `<svg class="item__graphic"><use xlink:href="#${getViewIcon(item.type)}"></use></svg>`}
+    <span class="item__text">${escapeHtml(item.name)}</span>
+</div>`;
+            if (item.id === response.data.viewID) {
+              viewData = item;
+            }
+          });
+          e.firstElementChild.outerHTML =
+            `<div class="av__container fn__block">
+    <div class="av__header">
+        <div class="fn__flex av__views">
+            <div class="layout-tab-bar fn__flex">
+                ${tabHTML}
+            </div>
+            <div class="fn__space"></div>
+            <div class="fn__flex-1"></div>
+            <div class="fn__space"></div>
+            <div class="fn__space"></div>
+            <div class="fn__space"></div>
+            <div class="fn__space"></div>
+            <div class="fn__space"></div>
+            <div class="fn__space"></div>
+            <div class="fn__space"></div>
+            ${response.data.isMirror ? ` <span data-av-id="${response.data.id}" data-popover-url="/api/av/getMirrorDatabaseBlocks" class="popover__block block__icon block__icon--show ariaLabel" data-position="8south" aria-label="${window.top.siyuan.languages.mirrorTip}">
+    <svg><use xlink:href="#iconSplitLR"></use></svg></span><div class="fn__space"></div>` : ""}
+        </div>
+        <div contenteditable="false" spellcheck="${window.top.siyuan.config.editor.spellcheck.toString()}" class="av__title${viewData.hideAttrViewName ? " fn__none" : ""}" data-title="${response.data.name || ""}" data-tip="${window.top.siyuan.languages.title}">${response.data.name || ""}</div>
+        <div class="av__counter fn__none"></div>
+    </div>
+    <div class="av__gallery${view.cardSize === 0 ? " av__gallery--small" : (view.cardSize === 2 ? " av__gallery--big" : "")}
+${view.hideAttrViewName ? " av__gallery--top" : ""}">
+        ${galleryHTML}
+    </div>
+    <div class="av__gallery-load${view.cardCount > view.cards.length ? "" : " fn__none"}">
+        <button class="b3-button av__button" data-type="av-load-more">
+            <svg><use xlink:href="#iconArrowDown"></use></svg>
+            <span>${window.top.siyuan.languages.loadMore}</span>
+            <svg data-type="set-page-size" data-size="${view.pageSize}"><use xlink:href="#iconMore"></use></svg>
+        </button>
+    </div>
+</div>`.replaceAll(`background-image:url('assets/`, `background-image:url('${window.top.location.origin}/assets/`).replaceAll(`src="assets/`, `src="${window.top.location.origin}/assets/`);
+        })
+      }
     })
-
   }
 }
-
 
 // 代码高亮
 async function highlight() {
@@ -653,14 +846,13 @@ async function highlight() {
 
 // 添加刷新按钮
 async function addRefreshBtn() {
-  let domStr = `<div id="refreshDoc" title="Update the current document."><svg t="1747160319122" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1458" width="20" height="20"><path d="M1022.955204 522.570753c0 100.19191-81.516572 181.698249-181.718715 181.698249l-185.637977 0c-11.2973 0-20.466124-9.168824-20.466124-20.466124 0-11.307533 9.168824-20.466124 20.466124-20.466124l185.637977 0c77.628008 0 140.786467-63.148226 140.786467-140.766001 0-77.423347-62.841234-140.448776-140.203182-140.766001-0.419556 0.030699-0.818645 0.051165-1.217734 0.061398-5.945409 0.143263-11.686157-2.292206-15.687284-6.702656-4.001127-4.400217-5.894244-10.335393-5.167696-16.250102 1.330298-10.806113 1.944282-19.760043 1.944282-28.192086 0-60.763922-23.658839-117.884874-66.617234-160.833035-42.968627-42.968627-100.089579-66.617234-160.843268-66.617234-47.368844 0-92.742241 14.449084-131.208321 41.781592-37.616736 26.738991-65.952084 63.700811-81.925894 106.884332-2.425236 6.538927-8.012488 11.399631-14.827707 12.893658-6.815219 1.483794-13.927197-0.603751-18.859533-5.54632-19.289322-19.330254-44.943608-29.972639-72.245418-29.972639-56.322773 0-102.146425 45.813419-102.146425 102.125959 0 0.317225 0.040932 0.982374 0.092098 1.627057 0.061398 0.920976 0.122797 1.831718 0.153496 2.762927 0.337691 9.465582-5.863545 17.928325-15.001669 20.455891-32.356942 8.933463-61.541635 28.550243-82.181721 55.217602-21.305235 27.516704-32.571836 60.508096-32.571836 95.41307 0 86.244246 70.188572 156.422585 156.443052 156.422585l169.981393 0c11.2973 0 20.466124 9.15859 20.466124 20.466124 0 11.2973-9.168824 20.466124-20.466124 20.466124l-169.981393 0c-108.828614 0-197.3753-88.536452-197.3753-197.354833 0-44.053332 14.223956-85.712127 41.126676-120.473839 22.809495-29.460985 53.897537-52.086285 88.710414-64.816215 5.065366-74.322729 67.149353-133.2447 142.751215-133.2447 28.386514 0 55.504128 8.217149 78.651314 23.52581 19.657712-39.868009 48.842405-74.169233 85.497233-100.212376 45.434795-32.295544 99.004875-49.354058 154.918325-49.354058 71.692832 0 139.087778 27.915793 189.782368 78.600149 50.694589 50.694589 78.610382 118.089535 78.610382 189.782368 0 3.704368-0.102331 7.470135-0.296759 11.368932C952.633602 352.568894 1022.955204 429.511287 1022.955204 522.570753z" p-id="1459"></path><path d="M629.258611 820.711014l-102.023628 102.013395c-3.990894 4.001127-9.230222 5.996574-14.46955 5.996574s-10.478655-1.995447-14.46955-5.996574l-102.023628-102.013395c-7.992021-7.992021-7.992021-20.947078 0-28.939099s20.947078-8.002254 28.939099 0l67.087954 67.077721 0-358.699522c0-11.2973 9.15859-20.466124 20.466124-20.466124 11.307533 0 20.466124 9.168824 20.466124 20.466124l0 358.699522 67.087954-67.077721c7.992021-8.002254 20.947078-7.992021 28.939099 0S637.250632 812.718993 629.258611 820.711014z" p-id="1460"></path></svg></div>`;
+  let domStr = `<div id="refreshDoc" title="重载/Reload"><svg t="1747160319122" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1458" width="20" height="20"><path d="M1022.955204 522.570753c0 100.19191-81.516572 181.698249-181.718715 181.698249l-185.637977 0c-11.2973 0-20.466124-9.168824-20.466124-20.466124 0-11.307533 9.168824-20.466124 20.466124-20.466124l185.637977 0c77.628008 0 140.786467-63.148226 140.786467-140.766001 0-77.423347-62.841234-140.448776-140.203182-140.766001-0.419556 0.030699-0.818645 0.051165-1.217734 0.061398-5.945409 0.143263-11.686157-2.292206-15.687284-6.702656-4.001127-4.400217-5.894244-10.335393-5.167696-16.250102 1.330298-10.806113 1.944282-19.760043 1.944282-28.192086 0-60.763922-23.658839-117.884874-66.617234-160.833035-42.968627-42.968627-100.089579-66.617234-160.843268-66.617234-47.368844 0-92.742241 14.449084-131.208321 41.781592-37.616736 26.738991-65.952084 63.700811-81.925894 106.884332-2.425236 6.538927-8.012488 11.399631-14.827707 12.893658-6.815219 1.483794-13.927197-0.603751-18.859533-5.54632-19.289322-19.330254-44.943608-29.972639-72.245418-29.972639-56.322773 0-102.146425 45.813419-102.146425 102.125959 0 0.317225 0.040932 0.982374 0.092098 1.627057 0.061398 0.920976 0.122797 1.831718 0.153496 2.762927 0.337691 9.465582-5.863545 17.928325-15.001669 20.455891-32.356942 8.933463-61.541635 28.550243-82.181721 55.217602-21.305235 27.516704-32.571836 60.508096-32.571836 95.41307 0 86.244246 70.188572 156.422585 156.443052 156.422585l169.981393 0c11.2973 0 20.466124 9.15859 20.466124 20.466124 0 11.2973-9.168824 20.466124-20.466124 20.466124l-169.981393 0c-108.828614 0-197.3753-88.536452-197.3753-197.354833 0-44.053332 14.223956-85.712127 41.126676-120.473839 22.809495-29.460985 53.897537-52.086285 88.710414-64.816215 5.065366-74.322729 67.149353-133.2447 142.751215-133.2447 28.386514 0 55.504128 8.217149 78.651314 23.52581 19.657712-39.868009 48.842405-74.169233 85.497233-100.212376 45.434795-32.295544 99.004875-49.354058 154.918325-49.354058 71.692832 0 139.087778 27.915793 189.782368 78.600149 50.694589 50.694589 78.610382 118.089535 78.610382 189.782368 0 3.704368-0.102331 7.470135-0.296759 11.368932C952.633602 352.568894 1022.955204 429.511287 1022.955204 522.570753z" p-id="1459"></path><path d="M629.258611 820.711014l-102.023628 102.013395c-3.990894 4.001127-9.230222 5.996574-14.46955 5.996574s-10.478655-1.995447-14.46955-5.996574l-102.023628-102.013395c-7.992021-7.992021-7.992021-20.947078 0-28.939099s20.947078-8.002254 28.939099 0l67.087954 67.077721 0-358.699522c0-11.2973 9.15859-20.466124 20.466124-20.466124 11.307533 0 20.466124 9.168824 20.466124 20.466124l0 358.699522 67.087954-67.077721c7.992021-8.002254 20.947078-7.992021 28.939099 0S637.250632 812.718993 629.258611 820.711014z" p-id="1460"></path></svg></div>`;
   document.body.insertAdjacentHTML("afterbegin", domStr);
   let refreshBtn = document.getElementById("refreshDoc");
   refreshBtn.addEventListener("click", () => { window.location.reload(); })
 }
 
 // 搜索、高亮iframe中的关键词
-
 window._searchText = function (keyword) {
   const allTextNodes = [];
   const treeWalker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);

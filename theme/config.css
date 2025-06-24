@@ -8,3 +8,121 @@
 .protyle-wysiwyg [data-node-id][data-subtype="o"].li>.protyle-action{
     top: 4px;
 }
+/* 代码块折叠后的高度 */
+.code-block[fold="1"] {
+    min-height: 140px;
+}
+/* 列表视图——前面的复选框 */
+.av__firstcol.av__colsticky {
+    visibility: hidden;
+}
+/* 更多 */
+span.b3-chip.b3-chip--info.b3-chip--small[data-type="block-more"] {
+    visibility: hidden;
+}
+/* 画廊视图 */
+.av__gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+    width: 100%;
+}
+.av__container {
+    overflow-x: auto;
+    overflow-y: hidden;
+    cursor: auto;
+}
+.av__gallery-item {
+    border: 1px solid var(--b3-border-color);
+    border-radius: var(--b3-border-radius);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+.av__gallery-img--fit {
+    background-size: contain !important;
+}
+.av__gallery-img {
+    height: 100%;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+.av__gallery-cover {
+    border-bottom: 1px solid var(--b3-border-color);
+    background-color: var(--b3-theme-surface);
+    border-radius: var(--b3-border-radius) var(--b3-border-radius) 0 0;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+}
+.av__gallery-fields {
+    border-radius: 0 0 var(--b3-border-radius) var(--b3-border-radius);
+    flex: 1;
+    white-space: nowrap;
+    font-size: 85%;
+    min-height: 23px;
+    padding: 5px;
+}
+.av[data-av-type=gallery] .av__cell {
+    border-right: none;
+}
+.av__header .layout-tab-bar .item__graphic {
+    height: calc(1.625em - 10px);
+    width: calc(1.625em - 10px);
+    padding: 10px 5px 10px 8px;
+    line-height: calc(1.625em - 10px);
+    font-size: inherit;
+    text-align: center;
+}
+.layout-tab-bar .item__graphic {
+    padding: 4px 0 4px 8px;
+    height: 14px;
+    width: 14px;
+    flex-shrink: 0;
+    line-height: 1em;
+}
+/* 数据库标题——下划线  */
+.av__title {
+    border-bottom: 1px solid var(--b3-theme-surface-lighter);
+}
+.av__colsticky.av__firstcol, .av__colsticky>div:not(.av__cell--select):not(.av__cell--active) {
+    background-color: transparent;
+}
+.av__row--header, .av__row--footer {
+    background-color: transparent;
+}
+/* 底部——计算栏 */
+.av__calc.av__calc--ashow {
+    white-space: normal;
+    border-right: 1px solid var(--b3-theme-surface-lighter);
+}
+/* 卡片尺寸*/
+.av__gallery--small {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+}
+.av__gallery--big {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+}
+/* 卡片宽高比 */
+.av__gallery-cover--0 {
+    aspect-ratio: 16 / 9;
+}
+.av__gallery-cover--1 {
+    aspect-ratio: 9 / 16;
+}
+.av__gallery-cover--2 {
+    aspect-ratio: 4 / 3;
+}
+.av__gallery-cover--3 {
+    aspect-ratio: 3 / 4;
+}
+.av__gallery-cover--4 {
+    aspect-ratio: 3 / 2;
+}
+.av__gallery-cover--5 {
+    aspect-ratio: 2 / 3;
+}
+.av__gallery-cover--6 {
+    aspect-ratio: 1;
+}
