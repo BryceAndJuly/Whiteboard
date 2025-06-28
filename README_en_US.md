@@ -3,6 +3,11 @@
 * If this widget is accidentally embedded in a document that already contains other content, please refer to: [How to undo after accidentally inserting a widget?](https://github.com/BryceAndJuly/Whiteboard/issues/48)
 
 ## 1. Current Version
+### V2.0.8
+
+* Issue fixed: Incompatibility of some shortcut keys on macOS. Reference: [Issue:68](https://github.com/BryceAndJuly/Whiteboard/issues/68)
+* Improvement: Record the current status of  `Snap to Object (Alt+S)`  when saving the whiteboard.
+
 ### V2.0.7
 
 Testing environment: SiYuan V3.2.0 preview version, Windows 11 Home Chinese version 24H2
@@ -12,7 +17,7 @@ Testing environment: SiYuan V3.2.0 preview version, Windows 11 Home Chinese vers
 
 ---
 
-For the current version: **V2.0.7**
+For the current version: **V2.0.8**
 
 If you **do not want auto-save to be enabled by default**, open the widget folder `Whiteboard` -> `custom.js` in an editor like VS Code and search for:
 
@@ -205,6 +210,25 @@ You can use the shortcut keys `Alt` + `P` to open/close the **Content Block Retr
   * Clicking on the icon in front of the search result allows you to jump to the corresponding content block.
   * When you click the `+` icon behind the search result, the corresponding search result can be embedded in the upper - left corner of the whiteboard in the form of an embedded document.
 
+
+### 7. Search within Embedded Content Blocks
+
+A  `Text Search Panel`  is added to the upper right corner, specifically for searching and highlighting text within iframes. This is similar to text search on web pages. — Currently, the search scope of this feature is limited to documents/content blocks embedded in the whiteboard.
+
+**Basic Usage:**
+
+* Before searching, it is recommended to load all iframe elements on the whiteboard. You can use the shortcut key (Shift+1) for the whiteboard's [Zoom to Fit All Elements] function.
+
+  * Since iframes are lazily loaded, they need to be in the visible area to load. Text search is performed within the loaded iframe elements.
+  * Click on the blank area of the whiteboard and press the shortcut key (Shift+1) to make all elements visible.
+* Click on the blank area of the whiteboard and press the shortcut key (Alt+o) to open/close the [Text Search Panel] in the upper right corner. Once opened, it automatically gains focus, allowing you to directly enter a single keyword for searching.
+* After entering a single keyword, if there are matching results, it will default to jumping to the first iframe containing the keyword. The focus remains in the input box; pressing `Enter` will switch to the next iframe.
+
+> **Notes:**
+>
+> * The number of search results refers to the count of iframe cards containing the keyword, not the number of keyword matches. An iframe may have multiple instances of the keyword, and you may need to manually scroll the page to view all highlighted parts.
+
+
 ## 5. Matters needing attention.
 
 * When `automatic save` is triggered, the right-click pop-up menu of the mouse will be closed. If you think this interference is too great, you can close `automatic save` by default or temporarily. (The shortcut key to temporarily turn off automatic save is `Alt+F`).
@@ -217,7 +241,7 @@ You can use the shortcut keys `Alt` + `P` to open/close the **Content Block Retr
 
 ### 1. Adjust Brush Thickness Manually
 
-For V2.0.7, open `Whiteboard` -> `assets` -> `index-ZsssFvwm.js` and search for:
+For V2.0.8, open `Whiteboard` -> `assets` -> `index-ZsssFvwm.js` and search for:
 
 ```css
 n={simulatePressure:e.simulatePressure,size:e.strokeWidth*1.2,thinning

@@ -525,17 +525,17 @@ document.addEventListener("click", (e) => {
 // 快捷键
 document.addEventListener("keydown", (e => {
   // 开启预览
-  if (e.altKey && "q" === e.key) {
+  if (e.altKey && "KeyQ" === e.code) {
     window._allowPreview = !0;
     showMessage(window._languages["msgPreviewMode"])
   }
   // 关闭预览
-  if (e.altKey && "w" === e.key) {
+  if (e.altKey && "KeyW" === e.code) {
     window._allowPreview = !1;
     showMessage(window._languages["msgPreviewModeOff"]);
   }
   // 临时开启/关闭【自动保存】
-  if (e.altKey && "f" === e.key) {
+  if (e.altKey && "KeyF" === e.code) {
     window._autoSave = !window._autoSave;
     if (!window._autoSave) {
       showMessage(window._languages["msgAutoSaveOff"])
@@ -544,7 +544,7 @@ document.addEventListener("keydown", (e => {
     }
   }
   // 快捷键——显示/隐藏检索面板
-  if (e.altKey && "p" === e.key) {
+  if (e.altKey && "KeyP" === e.code) {
     if (searchBlocksPanel.style.visibility === "hidden") {
       searchBlocksPanel.style.visibility = "visible";
       keywordBtn.focus();
@@ -553,7 +553,7 @@ document.addEventListener("keydown", (e => {
     }
   }
   // 快捷键——显示/隐藏iframe中搜索、高亮文本的面板
-  if (e.altKey && "o" === e.key) {
+  if (e.altKey && "KeyO" === e.code) {
     if (searchIframeTextPanel.style.visibility === "hidden") {
       searchIframeTextPanel.style.visibility = "visible";
       keywordInput.focus();
@@ -562,7 +562,7 @@ document.addEventListener("keydown", (e => {
     }
   }
   // 全屏
-  if (e.altKey && "y" === e.key) {
+  if (e.altKey && "KeyY" === e.code) {
     if (window?.frameElement?.parentElement?.parentElement?.parentElement?.parentElement?.parentElement?.classList?.contains("protyle")) {
       if (window?.frameElement?.parentElement?.parentElement?.parentElement?.parentElement?.parentElement?.classList?.contains("fullscreen")) {
         window.frameElement.parentElement.parentElement.parentElement.parentElement.parentElement.classList.remove("fullscreen");
