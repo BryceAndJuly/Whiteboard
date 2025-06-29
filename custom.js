@@ -129,7 +129,7 @@ checkVersion();
 // 默认关闭悬浮预览
 window._allowPreview = !1;
 // 当前使用的主题，深色/浅色
-window._currentThemePath = localStorage?.getItem("excalidraw-theme") === "dark" ? "./theme/dark.css" : "./theme/theme.css";
+window._currentThemePath = window.top.siyuan.config.appearance.mode===1 ? "./theme/dark.css" : "./theme/theme.css";
 // 保存时默认将白板中的文本内容写入到文档——备注中，方便全局检索
 window._allowSetMemo = true;
 // 是否默认开启自动保存
@@ -576,7 +576,7 @@ document.addEventListener("keydown", (e => {
 
 // 检索面板使用深色主题
 function setColor() {
-  if (localStorage?.getItem("excalidraw-theme") === "dark") {
+  if (window.top.siyuan.config.appearance.mode===1) {
     try {
       let pannel = document.getElementById("searchBlocksPanel");
       pannel.classList.add("dark");

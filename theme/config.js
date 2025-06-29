@@ -184,8 +184,11 @@ async function renderMermaid() {
   if (mermaidElements.length > 0) {
     await addScript("./theme/mermaid.min.js")
     let graphObj = new Object();
+    // 适配深色模式
+    let mermaidTheme = window?.top?.siyuan?.config?.appearance?.mode===1?"dark":"light"
     mermaid.initialize({
-      startOnLoad: false
+      startOnLoad: false,
+      theme:mermaidTheme
     });
     for (let element of mermaidElements) {
       const content = window.top.Lute.UnEscapeHTMLStr(element.getAttribute("data-content"));

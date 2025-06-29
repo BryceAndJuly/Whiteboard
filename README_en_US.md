@@ -5,8 +5,15 @@
 ## 1. Current Version
 ### V2.0.8
 
-* Issue fixed: Incompatibility of some shortcut keys on macOS. Reference: [Issue:68](https://github.com/BryceAndJuly/Whiteboard/issues/68)
-* Improvement: Record the current status of  `Snap to Object (Alt+S)`  when saving the whiteboard.
+* Bug Fixes:
+
+  * Some shortcuts are incompatible with MacOS. Reference: [Issue:68](https://github.com/BryceAndJuly/Whiteboard/issues/68)
+  * The Mermaid diagrams embedded in the whiteboard are not adapted to dark mode.
+* Improvements:
+
+  * The whiteboard's theme mode (dark/light) is defaulted to match that of the note-taking software. If the whiteboard does not change when the software's theme mode is switched, simply refresh the whiteboard.
+  * Record the current state of  `Snap to Object (Alt+S)`  when saving the whiteboard.
+  * Upgrade Mermaid to the latest version V11.7.0.
 
 ### V2.0.7
 

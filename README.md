@@ -5,8 +5,15 @@
 ## 一、当前版本
 ### V2.0.8
 
-* 修复问题：部分快捷键在MacOS上不兼容。参考：[Issue:68](https://github.com/BryceAndJuly/Whiteboard/issues/68)
-* 改进：保存时记录白板当前`吸附至对象（Alt+S）`的状态
+* 修复问题：
+
+  * 部分快捷键在`MacOS`上不兼容。参考：[Issue:68](https://github.com/BryceAndJuly/Whiteboard/issues/68)
+  * 嵌入到白板的`Mermaid`图未适配深色模式。
+* 改进：
+
+  * 白板的主题模式（深色/浅色）默认与笔记软件的保持一致。若软件的主题模式切换后白板未跟随变化，只需刷新一下白板即可。
+  * 保存时记录白板当前`吸附至对象（Alt+S）`的状态
+  * `Mermaid`升级到最新版的`V11.7.0`
 
 ### V2.0.7
 
