@@ -40,13 +40,13 @@ span.b3-chip.b3-chip--info.b3-chip--small[data-type="block-more"] {
     position: relative;
 }
 .av__gallery-img--fit {
-    background-size: contain !important;
+    object-fit: contain;
 }
 .av__gallery-img {
     height: 100%;
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-size: cover;
+    object-fit: cover;
+    width: 100%;
+    object-position: center;
 }
 .av__gallery-cover {
     border-bottom: 1px solid var(--b3-border-color);
