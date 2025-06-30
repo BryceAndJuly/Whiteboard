@@ -305,13 +305,8 @@ iframe {
 }
 /* 数据库表格——自定义样式----------------------------------------------------------- */
 
-/* 单元格垂直居中 */
-.av__cell {
-    display: flex;
-    align-items: center;
-}
 /* 图片显示大一点 */
-img.av__cellassetimg {
+.av[data-av-type="table"] img.av__cellassetimg {
     max-height: 86px;
 }
 /* 数据表格——勾选框 */
