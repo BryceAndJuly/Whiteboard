@@ -12,7 +12,7 @@
 * Improvements:
 
   * The whiteboard's theme mode (dark/light) is defaulted to match that of the note-taking software. If the whiteboard does not change when the software's theme mode is switched, simply refresh the whiteboard.
-  * Record the current state of  `Snap to Object (Alt+S)`  when saving the whiteboard.
+  * When saving the whiteboard, record the status of "Snapping to Object (Alt+S)" and the font size (currentItemFontSize) at the time of the last edit.
   * Upgrade Mermaid to the latest version V11.7.0.
 
 ### V2.0.7
