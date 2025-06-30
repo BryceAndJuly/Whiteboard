@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover,shrink-to-fit=no" />
   <script>
     try {
-      //检查当前的设备，如果是MacOS，处理保存时按键不一样的问题
       window._isDarwin = /Mac|iPod|iPhone|iPad/.test(navigator.platform);
       const isMobile = navigator.userAgent.match(/android|iphone|ipad|ipod/i);
       window.isNodeBlockQueryEmbed = window?.frameElement?.parentElement?.parentElement?.parentElement?.classList?.contains("protyle-wysiwyg__embed");
