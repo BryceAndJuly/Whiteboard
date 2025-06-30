@@ -13,6 +13,10 @@
     height: 20px;
     cursor: pointer;
     z-index: 2;
+    visibility: hidden;
+}
+body:hover #refreshDoc{
+    visibility: visible;
 }
 #refreshDoc:hover{
     color: #e03131;

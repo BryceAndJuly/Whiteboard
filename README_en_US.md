@@ -13,6 +13,7 @@
 
   * The whiteboard's theme mode (dark/light) is defaulted to match that of the note-taking software. If the whiteboard does not change when the software's theme mode is switched, simply refresh the whiteboard.
   * When saving the whiteboard, record the status of "Snapping to Object (Alt+S)" and the font size (currentItemFontSize) at the time of the last edit.
+  * The reload button in the upper right corner of the content block embedded in the whiteboard is hidden by default and will be displayed when the mouse hovers over the card.
   * Upgrade Mermaid to the latest version V11.7.0.
 
 ### V2.0.7
