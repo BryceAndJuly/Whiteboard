@@ -128,7 +128,7 @@ checkVersion();
 
 // 默认关闭悬浮预览
 window._allowPreview = !1;
-// 当前使用的主题，深色/浅色
+// 嵌入到白板的内容块，所使用的主题:深色/浅色
 window._currentThemePath = window.top.siyuan.config.appearance.mode===1 ? "./theme/dark.css" : "./theme/theme.css";
 // 保存时默认将白板中的文本内容写入到文档——备注中，方便全局检索
 window._allowSetMemo = true;
