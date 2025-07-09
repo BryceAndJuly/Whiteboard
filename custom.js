@@ -171,7 +171,7 @@ async function SaveBlockRef() {
     r.forEach(item => {
       if (item.link && item.link.match(/siyuan\:\/\/blocks\/\d{14}-\w{7}/)) {
         let id = item.link.split("siyuan://blocks/")[1];
-        str += `* ((${id} '${id}'))` + "\n"
+        str += `- ((${id} "${id}"))` + "\n"
       }
     })
   }
@@ -228,9 +228,9 @@ async function FixBrokenLinks() {
     })
     if (res?.data?.length > 0) {
       res.data.forEach((item) => {
-        const result = item.markdown.match(/\* \(\((\d{14}-\w{7}) \'(\d{14}-\w{7})\'\)\)/);
+        const result = item.markdown.match(/(\*|\-) \(\((\d{14}-\w{7}) (\'|\")(\d{14}-\w{7})(\'|\")\)\)/);
         if (result) {
-          newIndex[result[2]] = result[1]
+          newIndex[result[4]] = result[2]
         }
       })
     }
