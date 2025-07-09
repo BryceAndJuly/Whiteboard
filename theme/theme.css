@@ -305,11 +305,6 @@ iframe {
 
 /* 数据库表格——自定义样式----------------------------------------------------------- */
 
-
-/* 图片显示大一点 */
-.av[data-av-type="table"] img.av__cellassetimg {
-    max-height: 86px;
-}
 /* 数据表格——勾选框 */
 .av__cell.av__cell-check {
     background: #72c37266;
