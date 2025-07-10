@@ -2,7 +2,7 @@
   "name": "Whiteboard",
   "author": "BryceAndJuly",
   "url": "https://github.com/BryceAndJuly/Whiteboard",
-  "version": "2.0.8",
+  "version": "2.0.9",
   "minAppVersion": "2.9.0",
   "displayName": {
     "default": "Whiteboard",
@@ -11,7 +11,7 @@
   "description": {
     "default": "一个离线版的Excalidraw，嵌入后会默认铺满文档区域",
     "zh_CN": "一个离线版的Excalidraw，嵌入后会默认铺满文档区域",
-    "en_US": "An offline version of the Excalidraw whiteboard. After embedding, it will default to fill the document area."
+    "en_US": "An offline version of the Excalidraw. After embedding, it will default to fill the document area."
   },
   "readme": {
     "default": "README.md",
