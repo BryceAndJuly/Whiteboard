@@ -166,7 +166,10 @@ html.dark #refreshBtn:hover {
 :root[dir=ltr] .excalidraw .layer-ui__wrapper .zen-mode-transition.transition-right {
   transform: none !important;
 }
-
+/* 禅模式——不隐藏【撤销】、【重做】按钮 */
+.excalidraw .layer-ui__wrapper .zen-mode-transition.layer-ui__wrapper__footer-left--transition-bottom {
+  transform: none !important;
+}
 
 /* 检索面板——相关样式 */
 .top {
