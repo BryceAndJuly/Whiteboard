@@ -39,14 +39,15 @@ span.b3-chip.b3-chip--info.b3-chip--small[data-type="block-more"] {
     flex-direction: column;
     position: relative;
 }
-.av__gallery-img--fit {
-    object-fit: contain;
-}
 .av__gallery-img {
     height: 100%;
     object-fit: cover;
     width: 100%;
     object-position: center;
+}
+/* 开启【自适应图片大小】 */
+.av__gallery-img--fit {
+    object-fit: contain;
 }
 .av__gallery-cover {
     border-bottom: 1px solid var(--b3-border-color);
