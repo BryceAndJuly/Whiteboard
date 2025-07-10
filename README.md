@@ -3,6 +3,9 @@
 * 如果在已有其他内容的文档中误嵌入该挂件，可参考：[误操作插入挂件后如何撤销?](https://github.com/BryceAndJuly/Whiteboard/issues/48)
 
 ## 一、当前版本
+### V2.0.9
+
+- 处理兼容性：在笔记软件`V3.2.0`中，白板的【修复块超链接】功能失效。
 ### V2.0.8
 
 * 修复问题：
@@ -25,7 +28,7 @@
 
 ---
 
-对于当前版本：**V2.0.8**
+对于当前版本：**V2.0.9**
 
 如果你**不想默认开启自动保存功能**，可以使用VS Code之类的编辑器打开挂件文件夹`Whiteboard`——`custom.js`，
 
@@ -251,7 +254,7 @@ assets/ExcalidrawFiles/20231227015401-w0olmpi.excalidraw
 
 ### 1、手动更改画笔的粗细
 
-对于版本V2.0.8，打开挂件文件夹`Whiteboard`——`assets`——`index-ZsssFvwm.js`,在该js文件中搜索：
+对于版本V2.0.9，打开挂件文件夹`Whiteboard`——`assets`——`index-ZsssFvwm.js`,在该js文件中搜索：
 
 ```css
 n={simulatePressure:e.simulatePressure,size:e.strokeWidth*1.2,thinning
