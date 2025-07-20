@@ -32,3 +32,13 @@ svg.icon:active{
     margin: 0 5px 0 -4px;
     vertical-align: top;
 }
+/* 卡片视图——>设置——>布局——>卡片预览：内容块 */
+.av__gallery-content {
+    margin: 8px 8px 0;
+    color: var(--b3-theme-on-surface);
+    transform: scale(0.85);
+    left: 0;
+    right: 0;
+    transform-origin: 0 0;
+    width: calc(117.6470588235% - 16px);
+}
