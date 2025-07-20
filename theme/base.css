@@ -24,3 +24,11 @@ body:hover #refreshDoc{
 svg.icon:active{
     transform: scale(1.2);
 }
+.av__cell .b3-menu__avemoji {
+    display: inline-block;
+    font-size: 1em;
+    line-height: 1.625;
+    height: auto;
+    margin: 0 5px 0 -4px;
+    vertical-align: top;
+}

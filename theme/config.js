@@ -386,7 +386,7 @@ function renderCell(cellValue) {
     }
   } else if (cellValue.type === "relation") {
     cellValue?.relation?.contents?.forEach((item, index) => {
-      text += `<span class="av__celltext--ref" style="margin-right: 8px" data-id="${cellValue?.relation?.blockIDs[index]}">${item?.block?.content || item || "Untitled"}</span>`;
+      text += `<span class="b3-menu__avemoji">➖</span><span class="av__celltext--ref" style="margin-right: 8px" data-id="${cellValue?.relation?.blockIDs[index]}">${item?.block?.content || item || "Untitled"}</span>`;
     });
   }
   if (["text", "template", "url", "email", "phone", "number", "date", "created", "updated"].includes(cellValue.type) &&
@@ -673,13 +673,7 @@ async function avRender() {
               if (cell.valueType === "checkbox") {
                 checkClass = cell.value?.checkbox?.checked ? " av__cell-check" : " av__cell-uncheck";
               }
-              tableHTML += `<div class="av__cell${checkClass}" data-id="${cell.id}" data-col-id="${data.columns[index].id}"
-                          ${cell.valueType === "block" ? 'data-block-id="' + (cell.value.block.id || "") + '"' : ""} data-wrap="${data.columns[index].wrap}" 
-                          ${cell.value?.isDetached ? ' data-detached="true"' : ""} 
-                          style="width: ${data.columns[index].width || "200px"};
-                          ${cell.valueType === "number" ? "text-align: right;" : ""}
-                          ${cell.bgColor ? `background-color:${cell.bgColor};` : ""}
-                          ${cell.color ? `color:${cell.color};` : ""}">${renderCell(cell.value)}</div>`;
+              tableHTML += `<div class="av__cell${checkClass}" data-id="${cell.id}" data-col-id="${data.columns[index].id}" ${cell.valueType === "block" ? 'data-block-id="' + (cell.value.block.id || "") + '"' : ""} data-wrap="${data.columns[index].wrap}" ${cell.value?.isDetached ? ' data-detached="true"' : ""}  style="width: ${data.columns[index].width || "200px"}; ${cell.valueType === "number" ? "text-align: right;" : ""} ${cell.bgColor ? `background-color:${cell.bgColor};` : ""} ${cell.color ? `color:${cell.color};` : ""}">${renderCell(cell.value)}</div>`;
 
               if (pinIndex === index) {
                 tableHTML += "</div>";
