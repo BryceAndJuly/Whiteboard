@@ -3,6 +3,16 @@
 * If this widget is accidentally embedded in a document that already contains other content, please refer to: [How to undo after accidentally inserting a widget?](https://github.com/BryceAndJuly/Whiteboard/issues/48)
 
 ## 1. Current Version
+### V2.0.10
+Test environment: `SiYuan V3.2.1`, `Windows 11 Home Chinese Edition 24H2`
+
+Fix styles:
+
+- Delete the undefined font styles in `base.css`
+- `Attribute View`: Add the two missing icons, see the preview image
+- `Attribute View` - Settings - Layout - Card Preview: When set to content block, add the missing styles
+
+
 ### V2.0.9
 
 - Handling compatibility: In the software` V3.2.0,` the  `Fix Block Hyperlink` function of the whiteboard is invalid.
@@ -28,7 +38,7 @@ Testing environment: SiYuan V3.2.0 preview version, Windows 11 Home Chinese vers
 
 ---
 
-For the current version: **V2.0.9**
+For the current version: **V2.0.10**
 
 If you **do not want auto-save to be enabled by default**, open the widget folder `Whiteboard` -> `custom.js` in an editor like VS Code and search for:
 
@@ -252,7 +262,7 @@ A  `Text Search Panel`  is added to the upper right corner, specifically for sea
 
 ### 1. Adjust Brush Thickness Manually
 
-For V2.0.9, open `Whiteboard` -> `assets` -> `index-ZsssFvwm.js` and search for:
+For V2.0.10, open `Whiteboard` -> `assets` -> `index-ZsssFvwm.js` and search for:
 
 ```css
 n={simulatePressure:e.simulatePressure,size:e.strokeWidth*1.2,thinning

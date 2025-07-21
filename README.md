@@ -3,6 +3,16 @@
 * 如果在已有其他内容的文档中误嵌入该挂件，可参考：[误操作插入挂件后如何撤销?](https://github.com/BryceAndJuly/Whiteboard/issues/48)
 
 ## 一、当前版本
+### V2.0.10
+测试环境：`SiYuan V3.2.1`，`Windows 11家庭中文版24H2`
+
+修复样式：
+
+- 删除`base.css`中未定义的字体样式
+- `Attribute View`：补充缺失的两个图标，见预览图
+- `Attribute View`——设置——布局——卡片预览，当设置为内容块时，补充缺失的样式
+
+
 ### V2.0.9
 
 - 处理兼容性：在笔记软件`V3.2.0`中，白板的【修复块超链接】功能失效。
@@ -28,7 +38,7 @@
 
 ---
 
-对于当前版本：**V2.0.9**
+对于当前版本：**V2.0.10**
 
 如果你**不想默认开启自动保存功能**，可以使用VS Code之类的编辑器打开挂件文件夹`Whiteboard`——`custom.js`，
 
@@ -254,7 +264,7 @@ assets/ExcalidrawFiles/20231227015401-w0olmpi.excalidraw
 
 ### 1、手动更改画笔的粗细
 
-对于版本V2.0.9，打开挂件文件夹`Whiteboard`——`assets`——`index-ZsssFvwm.js`,在该js文件中搜索：
+对于版本V2.0.10，打开挂件文件夹`Whiteboard`——`assets`——`index-ZsssFvwm.js`,在该js文件中搜索：
 
 ```css
 n={simulatePressure:e.simulatePressure,size:e.strokeWidth*1.2,thinning
