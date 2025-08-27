@@ -3,42 +3,14 @@
 * If this widget is accidentally embedded in a document that already contains other content, please refer to: [How to undo after accidentally inserting a widget?](https://github.com/BryceAndJuly/Whiteboard/issues/48)
 
 ## 1. Current Version
-### V2.0.10
-Test environment: `SiYuan V3.2.1`, `Windows 11 Home Chinese Edition 24H2`
+### V2.0.11
+Test Environment: `SiYuan V3.3.0`, `Windows 11 Home Chinese Edition 24H2`
+- Handling Compatibility: Support rendering database groupings in the whiteboard. Reference: [Database grouping by field](https://github.com/siyuan-note/siyuan/issues/10964)
 
-Fix styles:
-
-- Delete the undefined font styles in `base.css`
-- `Attribute View`: Add the two missing icons, see the preview image
-- `Attribute View` - Settings - Layout - Card Preview: When set to content block, add the missing styles
-
-
-### V2.0.9
-
-- Handling compatibility: In the software` V3.2.0,` the  `Fix Block Hyperlink` function of the whiteboard is invalid.
-### V2.0.8
-
-* Bug Fixes:
-
-  * Some shortcuts are incompatible with MacOS. Reference: [Issue:68](https://github.com/BryceAndJuly/Whiteboard/issues/68)
-  * The Mermaid diagrams embedded in the whiteboard are not adapted to dark mode.
-* Improvements:
-
-  * The whiteboard's theme mode (dark/light) is defaulted to match that of the note-taking software. If the whiteboard does not change when the software's theme mode is switched, simply refresh the whiteboard.
-  * When saving the whiteboard, record the status of "Snapping to Object (Alt+S)" and the font size (currentItemFontSize) at the time of the last edit.
-  * The reload button in the upper right corner of the content block embedded in the whiteboard is hidden by default and will be displayed when the mouse hovers over the card.
-  * Upgrade Mermaid to the latest version V11.7.0.
-
-### V2.0.7
-
-Testing environment: SiYuan V3.2.0 preview version, Windows 11 Home Chinese version 24H2
-
-- **Fixed Issue:**  When clicking the [Click to Start Interaction] button in the center of a card (or double-clicking the edge area of the card) to enter the card for content blocks embedded in the whiteboard, using the mouse wheel often fails to scroll the page.
-- **Improvement:** Supports rendering the gallery view of databases in the whiteboard.
 
 ---
 
-For the current version: **V2.0.10**
+For the current version: **V2.0.11**
 
 If you **do not want auto-save to be enabled by default**, open the widget folder `Whiteboard` -> `custom.js` in an editor like VS Code and search for:
 
@@ -262,7 +234,7 @@ A  `Text Search Panel`  is added to the upper right corner, specifically for sea
 
 ### 1. Adjust Brush Thickness Manually
 
-For V2.0.10, open `Whiteboard` -> `assets` -> `index-ZsssFvwm.js` and search for:
+For V2.0.11, open `Whiteboard` -> `assets` -> `index-ZsssFvwm.js` and search for:
 
 ```css
 n={simulatePressure:e.simulatePressure,size:e.strokeWidth*1.2,thinning
@@ -375,6 +347,41 @@ Fix the issues:
 
 * In V2.0.5, after closing the text search box via the shortcut key Alt+o, the keyword highlighting in the iframe is not automatically removed.  
   > Note: In V2.0.5, the search box can still be closed and the highlighting removed via the "X" close button on the right side of the text search box.
+
+### V2.0.7
+
+Testing environment: SiYuan V3.2.0 preview version, Windows 11 Home Chinese version 24H2
+
+- **Fixed Issue:**  When clicking the [Click to Start Interaction] button in the center of a card (or double-clicking the edge area of the card) to enter the card for content blocks embedded in the whiteboard, using the mouse wheel often fails to scroll the page.
+- **Improvement:** Supports rendering the gallery view of databases in the whiteboard.
+
+
+### V2.0.8
+
+* Bug Fixes:
+
+  * Some shortcuts are incompatible with MacOS. Reference: [Issue:68](https://github.com/BryceAndJuly/Whiteboard/issues/68)
+  * The Mermaid diagrams embedded in the whiteboard are not adapted to dark mode.
+* Improvements:
+
+  * The whiteboard's theme mode (dark/light) is defaulted to match that of the note-taking software. If the whiteboard does not change when the software's theme mode is switched, simply refresh the whiteboard.
+  * When saving the whiteboard, record the status of "Snapping to Object (Alt+S)" and the font size (currentItemFontSize) at the time of the last edit.
+  * The reload button in the upper right corner of the content block embedded in the whiteboard is hidden by default and will be displayed when the mouse hovers over the card.
+  * Upgrade Mermaid to the latest version V11.7.0.
+
+### V2.0.9
+
+- Handling compatibility: In the software` V3.2.0,` the  `Fix Block Hyperlink` function of the whiteboard is invalid.
+
+### V2.0.10
+Test environment: `SiYuan V3.2.1`, `Windows 11 Home Chinese Edition 24H2`
+
+Fix styles:
+
+- Delete the undefined font styles in `base.css`
+- `Attribute View`: Add the two missing icons, see the preview image
+- `Attribute View` - Settings - Layout - Card Preview: When set to content block, add the missing styles
+
 
 ## 8. References and Thanks
 

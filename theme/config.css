@@ -135,3 +135,43 @@ body:hover {
 .av span.block__icon[data-type="copy"] {
     display: none;
 }
+/* 属性视图——关联 */
+.av__cell--relation {
+    margin-right: 12px;
+}
+/* 属性视图——表格——分组标题 */
+.av__group-title {
+    position: sticky;
+    left: 0;
+    clear: both;
+    padding: 8px 0 8px 0;
+    display: flex;
+    align-items: center;
+    background-color: var(--b3-theme-surface);
+    border-radius: 3px;
+}
+/* 属性视图——表格——分组条目计数 */
+.av__group-counter {
+    font-size: 80%;
+    color: var(--b3-theme-on-surface-light);
+    margin: 0 8px;
+}
+
+.av__gallery-tip img:first-child, .av__gallery-tip svg:first-child, .av__gallery-tip svg.ariaLabel, .av__gallery-name img:first-child, .av__gallery-name svg:first-child, .av__gallery-name svg.ariaLabel {
+    height: 1.625em;
+    width: calc(1.625em - 10px);
+    margin: 0 5px 0 0;
+    font-size: 1em;
+    vertical-align: bottom;
+}
+.av__gallery-name {
+    opacity: .38;
+    padding: 2px 4px;
+    width: 100%;
+    white-space: normal;
+    box-sizing: border-box;
+}
+.av {
+    display: flex;
+    max-width: 100%;
+}
