@@ -3,7 +3,7 @@
 * If this widget is accidentally embedded in a document that already contains other content, please refer to: [How to undo after accidentally inserting a widget?](https://github.com/BryceAndJuly/Whiteboard/issues/70#issuecomment-3027972161)
 
 ## 1. Current Version
-### V2.0.11
+### V2.0.12
 Test Environment: `SiYuan V3.4.0`, `Windows 11 Home Chinese Edition 24H2`
 - Handling Compatibility: Support for rendering the kanban view of the database in the whiteboard.. Reference: [Database kanban view](https://github.com/siyuan-note/siyuan/issues/8873)
 
