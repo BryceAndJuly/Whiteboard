@@ -1,16 +1,16 @@
 ## Top Pin  
 * It is recommended to read through this document before use.  
-* If this widget is accidentally embedded in a document that already contains other content, please refer to: [How to undo after accidentally inserting a widget?](https://github.com/BryceAndJuly/Whiteboard/issues/48)
+* If this widget is accidentally embedded in a document that already contains other content, please refer to: [How to undo after accidentally inserting a widget?](https://github.com/BryceAndJuly/Whiteboard/issues/70#issuecomment-3027972161)
 
 ## 1. Current Version
 ### V2.0.11
-Test Environment: `SiYuan V3.3.0`, `Windows 11 Home Chinese Edition 24H2`
-- Handling Compatibility: Support rendering database groupings in the whiteboard. Reference: [Database grouping by field](https://github.com/siyuan-note/siyuan/issues/10964)
+Test Environment: `SiYuan V3.4.0`, `Windows 11 Home Chinese Edition 24H2`
+- Handling Compatibility: Support for rendering the kanban view of the database in the whiteboard.. Reference: [Database kanban view](https://github.com/siyuan-note/siyuan/issues/8873)
 
 
 ---
 
-For the current version: **V2.0.11**
+For the current version: **V2.0.12**
 
 If you **do not want auto-save to be enabled by default**, open the widget folder `Whiteboard` -> `custom.js` in an editor like VS Code and search for:
 
@@ -234,7 +234,7 @@ A  `Text Search Panel`  is added to the upper right corner, specifically for sea
 
 ### 1. Adjust Brush Thickness Manually
 
-For V2.0.11, open `Whiteboard` -> `assets` -> `index-ZsssFvwm.js` and search for:
+For V2.0.12, open `Whiteboard` -> `assets` -> `index-ZsssFvwm.js` and search for:
 
 ```css
 n={simulatePressure:e.simulatePressure,size:e.strokeWidth*1.2,thinning
@@ -382,6 +382,9 @@ Fix styles:
 - `Attribute View`: Add the two missing icons, see the preview image
 - `Attribute View` - Settings - Layout - Card Preview: When set to content block, add the missing styles
 
+### V2.0.11
+Test Environment: `SiYuan V3.3.0`, `Windows 11 Home Chinese Edition 24H2`
+- Handling Compatibility: Support rendering database groupings in the whiteboard. Reference: [Database grouping by field](https://github.com/siyuan-note/siyuan/issues/10964)
 
 ## 8. References and Thanks
 

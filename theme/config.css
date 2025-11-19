@@ -51,7 +51,6 @@ span.b3-chip.b3-chip--info.b3-chip--small[data-type="block-more"] {
 }
 .av__gallery-cover {
     border-bottom: 1px solid var(--b3-border-color);
-    background-color: var(--b3-theme-surface);
     border-radius: var(--b3-border-radius) var(--b3-border-radius) 0 0;
     overflow: hidden;
     position: relative;
@@ -174,4 +173,44 @@ body:hover {
 .av {
     display: flex;
     max-width: 100%;
+}
+/* 看板 */
+.av__kanban-group .av__group-title {
+    padding-top: 0;
+}
+.av__kanban {
+    overflow: auto;
+    gap: 16px;
+    padding: 10px 1px;
+    display: flex
+;
+    align-items: flex-start;
+}
+.av__kanban-group {
+    width: 260px;
+    padding: 8px;
+    border-radius: var(--b3-border-radius);
+    position: relative;
+    flex-shrink: 0;
+}
+.fn__ellipsis {
+    word-break: break-all;
+    -webkit-line-clamp: 1;
+    overflow: hidden !important;
+    text-overflow: ellipsis;
+    -webkit-box-orient: vertical;
+    display: -webkit-box;
+    display: block;
+}
+.av__gallery-fields .av__cell {
+    padding: 2px 4px;
+    border-right: 0;
+    min-height: calc(1.625em + 4px);
+}
+.av__kanban-group--small {
+    width: 180px;
+}
+
+.av__kanban-group--big {
+    width: 320px;
 }

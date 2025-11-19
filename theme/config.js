@@ -587,6 +587,8 @@ function getViewIcon(type) {
       return "iconTable";
     case "gallery":
       return "iconGallery";
+    case "kanban":
+      return "iconBoard";
   }
 }
 
@@ -682,6 +684,9 @@ function addAttributeViewIcon() {
   <symbol id="iconForward" viewBox="0 0 32 32">
     <path d="M16 30.5l-1.903-1.948 11.192-11.192h-23.789v-2.719h23.789l-11.192-11.192 1.903-1.948 14.5 14.5z"></path>
   </symbol> 
+  <symbol id="iconBoard" viewBox="0 0 32 32">
+    <path d="M27.8 4.2h-23.6c-1.623 0-2.95 1.327-2.95 2.95v17.7c0 1.622 1.327 2.95 2.95 2.95h23.6c1.622 0 2.95-1.328 2.95-2.95v-17.7c0-1.623-1.328-2.95-2.95-2.95zM10.1 24.85h-5.9v-17.7h5.9v17.7zM18.95 24.85h-5.9v-17.7h5.9v17.7zM27.8 24.85h-5.9v-17.7h5.9v17.7z"></path>
+  </symbol>
 </defs></svg>`
   const svg = document.getElementById("svg");
   svg.insertAdjacentHTML("afterend", icon)
@@ -922,6 +927,97 @@ ${cell.color ? `color:${cell.color};` : ""}">${renderCell(cell.value, rowIndex, 
 </div>`.replaceAll(`background-image:url('assets/`, `background-image:url('${window.top.location.origin}/assets/`).replaceAll(`src="assets/`, `src="${window.top.location.origin}/assets/`);
 };
 
+function getKanbanTitleHTML(group, counter) {
+  let nameHTML = "";
+  if (["mSelect", "select"].includes(group.groupValue.type)) {
+    group.groupValue.mSelect.forEach((item) => {
+      nameHTML += `<span class="b3-chip" style="background-color:var(--b3-font-background${item.color});color:var(--b3-font-color${item.color})">${escapeHtml(item.content)}</span>`;
+    });
+  } else if (group.groupValue.type === "checkbox") {
+    nameHTML = `<svg style="width:calc(1.625em - 12px);height:calc(1.625em - 12px);margin: 4px 0;float: left;"><use xlink:href="#icon${group.groupValue.checkbox.checked ? "Check" : "Uncheck"}"></use></svg>`;
+  } else {
+    nameHTML = group.name;
+  }
+  return `<div class="av__group-title">
+  <span class="av__group-name fn__ellipsis" style="white-space: nowrap;">${nameHTML}</span>
+  ${counter === 0 ? '<span class="fn__space"></span>' : `<span aria-label="${window.top.siyuan.languages.entryNum}" data-position="north" class="av__group-counter ariaLabel">(${counter})</span>`}
+  <span class="fn__flex-1"></span>
+  <span class="av__group-icon av__group-icon--hover ariaLabel" data-type="av-add-top" data-position="north" aria-label="${window.top.siyuan.languages.newRow}"></span>
+</div>`;
+
+}
+
+function getKanbanHTML(data){
+  let galleryHTML = "";
+  // body
+  data.cards.forEach((item, rowIndex) => {
+      galleryHTML += `<div data-id="${item.id}" draggable="true" class="av__gallery-item">`;
+      if (data.coverFrom !== 0) {
+          const coverClass = "av__gallery-cover av__gallery-cover--" + data.cardAspectRatio;
+          if (item.coverURL) {
+              if (item.coverURL.startsWith("background")) {
+                  galleryHTML += `<div class="${coverClass}"><img class="av__gallery-img" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" style="${item.coverURL}"></div>`;
+              } else {
+                  galleryHTML += `<div class="${coverClass}"><img loading="lazy" class="av__gallery-img${data.fitImage ? " av__gallery-img--fit" : ""}" src="${getCompressURL(item.coverURL)}"></div>`;
+              }
+          } else if (item.coverContent.trim()) {
+              galleryHTML += `<div class="${coverClass}"><div class="av__gallery-content">${item.coverContent}</div><div></div></div>`;
+          }
+      }
+      galleryHTML += '<div class="av__gallery-fields">';
+      item.values.forEach((cell, fieldsIndex) => {
+          if (data.fields[fieldsIndex].hidden) {
+              return;
+          }
+          let checkClass = "";
+          if (cell.valueType === "checkbox") {
+              checkClass = cell.value?.checkbox?.checked ? " av__cell-check" : " av__cell-uncheck";
+          }
+          const isEmpty = cellValueIsEmpty(cell.value);
+          let ariaLabel = escapeAttr(data.fields[fieldsIndex].name) || getColNameByType(data.fields[fieldsIndex].type);
+          if (data.fields[fieldsIndex].desc) {
+              ariaLabel += escapeAttr(`<div class="ft__on-surface">${data.fields[fieldsIndex].desc}</div>`);
+          }
+          if (cell.valueType === "checkbox" && !data.displayFieldName) {
+              cell.value.checkbox.content = data.fields[fieldsIndex].name || getColNameByType(data.fields[fieldsIndex].type);
+          }
+          const cellHTML = `<div class="av__cell${checkClass}${data.displayFieldName ? "" : " ariaLabel"}" 
+data-wrap="${data.fields[fieldsIndex].wrap}" 
+aria-label="${ariaLabel}" 
+data-position="5west"
+data-id="${cell.id}" 
+data-field-id="${data.fields[fieldsIndex].id}" 
+data-dtype="${cell.valueType}" 
+${cell.value?.isDetached ? ' data-detached="true"' : ""} 
+style="${cell.bgColor ? `background-color:${cell.bgColor};` : ""}
+${cell.color ? `color:${cell.color};` : ""}">${renderCell(cell.value, rowIndex, data.showIcon, "kanban")}</div>`;
+          if (data.displayFieldName) {
+              galleryHTML += `<div class="av__gallery-field av__gallery-field--name" data-empty="${isEmpty}">
+  <div class="av__gallery-name">
+      ${data.fields[fieldsIndex].icon ? unicode2Emoji(data.fields[fieldsIndex].icon, undefined, true) : `<svg><use xlink:href="#${getColIconByType(data.fields[fieldsIndex].type)}"></use></svg>`}${window.top.Lute.EscapeHTMLStr(data.fields[fieldsIndex].name)}
+      ${data.fields[fieldsIndex].desc ? `<svg aria-label="${data.fields[fieldsIndex].desc}" data-position="north" class="ariaLabel"><use xlink:href="#iconInfo"></use></svg>` : ""}
+  </div>
+  ${cellHTML}
+</div>`;
+          } else {
+              galleryHTML += `<div class="av__gallery-field" data-empty="${isEmpty}">${cellHTML}</div>`;
+          }
+      });
+      galleryHTML += `</div></div>`;
+  });
+  return `<div class="av__gallery av__gallery--small">
+  ${galleryHTML}
+</div>
+<div class="av__gallery-load${data.cardCount > data.cards.length ? "" : " fn__none"}">
+  <button class="b3-button av__button" data-type="av-load-more">
+      <svg><use xlink:href="#iconArrowDown"></use></svg>
+      <span>${window.top.siyuan.languages.loadMore}</span>
+      <svg data-type="set-page-size" data-size="${data.pageSize}"><use xlink:href="#iconMore"></use></svg>
+  </button>
+</div>`.replaceAll(`background-image:url('assets/`, `background-image:url('${window.top.location.origin}/assets/`).replaceAll(`src="assets/`, `src="${window.top.location.origin}/assets/`);
+};
+
+
 // 渲染数据表格——数据库的表格视图、画廊视图
 async function avRender() {
   let avElements = Array.from(document.querySelectorAll('[data-type="NodeAttributeView"]'));
@@ -1002,6 +1098,30 @@ async function avRender() {
                 </div>
             </div>
         </div>`;
+          }
+        })
+      }
+      // 看板视图
+      else if (e.getAttribute("data-av-type") === "kanban") {
+        request("/api/av/renderAttributeView", {
+          "id": e.getAttribute("data-av-id"),
+          "viewID": e.getAttribute("custom-sy-av-view"),
+          "query": ""
+        }).then(response => {
+          const view = response.data.view;
+          if (view?.groups?.length - 1 > 0) {
+            let bodyHTML = "";
+            // 不显示最后一个空卡片
+            view.groups.pop();
+            view.groups.forEach((group) => {
+              if (group.groupHidden === 0) {
+                bodyHTML += `<div class="av__kanban-group${group.cardSize === 0 ? " av__kanban-group--small" : (group.cardSize === 2 ? " av__kanban-group--big" : "")}">
+        ${getKanbanTitleHTML(group, group.cardCount)}
+        <div data-group-id="${group.id}" data-page-size="${group.pageSize}" data-dtype="${group.groupKey.type}" class="av__body">${getKanbanHTML(group)}</div>
+    </div>`;
+              }
+            });
+            e.firstElementChild.outerHTML = `<div class="av__container fn__block">${genTabHeaderHTML(response.data)}<div class="av__kanban">${bodyHTML}</div></div>`;
           }
         })
       }
