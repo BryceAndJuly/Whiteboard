@@ -3,12 +3,39 @@
 * 如果在已有其他内容的文档中误嵌入该挂件，可参考：[误操作插入挂件后如何撤销?](https://github.com/BryceAndJuly/Whiteboard/issues/48)
 
 ## 一、当前版本
+### V2.0.13
+- 优化白板在`发布模式`、`全局只读模式`下的使用。
+
+使用说明：
+- 开启`发布服务`后，在浏览器打开发布地址查看笔记时，默认以`查看模式`打开白板，类似于其他文档的只读模式。
+- 白板的查看模式隐藏了大部分的按钮，只保留左下角的【缩放】按钮、右上角的【刷新】按钮，参考顶部预览图。
+- 在`设置`——`编辑器`——`只读模式`开启全局只读模式后，电脑端将以`查看模式`打开白板，否则默认以编辑模式打开。
+
+> 以`查看模式`打开白板**目前存在一个小问题**：就是打开后白板获取不到焦点，这会让白板中的快捷键（比如：`Ctrl`+`F`）未能生效。
+>
+> 解决办法是：打开白板后，鼠标单击一下左下角的【重置缩放】按钮或者【放大】、【缩小】按钮，让白板获得焦点，此后就可以正常使用白板的快捷键了。
+
+
+目前，白板的默认打开方式依然是编辑模式，如果想修改成查看模式，可以使用VS Code之类的编辑器打开挂件文件夹`Whiteboard`——`custom.js`，
+
+搜索
+
+```js
+window.viewModeEnabled = false;
+```
+
+改成：
+
+```js
+window.viewModeEnabled = true;
+```
+
 ### V2.0.12
 测试环境：`SiYuan V3.4.0`，`Windows 11家庭中文版24H2`
 - 处理兼容性：支持在白板中渲染数据库的看板视图。参考：[Database kanban view](https://github.com/siyuan-note/siyuan/issues/8873)
 ---
 
-对于当前版本：**V2.0.12**
+对于当前版本：**V2.0.13**
 
 如果你**不想默认开启自动保存功能**，可以使用VS Code之类的编辑器打开挂件文件夹`Whiteboard`——`custom.js`，
 
@@ -234,7 +261,7 @@ assets/ExcalidrawFiles/20231227015401-w0olmpi.excalidraw
 
 ### 1、手动更改画笔的粗细
 
-对于版本V2.0.12，打开挂件文件夹`Whiteboard`——`assets`——`index-ZsssFvwm.js`,在该js文件中搜索：
+对于版本V2.0.13，打开挂件文件夹`Whiteboard`——`assets`——`index-ZsssFvwm.js`,在该js文件中搜索：
 
 ```css
 n={simulatePressure:e.simulatePressure,size:e.strokeWidth*1.2,thinning

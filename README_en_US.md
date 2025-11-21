@@ -3,6 +3,35 @@
 * If this widget is accidentally embedded in a document that already contains other content, please refer to: [How to undo after accidentally inserting a widget?](https://github.com/BryceAndJuly/Whiteboard/issues/70#issuecomment-3027972161)
 
 ## 1. Current Version
+### V2.0.13
+
+- Optimize the usage of the whiteboard in `Publishing Mode` and `Global Read-Only Mode`.
+
+Instructions for Use:
+
+- After enabling the Publishing Service, when you open the publishing address in a browser to view notes, the whiteboard will open in `View Mode` by default, which is similar to the read-only mode of other documents.
+- Most buttons are hidden in the whiteboard's View Mode; only the Zoom button at the bottom left corner and the Refresh button at the top right corner are retained. Please refer to the preview image at the top for reference.
+- After enabling the Global Read-Only Mode via` Settings` → `Editor `→` Read-Only Mode,` the whiteboard will open in View Mode on the computer terminal; otherwise, it will open in Edit Mode by default.
+
+> **There is currently a minor issue when opening the whiteboard in View Mode:**  the whiteboard fails to gain focus after being opened, which prevents the shortcut keys in the whiteboard (e.g., Ctrl + F) from working.
+>
+> The solution is as follows: After opening the whiteboard, click the Reset Zoom button, Zoom In button, or Zoom Out button at the bottom left corner with your mouse to make the whiteboard gain focus. After that, you can use the whiteboard's shortcut keys normally.
+
+Currently, the default opening mode of the whiteboard is still Edit Mode. If you want to change it to View Mode, you can use an editor like VS Code to open the widget folder`Whiteboard`——`custom.js`
+
+search for
+
+```js
+window.viewModeEnabled = false;
+```
+
+Then change it to:
+
+```js
+window.viewModeEnabled = true;
+```
+
+
 ### V2.0.12
 Test Environment: `SiYuan V3.4.0`, `Windows 11 Home Chinese Edition 24H2`
 - Handling Compatibility: Support for rendering the kanban view of the database in the whiteboard.. Reference: [Database kanban view](https://github.com/siyuan-note/siyuan/issues/8873)
@@ -10,7 +39,7 @@ Test Environment: `SiYuan V3.4.0`, `Windows 11 Home Chinese Edition 24H2`
 
 ---
 
-For the current version: **V2.0.12**
+For the current version: **V2.0.13**
 
 If you **do not want auto-save to be enabled by default**, open the widget folder `Whiteboard` -> `custom.js` in an editor like VS Code and search for:
 
@@ -234,7 +263,7 @@ A  `Text Search Panel`  is added to the upper right corner, specifically for sea
 
 ### 1. Adjust Brush Thickness Manually
 
-For V2.0.12, open `Whiteboard` -> `assets` -> `index-ZsssFvwm.js` and search for:
+For V2.0.13, open `Whiteboard` -> `assets` -> `index-ZsssFvwm.js` and search for:
 
 ```css
 n={simulatePressure:e.simulatePressure,size:e.strokeWidth*1.2,thinning

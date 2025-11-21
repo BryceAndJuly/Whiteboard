@@ -375,3 +375,30 @@ button.topBarBtn {
 button.topBarBtn:hover {
   background-color: rgb(131, 131, 131);
 }
+
+body.viewmode .excalidraw .Stack_vertical,
+body.viewmode .excalidraw .App-menu_top,
+body.viewmode #refreshBtn,
+body.viewmode #saveBtn {
+  visibility: hidden;
+}
+
+/* 撤销、重做按钮 */
+body.viewmode .undo-redo-buttons.zen-mode-transition {
+  display: none !important;
+
+}
+/* 查看模式下，隐藏顶部菜单栏 */
+.excalidraw.excalidraw-container.excalidraw--view-mode .App-menu.App-menu_top {
+  visibility: hidden;
+}
+
+/* 查看模式下，隐藏【保存】按钮 */
+div#root:has(.excalidraw.excalidraw-container.excalidraw--view-mode)~#saveBtn {
+  display: none;
+}
+/* 调整查看模式下，刷新按钮的位置 */
+div#root:has(.excalidraw.excalidraw-container.excalidraw--view-mode)~#refreshBtn {
+  top: 30px;
+  right: 0px;
+}

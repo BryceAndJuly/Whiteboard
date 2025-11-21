@@ -136,6 +136,22 @@ window._allowSetMemo = true;
 window._autoSave = true;
 // 自动保存延时时间，单位：ms
 window._autoSaveDelay = 2000;
+// 默认关闭【查看模式】
+window.viewModeEnabled = false;
+
+
+
+// 发布模式、全局只读模式下，默认以【查看模式】打开白板
+if (window.top.siyuan.config.readonly || window.top.siyuan.config.editor.readOnly) {
+  window.viewModeEnabled = true;
+}
+// 消除以查看模式打开白板时出现的闪烁
+if (window.viewModeEnabled) {
+  document.body.classList.add("viewmode");
+  setTimeout(() => {
+    document.body.classList.remove("viewmode");
+  }, 1200)
+}
 
 
 
