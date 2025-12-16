@@ -3,6 +3,15 @@
 * If this widget is accidentally embedded in a document that already contains other content, please refer to: [How to undo after accidentally inserting a widget?](https://github.com/BryceAndJuly/Whiteboard/issues/70#issuecomment-3027972161)
 
 ## 1. Current Version
+
+### V2.0.14
+
+Test Environment: `SiYuan V3.5.0`, `Windows 11 Home Chinese Edition 24H2`
+
+- Adjust the styles of Callout blocks and iframe blocks
+
+---
+
 ### V2.0.13
 
 - Optimize the usage of the whiteboard in `Publishing Mode` and `Global Read-Only Mode`.
@@ -31,7 +40,7 @@ Then change it to:
 window.viewModeEnabled = true;
 ```
 
-
+---
 ### V2.0.12
 Test Environment: `SiYuan V3.4.0`, `Windows 11 Home Chinese Edition 24H2`
 - Handling Compatibility: Support for rendering the kanban view of the database in the whiteboard.. Reference: [Database kanban view](https://github.com/siyuan-note/siyuan/issues/8873)
@@ -39,7 +48,7 @@ Test Environment: `SiYuan V3.4.0`, `Windows 11 Home Chinese Edition 24H2`
 
 ---
 
-For the current version: **V2.0.13**
+For the current version: **V2.0.14**
 
 If you **do not want auto-save to be enabled by default**, open the widget folder `Whiteboard` -> `custom.js` in an editor like VS Code and search for:
 
@@ -263,7 +272,7 @@ A  `Text Search Panel`  is added to the upper right corner, specifically for sea
 
 ### 1. Adjust Brush Thickness Manually
 
-For V2.0.13, open `Whiteboard` -> `assets` -> `index-ZsssFvwm.js` and search for:
+For V2.0.14, open `Whiteboard` -> `assets` -> `index-ZsssFvwm.js` and search for:
 
 ```css
 n={simulatePressure:e.simulatePressure,size:e.strokeWidth*1.2,thinning

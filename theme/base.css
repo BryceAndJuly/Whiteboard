@@ -42,3 +42,107 @@ svg.icon:active{
     transform-origin: 0 0;
     width: calc(117.6470588235% - 16px);
 }
+
+/* callout ------------------------------------------------------------------------ */
+.b3-typography .callout,
+.protyle-wysiwyg .callout {
+    padding-left: calc(.25em + 6px);
+    color: var(--b3-theme-on-surface);
+    background-color: var(--b3-bq-background);
+    display: flex;
+    flex-direction: column;
+}
+
+.b3-typography .callout::before,
+.protyle-wysiwyg .callout::before {
+    content: "";
+    width: .25em;
+    border-radius: var(--b3-border-radius);
+    position: absolute;
+    left: 2px;
+    top: 6px;
+    bottom: 6px;
+}
+.b3-typography .callout::before,
+.protyle-wysiwyg .callout::before {
+    background-color: var(--b3-callout-note);
+}
+
+.b3-typography .callout[data-subtype=TIP]::before,
+.protyle-wysiwyg .callout[data-subtype=TIP]::before {
+    background-color: var(--b3-callout-tip);
+}
+
+.b3-typography .callout[data-subtype=IMPORTANT]::before,
+.protyle-wysiwyg .callout[data-subtype=IMPORTANT]::before {
+    background-color: var(--b3-callout-important);
+}
+
+.b3-typography .callout[data-subtype=WARNING]::before,
+.protyle-wysiwyg .callout[data-subtype=WARNING]::before {
+    background-color: var(--b3-callout-warning);
+}
+
+.b3-typography .callout[data-subtype=CAUTION]::before,
+.protyle-wysiwyg .callout[data-subtype=CAUTION]::before {
+    background-color: var(--b3-callout-caution);
+}
+
+.protyle-wysiwyg .callout-title {
+    cursor: pointer;
+}
+
+.b3-typography .callout-title,
+.protyle-wysiwyg .callout-title {
+    margin-left: 4px;
+    font-weight: 500;
+    font-size: 114%;
+    opacity: .86;
+}
+
+.b3-typography .callout .callout-info,
+.protyle-wysiwyg .callout .callout-info {
+    color: var(--b3-callout-note);
+}
+
+.b3-typography .callout[data-subtype=TIP] .callout-info,
+.protyle-wysiwyg .callout[data-subtype=TIP] .callout-info {
+    color: var(--b3-callout-tip);
+}
+
+.b3-typography .callout[data-subtype=IMPORTANT] .callout-info,
+.protyle-wysiwyg .callout[data-subtype=IMPORTANT] .callout-info {
+    color: var(--b3-callout-important);
+}
+
+.b3-typography .callout[data-subtype=WARNING] .callout-info,
+.protyle-wysiwyg .callout[data-subtype=WARNING] .callout-info {
+    color: var(--b3-callout-warning);
+}
+
+.b3-typography .callout[data-subtype=CAUTION] .callout-info,
+.protyle-wysiwyg .callout[data-subtype=CAUTION] .callout-info {
+    color: var(--b3-callout-caution);
+}
+/* callout =================================================================== */
+
+
+/* iframe  (V3.5.0) -----------------------------------------------------------*/
+.b3-typography [data-type=NodeIFrame], .b3-typography [data-type=NodeWidget], .protyle-wysiwyg [data-type=NodeIFrame], .protyle-wysiwyg [data-type=NodeWidget] {
+    width: 100%;
+    max-width: 100%;
+}
+.b3-typography [data-type=NodeIFrame] .iframe-content, .b3-typography [data-type=NodeWidget] .iframe-content, .protyle-wysiwyg [data-type=NodeIFrame] .iframe-content, .protyle-wysiwyg [data-type=NodeWidget] .iframe-content {
+    position: relative;
+    height: 100%;
+    width: 100%;
+}
+.b3-typography [data-type=NodeIFrame] iframe, .b3-typography [data-type=NodeWidget] iframe, .protyle-wysiwyg [data-type=NodeIFrame] iframe, .protyle-wysiwyg [data-type=NodeWidget] iframe {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    max-width: 100%;
+    min-height: 100%;
+    max-height: 100%;
+}
+/* iframe ====================================================================== */

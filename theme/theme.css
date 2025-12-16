@@ -165,6 +165,17 @@
     --b3-pdf-background6: var(--b3-theme-primary);
     --b3-pdf-background7: #944194;
     --b3-pdf-dark: #212224;
+
+    /* callout */
+    --b3-important:#8957e5;
+    --b3-theme-success: #65b84d;
+    --b3-highlight-current-background: #ff9632;
+    --b3-border-radius: 6px;
+    --b3-callout-note: var(--b3-theme-primary);
+    --b3-callout-tip: var(--b3-theme-success);
+    --b3-callout-important: var(--b3-important);
+    --b3-callout-warning: var(--b3-highlight-current-background);
+    --b3-callout-caution: var(--b3-theme-error);
 }
 
 /* https://github.com/siyuan-note/siyuan/issues/6440 */
