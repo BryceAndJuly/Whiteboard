@@ -150,3 +150,9 @@ iframe[src^="https"] {
     min-height: 400px !important;
 }
 /* iframe ====================================================================== */
+
+/* callout icon 使用自定义图标时，需限制显示尺寸 */
+.callout-icon .callout-img {
+    width: 1.7em;
+    height: 1.7em;
+}
