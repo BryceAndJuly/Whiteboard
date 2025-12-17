@@ -156,3 +156,7 @@ iframe[src^="https"] {
     width: 1.7em;
     height: 1.7em;
 }
+/* 隐藏代码块中多余的按钮 */
+.code-block .protyle-action__menu {
+    display: none;
+}
