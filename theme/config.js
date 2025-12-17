@@ -10,7 +10,8 @@ async function renderBody() {
   if (res?.code === 0 && res?.data?.content) {
     // 判断是否是文档块，是的话要另外获取标题
     if (res?.data?.type === "NodeDocument") {
-      htmlStr = res.data.content.replaceAll(`"assets/`, `"${window.top.location.origin}/assets/`).replaceAll(`contenteditable="true"`, `contenteditable="false"`);
+      // 修复问题：callout icon 设置为动态图标时，获取图标失败
+      htmlStr = res.data.content.replaceAll(`"assets/`, `"${window.top.location.origin}/assets/`).replaceAll(`contenteditable="true"`, `contenteditable="false"`).replaceAll(`src="api/icon/getDynamicIcon`, `src="${window.top.location.origin}/api/icon/getDynamicIcon`);
       let response = await request("/api/block/getDocInfo", { id });
       // 读取标题成功,添加文档标题
       if (response?.code === 0 && response?.data?.name && htmlStr) {
@@ -19,7 +20,8 @@ async function renderBody() {
         doc = `<h1>${title}</h1>` + htmlStr;
       }
     } else {
-      doc = res.data.content.replaceAll(`"assets/`, `"${window.top.location.origin}/assets/`).replaceAll(`contenteditable="true"`, `contenteditable="false"`);
+      // 修复问题：callout icon 设置为动态图标时，获取图标失败
+      doc = res.data.content.replaceAll(`"assets/`, `"${window.top.location.origin}/assets/`).replaceAll(`contenteditable="true"`, `contenteditable="false"`).replaceAll(`src="api/icon/getDynamicIcon`, `src="${window.top.location.origin}/api/icon/getDynamicIcon`);
     }
   } else {
     doc = "<h2>加载失败，未找到该内容块！</h2><h2>Failed to load. The content block was not found!</h2>"
