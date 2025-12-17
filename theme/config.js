@@ -14,7 +14,9 @@ async function renderBody() {
       let response = await request("/api/block/getDocInfo", { id });
       // 读取标题成功,添加文档标题
       if (response?.code === 0 && response?.data?.name && htmlStr) {
-        doc = `<h1>${response.data.name}</h1>` + htmlStr;
+        // 修复问题：当文档标题中包含类似“<iframe>”的字符串时，会被识别成标签，导致文档渲染异常
+        let title = response.data.name.replaceAll("<", "&lt;").replaceAll(">", "&gt;")
+        doc = `<h1>${title}</h1>` + htmlStr;
       }
     } else {
       doc = res.data.content.replaceAll(`"assets/`, `"${window.top.location.origin}/assets/`).replaceAll(`contenteditable="true"`, `contenteditable="false"`);
