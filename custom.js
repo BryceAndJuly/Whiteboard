@@ -385,7 +385,27 @@ async function handleInput() {
             default:
               icon = `<svg class="icon"><use xlink:href="#iconHeadings"></use></svg>`
           }
-        } else {
+        }
+        else if (item.type === "NodeCallout") {
+          switch (item.subType) {
+            case "NOTE":
+              icon = `✏️`
+              break;
+            case "TIP":
+              icon = `💡`
+              break;
+            case "IMPORTANT":
+              icon = `❗`
+              break;
+            case "WARNING":
+              icon = `⚠️`
+              break;
+            case "CAUTION":
+              icon = `🚨`
+              break;
+          }
+        } 
+        else {
           switch (item.type) {
             case "NodeDocument":
               icon = `📄`
