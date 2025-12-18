@@ -10,7 +10,7 @@
 ---
 ### V2.0.16
 
-Fixed Issue: The user documentation of the previous version displayed abnormally in the marketplace.
+- Fixed Issue: The user documentation of the previous version displayed abnormally in the marketplace.
 ---
 ### V2.0.15
 Fixed Issues:
