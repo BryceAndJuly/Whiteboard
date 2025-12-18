@@ -3,8 +3,12 @@
 * 如果在已有其他内容的文档中误嵌入该挂件，可参考：[误操作插入挂件后如何撤销?](https://github.com/BryceAndJuly/Whiteboard/issues/48)
 
 ## 一、当前版本
+### V2.0.17
+- 修复`Issue`：[数据库主键使用了绑定块后嵌入到白板无法展示](https://github.com/BryceAndJuly/Whiteboard/issues/92)
+---
 ### V2.0.16
 修复问题：上一版本的使用文档在集市中显示异常。
+---
 ### V2.0.15
 修复问题：
 - 提示块（Callout）的图标设置为动态图标时，获取图标失败。

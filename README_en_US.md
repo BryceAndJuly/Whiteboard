@@ -3,8 +3,13 @@
 * If this widget is accidentally embedded in a document that already contains other content, please refer to: [How to undo after accidentally inserting a widget?](https://github.com/BryceAndJuly/Whiteboard/issues/70#issuecomment-3027972161)
 
 ## 1. Current Version
+### V2.0.17
+- Fix the issue: [When the database primary key uses a bound block, it cannot be displayed after being embedded into the whiteboard.](https://github.com/BryceAndJuly/Whiteboard/issues/92)
+
+---
 ### V2.0.16
 Fixed Issue: The user documentation of the previous version displayed abnormally in the marketplace.
+---
 ### V2.0.15
 Fixed Issues:
 - Failed to retrieve the icon when the icon of the **Callout** is set as a dynamic icon.

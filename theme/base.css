@@ -160,3 +160,8 @@ iframe[src^="https"] {
 .code-block .protyle-action__menu {
     display: none;
 }
+/* 数据库——绑定块——图标 */
+.av__cell > span.b3-menu__avemoji > img{
+    width: 1.7em;
+    height: 1.7em;
+}

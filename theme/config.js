@@ -417,7 +417,9 @@ function unicode2Emoji(unicode, className = "", needSpan = false, lazy = false) 
     return "";
   }
   let emoji = "";
-  if (unicode.indexOf(".") > -1) {
+  if (unicode.startsWith("api/icon/getDynamicIcon")) {
+    emoji = `<img class="${className}" ${lazy ? "data-" : ""}src="${window.top.location.origin}/${unicode}"/>`;
+  } else if (unicode.indexOf(".") > -1) {
     emoji = `<img class="${className}" ${lazy ? "data-" : ""}src="/emojis/${unicode}"/>`;
   } else {
     try {
@@ -431,8 +433,7 @@ function unicode2Emoji(unicode, className = "", needSpan = false, lazy = false) 
       if (needSpan) {
         emoji = `<span class="${className}">${emoji}</span>`;
       }
-    } catch (e) {
-    }
+    } catch (e) {}
   }
   return emoji;
 };
@@ -459,7 +460,7 @@ function renderCell(cellValue, rowIndex = 0, showIcon = true, type = "table") {
     if (cellValue?.isDetached) {
       text = `<span class="av__celltext">${window.top.Lute.EscapeHTMLStr(cellValue.block.content || "")}</span><span class="b3-chip b3-chip--info b3-chip--small" data-type="block-more">${window.top.siyuan.languages.more}</span>`;
     } else {
-      text = `<span class="b3-menu__avemoji${showIcon ? "" : " fn__none"}" data-unicode="${cellValue.block.icon || ""}">${unicode2Emoji(cellValue.block.icon || window.top.siyuan.storage[Constants.LOCAL_IMAGES].file)}</span><span data-type="block-ref" data-id="${cellValue.block.id}" data-subtype="s" class="av__celltext av__celltext--ref">${window.top.Lute.EscapeHTMLStr(cellValue.block.content)}</span><span class="b3-chip b3-chip--info b3-chip--small" data-type="block-more">${window.top.siyuan.languages.update}</span>`;
+      text = `<span class="b3-menu__avemoji${showIcon ? "" : " fn__none"}" data-unicode="${cellValue.block.icon || ""}">${unicode2Emoji(cellValue.block.icon || window.top.siyuan.storage["local-images"].file)}</span><span data-type="block-ref" data-id="${cellValue.block.id}" data-subtype="s" class="av__celltext av__celltext--ref">${window.top.Lute.EscapeHTMLStr(cellValue.block.content)}</span><span class="b3-chip b3-chip--info b3-chip--small" data-type="block-more">${window.top.siyuan.languages.update}</span>`;
     }
   } else if (cellValue.type === "number") {
     text = `<span class="av__celltext" data-content="${cellValue?.number.isNotEmpty ? cellValue?.number.content : ""}">${cellValue?.number.formattedContent || cellValue?.number.content || ""}</span>`;
@@ -522,7 +523,7 @@ function renderCell(cellValue, rowIndex = 0, showIcon = true, type = "table") {
           text += `<span data-row-id="${rowID}" class="av__cell--relation"><span class="b3-menu__avemoji${showIcon ? "" : " fn__none"}">➖</span><span class="av__celltext">${window.top.Lute.EscapeHTMLStr(item.block.content || window.top.siyuan.languages.untitled)}</span></span>`;
         } else {
           // data-block-id 用于更新 emoji
-          text += `<span data-row-id="${rowID}" class="av__cell--relation" data-block-id="${item.block.id}"><span class="b3-menu__avemoji${showIcon ? "" : " fn__none"}" data-unicode="${item.block.icon || ""}">${unicode2Emoji(item.block.icon || window.top.siyuan.storage[Constants.LOCAL_IMAGES].file)}</span><span data-type="block-ref" data-id="${item.block.id}" data-subtype="s" class="av__celltext av__celltext--ref">${window.top.Lute.EscapeHTMLStr(item.block.content || window.top.siyuan.languages.untitled)}</span></span>`;
+          text += `<span data-row-id="${rowID}" class="av__cell--relation" data-block-id="${item.block.id}"><span class="b3-menu__avemoji${showIcon ? "" : " fn__none"}" data-unicode="${item.block.icon || ""}">${unicode2Emoji(item.block.icon || window.top.siyuan.storage["local-images"].file)}</span><span data-type="block-ref" data-id="${item.block.id}" data-subtype="s" class="av__celltext av__celltext--ref">${window.top.Lute.EscapeHTMLStr(item.block.content || window.top.siyuan.languages.untitled)}</span></span>`;
         }
       }
     });
