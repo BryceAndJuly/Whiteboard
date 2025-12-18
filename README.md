@@ -3,11 +3,19 @@
 * 如果在已有其他内容的文档中误嵌入该挂件，可参考：[误操作插入挂件后如何撤销?](https://github.com/BryceAndJuly/Whiteboard/issues/48)
 
 ## 一、当前版本
+
+### V2.0.15
+修复问题：
+- 提示块（Callout）的图标设置为动态图标时，获取图标失败。
+- 提示块（Callout）的图标设置为自定义图标时，图标大小异常。
+- 内容块检索面板中，提示块（Callout）对应的图标缺失。
+- 当文档标题中包含类似“<iframe>”的字符串时，会被识别成标签，导致文档渲染异常。
+
+---
 ### V2.0.14
 测试环境：`SiYuan V3.5.0`，`Windows 11家庭中文版24H2`
 - 调整`提示块`（`Callout`）和`iframe块`的样式
 ---
-
 
 ### V2.0.13
 - 优化白板在`发布模式`、`全局只读模式`下的使用。
@@ -37,12 +45,8 @@ window.viewModeEnabled = true;
 ```
 
 ---
-### V2.0.12
-测试环境：`SiYuan V3.4.0`，`Windows 11家庭中文版24H2`
-- 处理兼容性：支持在白板中渲染数据库的看板视图。参考：[Database kanban view](https://github.com/siyuan-note/siyuan/issues/8873)
----
 
-对于当前版本：**V2.0.14**
+对于当前版本：**V2.0.15**
 
 如果你**不想默认开启自动保存功能**，可以使用VS Code之类的编辑器打开挂件文件夹`Whiteboard`——`custom.js`，
 
@@ -268,7 +272,7 @@ assets/ExcalidrawFiles/20231227015401-w0olmpi.excalidraw
 
 ### 1、手动更改画笔的粗细
 
-对于版本V2.0.14，打开挂件文件夹`Whiteboard`——`assets`——`index-ZsssFvwm.js`,在该js文件中搜索：
+对于版本V2.0.15，打开挂件文件夹`Whiteboard`——`assets`——`index-ZsssFvwm.js`,在该js文件中搜索：
 
 ```css
 n={simulatePressure:e.simulatePressure,size:e.strokeWidth*1.2,thinning
@@ -420,6 +424,11 @@ D:\Siyuan\SiYuan.exe  --port=6806
 ### V2.0.11
 测试环境：`SiYuan V3.3.0`，`Windows 11家庭中文版24H2`
 - 处理兼容性：支持在白板中渲染数据库的分组。参考：[Database grouping by field](https://github.com/siyuan-note/siyuan/issues/10964)
+
+---
+### V2.0.12
+测试环境：`SiYuan V3.4.0`，`Windows 11家庭中文版24H2`
+- 处理兼容性：支持在白板中渲染数据库的看板视图。参考：[Database kanban view](https://github.com/siyuan-note/siyuan/issues/8873)
 
 ## 八、参考与感谢
 

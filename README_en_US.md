@@ -3,7 +3,13 @@
 * If this widget is accidentally embedded in a document that already contains other content, please refer to: [How to undo after accidentally inserting a widget?](https://github.com/BryceAndJuly/Whiteboard/issues/70#issuecomment-3027972161)
 
 ## 1. Current Version
-
+### V2.0.15
+Fixed Issues:
+- Failed to retrieve the icon when the icon of the **Callout** is set as a dynamic icon.
+- Abnormal icon size when the icon of the **Callout** is set as a custom icon.
+- Missing corresponding icon for the **Callout** in the content block search panel.
+- When a document title contains a string similar to `<iframe>`, it will be recognized as a tag, resulting in abnormal document rendering.
+---
 ### V2.0.14
 
 Test Environment: `SiYuan V3.5.0`, `Windows 11 Home Chinese Edition 24H2`
@@ -40,15 +46,10 @@ Then change it to:
 window.viewModeEnabled = true;
 ```
 
----
-### V2.0.12
-Test Environment: `SiYuan V3.4.0`, `Windows 11 Home Chinese Edition 24H2`
-- Handling Compatibility: Support for rendering the kanban view of the database in the whiteboard.. Reference: [Database kanban view](https://github.com/siyuan-note/siyuan/issues/8873)
-
 
 ---
 
-For the current version: **V2.0.14**
+For the current version: **V2.0.15**
 
 If you **do not want auto-save to be enabled by default**, open the widget folder `Whiteboard` -> `custom.js` in an editor like VS Code and search for:
 
@@ -272,7 +273,7 @@ A  `Text Search Panel`  is added to the upper right corner, specifically for sea
 
 ### 1. Adjust Brush Thickness Manually
 
-For V2.0.14, open `Whiteboard` -> `assets` -> `index-ZsssFvwm.js` and search for:
+For V2.0.15, open `Whiteboard` -> `assets` -> `index-ZsssFvwm.js` and search for:
 
 ```css
 n={simulatePressure:e.simulatePressure,size:e.strokeWidth*1.2,thinning
@@ -423,6 +424,13 @@ Fix styles:
 ### V2.0.11
 Test Environment: `SiYuan V3.3.0`, `Windows 11 Home Chinese Edition 24H2`
 - Handling Compatibility: Support rendering database groupings in the whiteboard. Reference: [Database grouping by field](https://github.com/siyuan-note/siyuan/issues/10964)
+
+
+---
+### V2.0.12
+Test Environment: `SiYuan V3.4.0`, `Windows 11 Home Chinese Edition 24H2`
+- Handling Compatibility: Support for rendering the kanban view of the database in the whiteboard.. Reference: [Database kanban view](https://github.com/siyuan-note/siyuan/issues/8873)
+
 
 ## 8. References and Thanks
 
