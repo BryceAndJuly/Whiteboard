@@ -3,6 +3,8 @@
 * If this widget is accidentally embedded in a document that already contains other content, please refer to: [How to undo after accidentally inserting a widget?](https://github.com/BryceAndJuly/Whiteboard/issues/70#issuecomment-3027972161)
 
 ## 1. Current Version
+### V2.0.16
+Fixed Issue: The user documentation of the previous version displayed abnormally in the marketplace.
 ### V2.0.15
 Fixed Issues:
 - Failed to retrieve the icon when the icon of the **Callout** is set as a dynamic icon.
@@ -49,7 +51,7 @@ window.viewModeEnabled = true;
 
 ---
 
-For the current version: **V2.0.15**
+For the current version: **V2.0.16**
 
 If you **do not want auto-save to be enabled by default**, open the widget folder `Whiteboard` -> `custom.js` in an editor like VS Code and search for:
 
@@ -273,7 +275,7 @@ A  `Text Search Panel`  is added to the upper right corner, specifically for sea
 
 ### 1. Adjust Brush Thickness Manually
 
-For V2.0.15, open `Whiteboard` -> `assets` -> `index-ZsssFvwm.js` and search for:
+For V2.0.16, open `Whiteboard` -> `assets` -> `index-ZsssFvwm.js` and search for:
 
 ```css
 n={simulatePressure:e.simulatePressure,size:e.strokeWidth*1.2,thinning
