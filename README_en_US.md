@@ -8,7 +8,7 @@ Fixed Issues:
 - Failed to retrieve the icon when the icon of the **Callout** is set as a dynamic icon.
 - Abnormal icon size when the icon of the **Callout** is set as a custom icon.
 - Missing corresponding icon for the **Callout** in the content block search panel.
-- When a document title contains a string similar to `<iframe>`, it will be recognized as a tag, resulting in abnormal document rendering.
+- When a document title contains a string similar to `\<iframe\>`, it will be recognized as a tag, resulting in abnormal document rendering.
 ---
 ### V2.0.14
 
