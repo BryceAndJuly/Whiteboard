@@ -4,10 +4,12 @@
 
 ## 1. Current Version
 ### V2.0.17
+
 - Fix the issue: [When the database primary key uses a bound block, it cannot be displayed after being embedded into the whiteboard.](https://github.com/BryceAndJuly/Whiteboard/issues/92)
 
 ---
 ### V2.0.16
+
 Fixed Issue: The user documentation of the previous version displayed abnormally in the marketplace.
 ---
 ### V2.0.15
@@ -56,7 +58,7 @@ window.viewModeEnabled = true;
 
 ---
 
-For the current version: **V2.0.16**
+For the current version: **V2.0.17**
 
 If you **do not want auto-save to be enabled by default**, open the widget folder `Whiteboard` -> `custom.js` in an editor like VS Code and search for:
 
@@ -280,7 +282,7 @@ A  `Text Search Panel`  is added to the upper right corner, specifically for sea
 
 ### 1. Adjust Brush Thickness Manually
 
-For V2.0.16, open `Whiteboard` -> `assets` -> `index-ZsssFvwm.js` and search for:
+For V2.0.17, open `Whiteboard` -> `assets` -> `index-ZsssFvwm.js` and search for:
 
 ```css
 n={simulatePressure:e.simulatePressure,size:e.strokeWidth*1.2,thinning
