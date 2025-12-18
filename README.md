@@ -3,7 +3,8 @@
 * 如果在已有其他内容的文档中误嵌入该挂件，可参考：[误操作插入挂件后如何撤销?](https://github.com/BryceAndJuly/Whiteboard/issues/48)
 
 ## 一、当前版本
-
+### V2.0.16
+修复问题：上一版本的使用文档在集市中显示异常。
 ### V2.0.15
 修复问题：
 - 提示块（Callout）的图标设置为动态图标时，获取图标失败。
@@ -46,7 +47,7 @@ window.viewModeEnabled = true;
 
 ---
 
-对于当前版本：**V2.0.15**
+对于当前版本：**V2.0.16**
 
 如果你**不想默认开启自动保存功能**，可以使用VS Code之类的编辑器打开挂件文件夹`Whiteboard`——`custom.js`，
 
@@ -272,7 +273,7 @@ assets/ExcalidrawFiles/20231227015401-w0olmpi.excalidraw
 
 ### 1、手动更改画笔的粗细
 
-对于版本V2.0.15，打开挂件文件夹`Whiteboard`——`assets`——`index-ZsssFvwm.js`,在该js文件中搜索：
+对于版本V2.0.16，打开挂件文件夹`Whiteboard`——`assets`——`index-ZsssFvwm.js`,在该js文件中搜索：
 
 ```css
 n={simulatePressure:e.simulatePressure,size:e.strokeWidth*1.2,thinning
