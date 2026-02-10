@@ -257,7 +257,7 @@
 .b3-typography span[data-type~=code],
 .protyle-wysiwyg code:not(.hljs),
 .protyle-wysiwyg span[data-type~=code] {
-    background-color: #f9d7da;
+    background-color: #E3E2FC;
 }
 
 /* 行内代码——加阴影 */
