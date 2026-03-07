@@ -3,62 +3,181 @@
 * If this widget is accidentally embedded in a document that already contains other content, please refer to: [How to undo after accidentally inserting a widget?](https://github.com/BryceAndJuly/Whiteboard/issues/70#issuecomment-3027972161)
 
 ## 1. Current Version
-### V2.0.17
+### V2.0.18
 
-- Fix the issue: [When the database primary key uses a bound block, it cannot be displayed after being embedded into the whiteboard.](https://github.com/BryceAndJuly/Whiteboard/issues/92)
+Refer to the preview image at the top (the software version used for testing is: `Siyuan V3.5.8`).
 
----
-### V2.0.16
+- Whiteboard elements support linking to PDF annotations. (The link format is as follows: `assets/User Guide-20250501154835-226lt9b.pdf/20250304154923-lqp5jgy`)
 
-- Fixed Issue: The user documentation of the previous version displayed abnormally in the marketplace.
----
-### V2.0.15
-Fixed Issues:
-- Failed to retrieve the icon when the icon of the **Callout** is set as a dynamic icon.
-- Abnormal icon size when the icon of the **Callout** is set as a custom icon.
-- Missing corresponding icon for the **Callout** in the content block search panel.
-- When a document title contains a string similar to "\<iframe\>", it will be recognized as a tag, resulting in abnormal document rendering.
----
-### V2.0.14
+Before use, it is recommended to add a JS code snippet in `Settings` > `Appearance` > `Code Snippets` > `Settings` > `JS` to convert copied annotations into linkable elements that can be directly pasted into the whiteboard.
 
-Test Environment: `SiYuan V3.5.0`, `Windows 11 Home Chinese Edition 24H2`
-
-- Adjust the styles of Callout blocks and iframe blocks
-
----
-
-### V2.0.13
-
-- Optimize the usage of the whiteboard in `Publishing Mode` and `Global Read-Only Mode`.
-
-Instructions for Use:
-
-- After enabling the Publishing Service, when you open the publishing address in a browser to view notes, the whiteboard will open in `View Mode` by default, which is similar to the read-only mode of other documents.
-- Most buttons are hidden in the whiteboard's View Mode; only the Zoom button at the bottom left corner and the Refresh button at the top right corner are retained. Please refer to the preview image at the top for reference.
-- After enabling the Global Read-Only Mode via` Settings` → `Editor `→` Read-Only Mode,` the whiteboard will open in View Mode on the computer terminal; otherwise, it will open in Edit Mode by default.
-
-> **There is currently a minor issue when opening the whiteboard in View Mode:**  the whiteboard fails to gain focus after being opened, which prevents the shortcut keys in the whiteboard (e.g., Ctrl + F) from working.
->
-> The solution is as follows: After opening the whiteboard, click the Reset Zoom button, Zoom In button, or Zoom Out button at the bottom left corner with your mouse to make the whiteboard gain focus. After that, you can use the whiteboard's shortcut keys normally.
-
-Currently, the default opening mode of the whiteboard is still Edit Mode. If you want to change it to View Mode, you can use an editor like VS Code to open the widget folder`Whiteboard`——`custom.js`
-
-search for
 
 ```js
-window.viewModeEnabled = false;
+(() => {
+    // 发送请求
+    function request(url, data = null) {
+        return new Promise((resolve, reject) => {
+            fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+                .then(
+                    data => resolve(data.json()),
+                    error => {
+                        reject(error)
+                    }
+                )
+                .catch(err => {
+                    console.error('请求失败:', err)
+                })
+        })
+    }
+    // 获取PDF注释中的图片
+    function getImage(url, data = null) {
+        return new Promise((resolve, reject) => {
+            fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+                .then(
+                    data => resolve(data.blob()),
+                    error => {
+                        reject(error)
+                    }
+                )
+                .catch(err => {
+                    console.error('请求失败:', err)
+                })
+        })
+    }
+
+    function blobToBase64(blob) {
+        return new Promise((resolve, reject) => {
+            if (!(blob instanceof Blob)) {
+                reject(new Error('传入的参数不是有效的 Blob 对象'));
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = (error) => reject(error);
+            reader.readAsDataURL(blob);
+        });
+    }
+    // 将文本写入剪切板
+    function writeText(txt) {
+        let status = false
+        const input = document.createElement('textarea')
+        input.value = txt;
+        // 设置样式避免页面闪烁
+        input.style.position = 'fixed';
+        input.style.top = '-9999px';
+        input.style.left = '-9999px';
+        document.body.appendChild(input);
+        input.select()
+        if (document.execCommand('copy')) {
+            document.execCommand('copy')
+            status = true
+        } else {
+            console.log("复制失败");
+        }
+        document.body.removeChild(input)
+        return status
+    }
+
+    function getRandomStr(len) {
+        let originStr =
+            'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+        let result = ''
+        for (let i = 0; i < len; i++) {
+            result += originStr.charAt(Math.floor(Math.random() * originStr.length))
+        }
+        return result
+    }
+
+
+    function showMessage(text) {
+        request("/api/notification/pushMsg", { "msg": text, "timeout": 2000 })
+    }
+    async function annotationToElement() {
+        let text = await navigator.clipboard.readText()
+        if (!text) { return }
+        let result = text.match(/^\<\<(assets\/.+\.pdf\/\d{14}\-\w{7}) \"(.+)\"\>\>$/);
+        // 文字型标注
+        if (result) {
+            let str = result[2];
+            // 如果标注的是代码块之类的，需要将部分字符进行转换
+            str = str.replaceAll("\\", "\\\\").replaceAll("&lt;", "<").replaceAll("&gt;", ">").replaceAll("&amp;", "&").replaceAll("&quot;", '\\"');
+        
+            let TextAnnotationTemplate = `{"type":"excalidraw/clipboard","elements":[{"id":"eP8wnAQNU2pZsbLysLQ8z","type":"rectangle","x":-422,"y":-738,"width":652,"height":35,"angle":0,"strokeColor":"#ced4da","backgroundColor":"transparent","fillStyle":"solid","strokeWidth":1,"strokeStyle":"dotted","roughness":0,"opacity":100,"groupIds":[],"frameId":null,"index":"a5","roundness":null,"seed":1190528293,"version":1168,"versionNonce":1136500139,"isDeleted":false,"boundElements":[{"id":"5lGwJ1Ol-USEwgyTJbtpQ","type":"text"}],"updated":1772855567196,"link":"${result[1]}","locked":false},{"id":"5lGwJ1Ol-USEwgyTJbtpQ","type":"text","x":-417.3762362353516,"y":-733.0763173558735,"width":154,"height":25,"angle":0,"strokeColor":"#1e1e1e","backgroundColor":"transparent","fillStyle":"solid","strokeWidth":2,"strokeStyle":"solid","roughness":1,"opacity":100,"groupIds":[],"frameId":null,"index":"a6","roundness":null,"seed":1990465669,"version":747,"versionNonce":1496494155,"isDeleted":false,"boundElements":[],"updated":1772855567196,"link":"${result[1]}","locked":false,"text":"${str}","fontSize":20,"fontFamily":8,"textAlign":"left","verticalAlign":"top","containerId":"eP8wnAQNU2pZsbLysLQ8z","originalText":"${str}","autoResize":true,"lineHeight":1.25}],"files":{}}`
+            // 写入剪切板
+            let status = writeText(TextAnnotationTemplate)
+            if (status) { showMessage("👌") } else {
+                showMessage("操作失败（Operation failed）")
+            }
+        }
+        let result2 = text.match(/^\<\<((assets\/.+\.pdf)\/(\d{14}\-\w{7})) \".+\"\>\>\r\n\!\[\]\((assets\/.+\.png)\)$/);
+        if (result2) {
+            let link = result2[1];
+            let pdfPath = result2[2]
+            let id = result2[3];
+            let imagePath = result2[4];
+            let imageBlob = await getImage("/api/file/getFile", { "path": `/data/${imagePath}` })
+            // 图片转成base64格式
+            const base64Str = await blobToBase64(imageBlob);
+            // 需计算图片的长宽比，保证粘贴到白板时图片的比例正常。
+            let annotationData = await request("/api/asset/getFileAnnotation", { path: `${pdfPath}.sya` });
+            if (annotationData.code === 0) {
+                let data = JSON.parse(annotationData.data.data);
+                let position = data[id].pages[0].positions[0];
+                // 图片长、宽
+                let width = Math.abs(position[2] - position[0]) * 1.5;
+                let height = Math.abs(position[1] - position[3]) * 1.5;
+                let fileID = `${Date.now()}${getRandomStr(27)}`;
+                // 
+                let imageAnnotationTemplate = `{"type":"excalidraw/clipboard","elements":[{"id":"-0IXg4dxa4jsF4Etw3oV_","type":"image","x":3163,"y":3095,"width":${width},"height":${height},"angle":0,"strokeColor":"transparent","backgroundColor":"transparent","fillStyle":"solid","strokeWidth":2,"strokeStyle":"solid","roughness":1,"opacity":100,"groupIds":[],"frameId":null,"index":"aM","roundness":null,"seed":684078715,"version":6,"versionNonce":1503382395,"isDeleted":false,"boundElements":null,"updated":1772601177808,"link":"${link}","locked":false,"status":"pending","fileId":"${fileID}","scale":[1,1],"crop":null}],"files":{"${fileID}":{"mimeType":"image/png","id":"${fileID}","dataURL":"${base64Str}","created":1772601161101,"lastRetrieved":1772601161101}}}`
+
+                // 写入剪切板
+                let status = writeText(imageAnnotationTemplate);
+                if (status) { showMessage("👌") } else {
+                    showMessage("操作失败（Operation failed）")
+                }
+            }
+        }
+    }
+
+
+    // 顶栏添加一个按钮
+    const barMode = document.getElementById("barMode");
+    barMode.insertAdjacentHTML(
+        "beforebegin",
+        '<div id="convertAnnotation"  class="toolbar__item ariaLabel" aria-label="PDF" ></div>'
+    );
+    const convertBtn = document.getElementById("convertAnnotation");
+    convertBtn.style.width = "auto";
+    convertBtn.innerHTML = `<svg t="1772610251555" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1692" width="48" height="48"><path d="M905.185809 178.844158C898.576738 172.685485 891.19337 165.824412 883.21687 158.436127 860.422682 137.322863 837.434925 116.207791 815.697647 96.487895 813.243072 94.261877 813.243072 94.261877 810.786411 92.037081 781.783552 65.781062 757.590948 44.376502 739.713617 29.293612 729.254178 20.469111 721.020606 13.860686 714.970549 9.501727 710.955023 6.608611 707.690543 4.524745 704.47155 2.998714 700.417679 1.07689 696.638044-0.094029 691.307277 0.005928 677.045677 0.273349 665.6 11.769337 665.6 26.182727L665.6 77.352844 665.6 128.522961 665.6 230.863194 665.6 256.448252 691.2 256.448252 896 256.448252 870.4 230.863194 870.4 998.414942 896 972.829884 230.381436 972.829884C187.90385 972.829884 153.6 938.623723 153.6 896.20663L153.6 26.182727 128 51.767786 588.8 51.767786C602.93849 51.767786 614.4 40.312965 614.4 26.182727 614.4 12.05249 602.93849 0.597669 588.8 0.597669L128 0.597669 102.4 0.597669 102.4 26.182727 102.4 896.20663C102.4 966.91021 159.652833 1024 230.381436 1024L896 1024 921.6 1024 921.6 998.414942 921.6 230.863194 921.6 205.278135 896 205.278135 691.2 205.278135 716.8 230.863194 716.8 128.522961 716.8 77.352844 716.8 26.182727C716.8 39.813762 705.748075 50.91427 692.267725 51.167041 687.705707 51.252584 685.069822 50.435995 682.52845 49.231204 682.259458 49.103682 683.344977 49.796618 685.029451 51.010252 689.779394 54.432502 697.145822 60.34494 706.686383 68.394196 724.009052 83.009121 747.816448 104.072869 776.413589 129.961594 778.850014 132.168064 778.850014 132.168064 781.285216 134.376514 802.876774 153.964212 825.739479 174.96442 848.413564 195.966437 856.350957 203.3185 863.697005 210.144893 870.269888 216.269843 874.209847 219.941299 877.019309 222.565641 878.499674 223.951409 888.81866 233.610931 905.019017 233.081212 914.684179 222.768247 924.349344 212.455283 923.819315 196.264383 913.500326 186.604861 911.981323 185.182945 909.155025 182.542876 905.185809 178.844158ZM102.4 461.128719 0 461.128719 0 896.074709 512 896.074709 1024 896.074709 1024 461.128719 153.6 461.128719 153.6 460.531049 102.4 460.531049 102.4 461.128719ZM208.2 711 208.2 819.2 157.6 819.2 157.6 528 269 528C301.533495 528 327.366571 536.466581 346.5 553.4 365.633429 570.333419 375.2 592.733195 375.2 620.6 375.2 649.133476 365.833427 671.333254 347.1 687.2 328.366573 703.066746 302.133502 711 268.4 711L208.2 711ZM208.2 670.4 269 670.4C287.00009 670.4 300.733286 666.166709 310.2 657.7 319.666714 649.233291 324.4 637.000079 324.4 621 324.4 605.266588 319.600047 592.700047 310 583.3 300.399951 573.899953 287.200083 569.066669 270.4 568.8L208.2 568.8 208.2 670.4ZM419.4 819.2 419.4 528 505.4 528C531.133461 528 553.966566 533.733276 573.9 545.2 593.833434 556.666724 609.266611 572.933229 620.2 594 631.133389 615.066771 636.6 639.199863 636.6 666.4L636.6 681C636.6 708.600139 631.100055 732.866562 620.1 753.8 609.099945 774.733438 593.433436 790.866609 573.1 802.2 552.766564 813.533391 529.466799 819.2 503.2 819.2L419.4 819.2ZM470 568.8 470 778.8 503 778.8C529.533466 778.8 549.89993 770.500083 564.1 753.9 578.30007 737.299917 585.533331 713.466822 585.8 682.4L585.8 666.2C585.8 634.599842 578.933402 610.46675 565.2 593.8 551.466598 577.13325 531.533463 568.8 505.4 568.8L470 568.8ZM854.8 695.8 737.6 695.8 737.6 819.2 687 819.2 687 528 872 528 872 568.8 737.6 568.8 737.6 655.4 854.8 655.4 854.8 695.8Z" fill="#d4237a" p-id="1693"></path></svg>`;
+    convertBtn.addEventListener(
+        "click",
+        (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            annotationToElement();
+        },
+        true
+    );
+    convertBtn.addEventListener("mousedown", () => { convertBtn.style.transform = 'scale(2)' })
+    convertBtn.addEventListener("mouseup", () => { convertBtn.style.transform = 'scale(1)' })
+    convertBtn.addEventListener("mouseleave", () => { convertBtn.style.transform = 'scale(1)' })
+})();
 ```
 
-Then change it to:
 
-```js
-window.viewModeEnabled = true;
-```
 
 
 ---
 
-For the current version: **V2.0.17**
+For the current version: **V2.0.18**
 
 If you **do not want auto-save to be enabled by default**, open the widget folder `Whiteboard` -> `custom.js` in an editor like VS Code and search for:
 
@@ -282,7 +401,7 @@ A  `Text Search Panel`  is added to the upper right corner, specifically for sea
 
 ### 1. Adjust Brush Thickness Manually
 
-For V2.0.17, open `Whiteboard` -> `assets` -> `index-ZsssFvwm.js` and search for:
+For V2.0.18, open `Whiteboard` -> `assets` -> `index-ZsssFvwm.js` and search for:
 
 ```css
 n={simulatePressure:e.simulatePressure,size:e.strokeWidth*1.2,thinning
@@ -330,120 +449,11 @@ D:\Siyuan\SiYuan.exe  --port=6806
 
 ## 7. Update records
 
-### V2.0.0
-
-* **Excalidraw Version Update: From V0.17.0 to V0.18.0.**  For the specific update contents, please refer to: [https://github.com/excalidraw/excalidraw/releases](https://github.com/excalidraw/excalidraw/releases)
-
-  * In this version, the official has added two features, namely "Text Search" and "Element Link". Therefore, the "Text Search" and "Element Link" functions of the old version of the widget have been deprecated.
-
-    * Regarding [Element Link]: There is no need to worry that the previously established element link relationships will become invalid. After adaptation, the element links in the current version will continue to maintain the previous element link format, in the form of: `excalidraw://7LItP1OJtttbMuytaDgp2`. You can obtain it through the `Copy link to object` option in the right-click menu.
-
-      > Remarks: The right-click menu of the mouse will be closed when the auto-save function is triggered. If you need to obtain element links frequently, it is recommended to temporarily turn off the auto-save function by using the shortcut keys `Alt` + `F` first.
-      >
-    * Regarding [Text Search], you can call it up by using the shortcut keys `Ctrl` + `F`. The default single-keyword search in the official version has been modified to support multi-keyword search. Separate the keywords with spaces, which is consistent with the previous search method.
-  * Other update points that I personally find quite useful.
-
-    * Handwritten fonts are supported by default. The font files are located in the `Whiteboard/fonts/Xiaolai` folder and are split into multiple woff2 files for lazy loading. Although the font files are slightly large, the glyphs look good, taking both readability and aesthetics into account.
-    * It supports `Elbow arrows`. Elements can be quickly and neatly connected, making it more convenient to draw flowcharts.
-    * Image Cropping. You can perform simple cropping on the images embedded in the whiteboard.
-* Fix the loading issue of the embedded document (Web Embed)
-
-  * Previously, right after opening or refreshing the whiteboard, you had to move the mouse randomly within the whiteboard for the embedded document to start rendering. The same was true for other embedded documents added through dragging and dropping or via the [Block Citation Retrieval Panel]. After the fix, the documents embedded in the whiteboard will be automatically loaded, eliminating the need to wait for actions like moving the mouse.
-
-
-
-### V2.0.1
-I've just discovered an issue: when multiple whiteboards are opened simultaneously, the data of the whiteboards interfere with each other due to the LocalStorage cache. 
-Please stay on version V1.6.0 and do not update for now until this issue is fixed!!!
-
-
-### V2.0.2
-* Fix the issue: In V2.0.0, when multiple whiteboards are opened simultaneously, the whiteboard data interferes with each other due to the LocalStorage cache. 
-
-### V2.0.3
-Fix the issue: In version `2.0.2`, When the link added to an element is an external link (such as a link starting with `https://` or `http://`), clicking the link icon in the upper right corner of the element fails to perform the jump. Instead, it is necessary to click the element first and then click the link input box displayed above to make the jump.
-
-### V2.0.4
-
-See the preview image at the top:
-
-* Add a refresh button to the upper right corner of the content block embedded in the whiteboard. This makes it convenient to reload the content block individually after updating the content, instead of reloading the entire whiteboard.
-  * You need to click on [Click to start interaction] in the center of the card or double-click on the edge area of the card to enter the card before you can click this button.
-* For the content block embedded in the whiteboard, the background color is set to transparent by default, so that the background color set for the element takes effect.
-* The `Content Block Retrieval Panel` (Alt+P) has a newly added dark mode, which takes effect when the theme of the whiteboard is in dark mode (it is directly set to dark, not the System mode). 
-
-
-### V2.0.5
-
-A [Text Search Panel] is newly added in the upper right corner, specially designed for searching and highlighting text within iframes, similar to text search in web pages.  
-
-* Before searching, it is recommended to load all iframe elements of the whiteboard. You can use the shortcut key (Shift+1) for the whiteboard's [Zoom to Fit All Elements] function.  
-  * Since iframes are lazy-loaded, they need to be in the visible area to load, and text search is performed within the loaded iframe elements.  
-  * Click on the blank area of the whiteboard and then press the shortcut key (Shift+1) to make all elements visible.  
-* Click on the blank area of the whiteboard and then press the shortcut key (Alt+o) to open/close the [Text Search Panel] in the upper right corner. Once opened, it automatically gains focus, allowing you to directly enter a single keyword for searching.  
-* After entering a single keyword, if there are matching results, it will default to jumping to the first iframe containing the keyword. At this point, the focus remains in the input box; pressing `Enter` will switch to the next iframe.  
-
-> Notes:  
-> * The number of search results refers to the number of iframe cards containing the keyword, not the number of keyword matches. An iframe may contain multiple instances of the keyword, and you may need to manually scroll the page to view all highlighted parts.
-
-### V2.0.6
-
-Fix the issues:  
-
-* In V2.0.5, when the whiteboard's iframe contains external links, the text search (Alt+o) malfunctions.  
-  > Note: Currently, the search scope of this feature is limited to the documents/content blocks embedded within the whiteboard.  
-
-* In V2.0.5, after closing the text search box via the shortcut key Alt+o, the keyword highlighting in the iframe is not automatically removed.  
-  > Note: In V2.0.5, the search box can still be closed and the highlighting removed via the "X" close button on the right side of the text search box.
-
-### V2.0.7
-
-Testing environment: SiYuan V3.2.0 preview version, Windows 11 Home Chinese version 24H2
-
-- **Fixed Issue:**  When clicking the [Click to Start Interaction] button in the center of a card (or double-clicking the edge area of the card) to enter the card for content blocks embedded in the whiteboard, using the mouse wheel often fails to scroll the page.
-- **Improvement:** Supports rendering the gallery view of databases in the whiteboard.
-
-
-### V2.0.8
-
-* Bug Fixes:
-
-  * Some shortcuts are incompatible with MacOS. Reference: [Issue:68](https://github.com/BryceAndJuly/Whiteboard/issues/68)
-  * The Mermaid diagrams embedded in the whiteboard are not adapted to dark mode.
-* Improvements:
-
-  * The whiteboard's theme mode (dark/light) is defaulted to match that of the note-taking software. If the whiteboard does not change when the software's theme mode is switched, simply refresh the whiteboard.
-  * When saving the whiteboard, record the status of "Snapping to Object (Alt+S)" and the font size (currentItemFontSize) at the time of the last edit.
-  * The reload button in the upper right corner of the content block embedded in the whiteboard is hidden by default and will be displayed when the mouse hovers over the card.
-  * Upgrade Mermaid to the latest version V11.7.0.
-
-### V2.0.9
-
-- Handling compatibility: In the software` V3.2.0,` the  `Fix Block Hyperlink` function of the whiteboard is invalid.
-
-### V2.0.10
-Test environment: `SiYuan V3.2.1`, `Windows 11 Home Chinese Edition 24H2`
-
-Fix styles:
-
-- Delete the undefined font styles in `base.css`
-- `Attribute View`: Add the two missing icons, see the preview image
-- `Attribute View` - Settings - Layout - Card Preview: When set to content block, add the missing styles
-
-### V2.0.11
-Test Environment: `SiYuan V3.3.0`, `Windows 11 Home Chinese Edition 24H2`
-- Handling Compatibility: Support rendering database groupings in the whiteboard. Reference: [Database grouping by field](https://github.com/siyuan-note/siyuan/issues/10964)
-
-
----
-### V2.0.12
-Test Environment: `SiYuan V3.4.0`, `Windows 11 Home Chinese Edition 24H2`
-- Handling Compatibility: Support for rendering the kanban view of the database in the whiteboard.. Reference: [Database kanban view](https://github.com/siyuan-note/siyuan/issues/8873)
-
+[Changelog](https://github.com/BryceAndJuly/Whiteboard/issues/98#issuecomment-4015673213)
 
 ## 8. References and Thanks
 
 * [Excalidraw](https://github.com/excalidraw/excalidraw)
 * [SiYuan](https://github.com/siyuan-note/siyuan)
-* The Chinese font file in the whiteboard is copied from the [superdraw](https://github.com/zuoez02/superdraw) project.
+* The Chinese font file in the whiteboard (prior to V2.0.0) is copied from the [superdraw](https://github.com/zuoez02/superdraw) project.
 * Thanks to the author [Zuoqiu-Yingyi](https://github.com/Zuoqiu-Yingyi) of the plugin "Open API".

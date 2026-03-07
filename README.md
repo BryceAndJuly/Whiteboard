@@ -3,57 +3,177 @@
 * 如果在已有其他内容的文档中误嵌入该挂件，可参考：[误操作插入挂件后如何撤销?](https://github.com/BryceAndJuly/Whiteboard/issues/48)
 
 ## 一、当前版本
-### V2.0.17
+### V2.0.18
 
-- 修复`Issue`：[数据库主键使用了绑定块后嵌入到白板无法展示](https://github.com/BryceAndJuly/Whiteboard/issues/92)
----
-### V2.0.16
+参考顶部预览图（测试时的软件版本为：`Siyuan V3.5.8`）
 
-- 修复问题：上一版本的使用文档在集市中显示异常。
----
-### V2.0.15
-修复问题：
-- 提示块（Callout）的图标设置为动态图标时，获取图标失败。
-- 提示块（Callout）的图标设置为自定义图标时，图标大小异常。
-- 内容块检索面板中，提示块（Callout）对应的图标缺失。
-- 当文档标题中包含类似“\<iframe\>”的字符串时，会被识别成标签，导致文档渲染异常。
+- 白板元素支持链接到PDF标注。（链接格式形如：`assets/User Guide-20250501154835-226lt9b.pdf/20250304154923-lqp5jgy`）
 
----
-### V2.0.14
-测试环境：`SiYuan V3.5.0`，`Windows 11家庭中文版24H2`
-- 调整`提示块`（`Callout`）和`iframe块`的样式
----
-
-### V2.0.13
-- 优化白板在`发布模式`、`全局只读模式`下的使用。
-
-使用说明：
-- 开启`发布服务`后，在浏览器打开发布地址查看笔记时，默认以`查看模式`打开白板，类似于其他文档的只读模式。
-- 白板的查看模式隐藏了大部分的按钮，只保留左下角的【缩放】按钮、右上角的【刷新】按钮，参考顶部预览图。
-- 在`设置`——`编辑器`——`只读模式`开启全局只读模式后，电脑端将以`查看模式`打开白板，否则默认以编辑模式打开。
-
-> 以`查看模式`打开白板**目前存在一个小问题**：就是打开后白板获取不到焦点，这会让白板中的快捷键（比如：`Ctrl`+`F`）未能生效。
->
-> 解决办法是：打开白板后，鼠标单击一下左下角的【重置缩放】按钮或者【放大】、【缩小】按钮，让白板获得焦点，此后就可以正常使用白板的快捷键了。
-
-
-目前，白板的默认打开方式依然是编辑模式，如果想修改成查看模式，可以使用VS Code之类的编辑器打开挂件文件夹`Whiteboard`——`custom.js`，
-
-搜索
+使用前，建议在`设置`——`外观`——`代码片段`——`设置`——`JS`中添加一个JS代码片段，用于将复制的标注转换成可以直接在白板中粘贴的带链接的元素。
 
 ```js
-window.viewModeEnabled = false;
-```
+(() => {
+    // 发送请求
+    function request(url, data = null) {
+        return new Promise((resolve, reject) => {
+            fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+                .then(
+                    data => resolve(data.json()),
+                    error => {
+                        reject(error)
+                    }
+                )
+                .catch(err => {
+                    console.error('请求失败:', err)
+                })
+        })
+    }
+    // 获取PDF注释中的图片
+    function getImage(url, data = null) {
+        return new Promise((resolve, reject) => {
+            fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+                .then(
+                    data => resolve(data.blob()),
+                    error => {
+                        reject(error)
+                    }
+                )
+                .catch(err => {
+                    console.error('请求失败:', err)
+                })
+        })
+    }
 
-改成：
+    function blobToBase64(blob) {
+        return new Promise((resolve, reject) => {
+            if (!(blob instanceof Blob)) {
+                reject(new Error('传入的参数不是有效的 Blob 对象'));
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = (error) => reject(error);
+            reader.readAsDataURL(blob);
+        });
+    }
+    // 将文本写入剪切板
+    function writeText(txt) {
+        let status = false
+        const input = document.createElement('textarea')
+        input.value = txt;
+        // 设置样式避免页面闪烁
+        input.style.position = 'fixed';
+        input.style.top = '-9999px';
+        input.style.left = '-9999px';
+        document.body.appendChild(input);
+        input.select()
+        if (document.execCommand('copy')) {
+            document.execCommand('copy')
+            status = true
+        } else {
+            console.log("复制失败");
+        }
+        document.body.removeChild(input)
+        return status
+    }
 
-```js
-window.viewModeEnabled = true;
+    function getRandomStr(len) {
+        let originStr =
+            'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+        let result = ''
+        for (let i = 0; i < len; i++) {
+            result += originStr.charAt(Math.floor(Math.random() * originStr.length))
+        }
+        return result
+    }
+
+
+    function showMessage(text) {
+        request("/api/notification/pushMsg", { "msg": text, "timeout": 2000 })
+    }
+    async function annotationToElement() {
+        let text = await navigator.clipboard.readText()
+        if (!text) { return }
+        let result = text.match(/^\<\<(assets\/.+\.pdf\/\d{14}\-\w{7}) \"(.+)\"\>\>$/);
+        // 文字型标注
+        if (result) {
+            let str = result[2];
+            // 如果标注的是代码块之类的，需要将部分字符进行转换
+            str = str.replaceAll("\\", "\\\\").replaceAll("&lt;", "<").replaceAll("&gt;", ">").replaceAll("&amp;", "&").replaceAll("&quot;", '\\"');
+        
+            let TextAnnotationTemplate = `{"type":"excalidraw/clipboard","elements":[{"id":"eP8wnAQNU2pZsbLysLQ8z","type":"rectangle","x":-422,"y":-738,"width":652,"height":35,"angle":0,"strokeColor":"#ced4da","backgroundColor":"transparent","fillStyle":"solid","strokeWidth":1,"strokeStyle":"dotted","roughness":0,"opacity":100,"groupIds":[],"frameId":null,"index":"a5","roundness":null,"seed":1190528293,"version":1168,"versionNonce":1136500139,"isDeleted":false,"boundElements":[{"id":"5lGwJ1Ol-USEwgyTJbtpQ","type":"text"}],"updated":1772855567196,"link":"${result[1]}","locked":false},{"id":"5lGwJ1Ol-USEwgyTJbtpQ","type":"text","x":-417.3762362353516,"y":-733.0763173558735,"width":154,"height":25,"angle":0,"strokeColor":"#1e1e1e","backgroundColor":"transparent","fillStyle":"solid","strokeWidth":2,"strokeStyle":"solid","roughness":1,"opacity":100,"groupIds":[],"frameId":null,"index":"a6","roundness":null,"seed":1990465669,"version":747,"versionNonce":1496494155,"isDeleted":false,"boundElements":[],"updated":1772855567196,"link":"${result[1]}","locked":false,"text":"${str}","fontSize":20,"fontFamily":8,"textAlign":"left","verticalAlign":"top","containerId":"eP8wnAQNU2pZsbLysLQ8z","originalText":"${str}","autoResize":true,"lineHeight":1.25}],"files":{}}`
+            // 写入剪切板
+            let status = writeText(TextAnnotationTemplate)
+            if (status) { showMessage("👌") } else {
+                showMessage("操作失败（Operation failed）")
+            }
+        }
+        let result2 = text.match(/^\<\<((assets\/.+\.pdf)\/(\d{14}\-\w{7})) \".+\"\>\>\r\n\!\[\]\((assets\/.+\.png)\)$/);
+        if (result2) {
+            let link = result2[1];
+            let pdfPath = result2[2]
+            let id = result2[3];
+            let imagePath = result2[4];
+            let imageBlob = await getImage("/api/file/getFile", { "path": `/data/${imagePath}` })
+            // 图片转成base64格式
+            const base64Str = await blobToBase64(imageBlob);
+            // 需计算图片的长宽比，保证粘贴到白板时图片的比例正常。
+            let annotationData = await request("/api/asset/getFileAnnotation", { path: `${pdfPath}.sya` });
+            if (annotationData.code === 0) {
+                let data = JSON.parse(annotationData.data.data);
+                let position = data[id].pages[0].positions[0];
+                // 图片长、宽
+                let width = Math.abs(position[2] - position[0]) * 1.5;
+                let height = Math.abs(position[1] - position[3]) * 1.5;
+                let fileID = `${Date.now()}${getRandomStr(27)}`;
+                // 
+                let imageAnnotationTemplate = `{"type":"excalidraw/clipboard","elements":[{"id":"-0IXg4dxa4jsF4Etw3oV_","type":"image","x":3163,"y":3095,"width":${width},"height":${height},"angle":0,"strokeColor":"transparent","backgroundColor":"transparent","fillStyle":"solid","strokeWidth":2,"strokeStyle":"solid","roughness":1,"opacity":100,"groupIds":[],"frameId":null,"index":"aM","roundness":null,"seed":684078715,"version":6,"versionNonce":1503382395,"isDeleted":false,"boundElements":null,"updated":1772601177808,"link":"${link}","locked":false,"status":"pending","fileId":"${fileID}","scale":[1,1],"crop":null}],"files":{"${fileID}":{"mimeType":"image/png","id":"${fileID}","dataURL":"${base64Str}","created":1772601161101,"lastRetrieved":1772601161101}}}`
+
+                // 写入剪切板
+                let status = writeText(imageAnnotationTemplate);
+                if (status) { showMessage("👌") } else {
+                    showMessage("操作失败（Operation failed）")
+                }
+            }
+        }
+    }
+
+
+    // 顶栏添加一个按钮
+    const barMode = document.getElementById("barMode");
+    barMode.insertAdjacentHTML(
+        "beforebegin",
+        '<div id="convertAnnotation"  class="toolbar__item ariaLabel" aria-label="PDF" ></div>'
+    );
+    const convertBtn = document.getElementById("convertAnnotation");
+    convertBtn.style.width = "auto";
+    convertBtn.innerHTML = `<svg t="1772610251555" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1692" width="48" height="48"><path d="M905.185809 178.844158C898.576738 172.685485 891.19337 165.824412 883.21687 158.436127 860.422682 137.322863 837.434925 116.207791 815.697647 96.487895 813.243072 94.261877 813.243072 94.261877 810.786411 92.037081 781.783552 65.781062 757.590948 44.376502 739.713617 29.293612 729.254178 20.469111 721.020606 13.860686 714.970549 9.501727 710.955023 6.608611 707.690543 4.524745 704.47155 2.998714 700.417679 1.07689 696.638044-0.094029 691.307277 0.005928 677.045677 0.273349 665.6 11.769337 665.6 26.182727L665.6 77.352844 665.6 128.522961 665.6 230.863194 665.6 256.448252 691.2 256.448252 896 256.448252 870.4 230.863194 870.4 998.414942 896 972.829884 230.381436 972.829884C187.90385 972.829884 153.6 938.623723 153.6 896.20663L153.6 26.182727 128 51.767786 588.8 51.767786C602.93849 51.767786 614.4 40.312965 614.4 26.182727 614.4 12.05249 602.93849 0.597669 588.8 0.597669L128 0.597669 102.4 0.597669 102.4 26.182727 102.4 896.20663C102.4 966.91021 159.652833 1024 230.381436 1024L896 1024 921.6 1024 921.6 998.414942 921.6 230.863194 921.6 205.278135 896 205.278135 691.2 205.278135 716.8 230.863194 716.8 128.522961 716.8 77.352844 716.8 26.182727C716.8 39.813762 705.748075 50.91427 692.267725 51.167041 687.705707 51.252584 685.069822 50.435995 682.52845 49.231204 682.259458 49.103682 683.344977 49.796618 685.029451 51.010252 689.779394 54.432502 697.145822 60.34494 706.686383 68.394196 724.009052 83.009121 747.816448 104.072869 776.413589 129.961594 778.850014 132.168064 778.850014 132.168064 781.285216 134.376514 802.876774 153.964212 825.739479 174.96442 848.413564 195.966437 856.350957 203.3185 863.697005 210.144893 870.269888 216.269843 874.209847 219.941299 877.019309 222.565641 878.499674 223.951409 888.81866 233.610931 905.019017 233.081212 914.684179 222.768247 924.349344 212.455283 923.819315 196.264383 913.500326 186.604861 911.981323 185.182945 909.155025 182.542876 905.185809 178.844158ZM102.4 461.128719 0 461.128719 0 896.074709 512 896.074709 1024 896.074709 1024 461.128719 153.6 461.128719 153.6 460.531049 102.4 460.531049 102.4 461.128719ZM208.2 711 208.2 819.2 157.6 819.2 157.6 528 269 528C301.533495 528 327.366571 536.466581 346.5 553.4 365.633429 570.333419 375.2 592.733195 375.2 620.6 375.2 649.133476 365.833427 671.333254 347.1 687.2 328.366573 703.066746 302.133502 711 268.4 711L208.2 711ZM208.2 670.4 269 670.4C287.00009 670.4 300.733286 666.166709 310.2 657.7 319.666714 649.233291 324.4 637.000079 324.4 621 324.4 605.266588 319.600047 592.700047 310 583.3 300.399951 573.899953 287.200083 569.066669 270.4 568.8L208.2 568.8 208.2 670.4ZM419.4 819.2 419.4 528 505.4 528C531.133461 528 553.966566 533.733276 573.9 545.2 593.833434 556.666724 609.266611 572.933229 620.2 594 631.133389 615.066771 636.6 639.199863 636.6 666.4L636.6 681C636.6 708.600139 631.100055 732.866562 620.1 753.8 609.099945 774.733438 593.433436 790.866609 573.1 802.2 552.766564 813.533391 529.466799 819.2 503.2 819.2L419.4 819.2ZM470 568.8 470 778.8 503 778.8C529.533466 778.8 549.89993 770.500083 564.1 753.9 578.30007 737.299917 585.533331 713.466822 585.8 682.4L585.8 666.2C585.8 634.599842 578.933402 610.46675 565.2 593.8 551.466598 577.13325 531.533463 568.8 505.4 568.8L470 568.8ZM854.8 695.8 737.6 695.8 737.6 819.2 687 819.2 687 528 872 528 872 568.8 737.6 568.8 737.6 655.4 854.8 655.4 854.8 695.8Z" fill="#d4237a" p-id="1693"></path></svg>`;
+    convertBtn.addEventListener(
+        "click",
+        (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            annotationToElement();
+        },
+        true
+    );
+    convertBtn.addEventListener("mousedown", () => { convertBtn.style.transform = 'scale(2)' })
+    convertBtn.addEventListener("mouseup", () => { convertBtn.style.transform = 'scale(1)' })
+    convertBtn.addEventListener("mouseleave", () => { convertBtn.style.transform = 'scale(1)' })
+})();
 ```
 
 ---
 
-对于当前版本：**V2.0.17**
+对于当前版本：**V2.0.18**
 
 如果你**不想默认开启自动保存功能**，可以使用VS Code之类的编辑器打开挂件文件夹`Whiteboard`——`custom.js`，
 
@@ -279,7 +399,7 @@ assets/ExcalidrawFiles/20231227015401-w0olmpi.excalidraw
 
 ### 1、手动更改画笔的粗细
 
-对于版本V2.0.17，打开挂件文件夹`Whiteboard`——`assets`——`index-ZsssFvwm.js`,在该js文件中搜索：
+对于版本V2.0.18，打开挂件文件夹`Whiteboard`——`assets`——`index-ZsssFvwm.js`,在该js文件中搜索：
 
 ```css
 n={simulatePressure:e.simulatePressure,size:e.strokeWidth*1.2,thinning
@@ -327,119 +447,12 @@ D:\Siyuan\SiYuan.exe  --port=6806
 
 ## 七、更新记录
 
-### V2.0.0
+[更新记录](https://github.com/BryceAndJuly/Whiteboard/issues/98#issue-4037507371)
 
-* **Excalidraw 版本更新：V0.17.0——&gt;V0.18.0 ，** 具体更新内容可参考：[https://github.com/excalidraw/excalidraw/releases](https://github.com/excalidraw/excalidraw/releases)
-
-  * 在该版本中，官方已添加【文本检索】、【元素链接】这两项功能，所以旧版挂件的【文本检索】和【元素链接】功能已废弃。
-
-    * 关于【元素链接】：不必担心之前建立的元素链接关系会失效，经适配，当前版本的元素链接会继续保持之前的元素链接格式，形如：`excalidraw://7LItP1OJtttbMuytaDgp2`。通过鼠标右键的 `Copy link to object`选项来获取。
-
-      > 备注：触发自动保存时会关闭鼠标右键菜单，如果需要频繁获取元素链接，建议先通过快捷键`Alt`+`F`临时关闭自动保存。
-      >
-    * 关于【文本检索】，可通过快捷键`Ctrl`+`F`唤出，官方版默认的单关键词检索已修改成支持多关键词检索，关键词之间用空格隔开，跟之前的检索方式保持一致。
-  * 其他感觉比较好用的更新点：
-
-    * 默认支持中文手写字体。字体文件在`Whiteboard/fonts/Xiaolai`文件夹下，被拆分成多个woff2文件以便懒加载。虽然字体文件略大，但是字形看着不错，兼顾了可读性和美观。
-    * 支持了`Elbow arrows`。可快速并规整地连接元素，绘制起流程图来更方便了。
-    * 图片裁剪，可对嵌入到白板的图片进行简单的裁剪。
-* **修复嵌入文档（Web Embed）的加载问题**
-
-  * 之前刚打开或刷新白板后，需要在白板中随便挪动一下鼠标才会开始渲染嵌入的文档。其他通过拖拽或者【块引检索面板】添加的嵌入文档也是如此。修复后，嵌入白板的文档会自动加载，不需要等鼠标挪动等操作。
-
-### V2.0.1
-刚刚发现一个问题：同时打开多个白板时，因为LocalStorage缓存而导致白板数据互相干扰。
-在修复前，请保持在V1.6.0，先不要更新！！！
-
-### V2.0.2
-* 修复问题：在V2.0.0中，同时打开多个白板时，因LocalStorage缓存导致白板数据互相干扰。
-
-
-### V2.0.3
-修复问题：在V2.0.2中，当元素添加的链接为外链（比如以`https://`或`http://`开头的链接），点击元素右上角的链接图标未能跳转，需要单击元素后点击上方显示的链接输入框才能跳转。
-
-### V2.0.4
-
-见顶部预览图：
-
-* 白板中嵌入的内容块，右上角添加刷新按钮。方便更新内容后单独重载该内容块，而不是重载整个白板 。
-  * 需要先单击卡片中央的【点击以开始交互】或者双击卡片的边缘区域进入卡片后才能点击该按钮
-* 白板中嵌入的内容块，背景色默认设置为透明，以便元素设置的背景色生效。
-* `内容块检索面板`（Alt+P）新增深色模式，当白板的主题为深色模式时生效（是直接设置为深色，而不是System mode）。
-
-
-### V2.0.5
-右上角新增【文本搜索面板】，专用于搜索、高亮iframe中的文本。类似于网页中的文本检索。
-
-* 搜索前，建议先加载白板的所有iframe元素，可使用白板【缩放以适应所有元素】功能的快捷键（Shift+1）。
-
-  * 因为iframe是懒加载的，需要处于可视区域才会加载，而文本搜索是在已加载的iframe元素中进行的。
-  * 单击白板空白处后按快捷键（Shift+1）即可让所有元素都处于可视区域。
-* 单击白板空白处后按快捷键（Alt+o）即可开启/关闭右上角的【文本搜索面板】，开启后自动获得焦点，可直接输入单个关键词进行检索。
-* 输入单个关键词后，如果有命中的结果，默认跳转到第一个包含关键词的iframe。此时焦点仍在输入框，按下`Enter`后可切换到下一个iframe。
-
-
-> 注意事项：
-> * 搜索结果的数量是包含关键词的iframe卡片的数量，而不是关键词命中的数量。一个iframe中可能拥有多个该关键词，有时需要手动滚动页面来查看所有高亮部分。
-
-### V2.0.6
-
-修复问题：
-
-* 在`V2.0.5`中，当白板的iframe包含外链时，文本搜索（Alt+o）出错。
-
-  > 备注：目前，该功能的搜索范围仅限于白板内已嵌入的文档/内容块。
-  >
-* 在`V2.0.5`中，通过快捷键Alt+o关闭文本搜索框后，未自动取消iframe中的关键词高亮。
-
-  > 备注：在`V2.0.5`，仍能通过`文本搜索框`右侧的关闭按钮`X`来关闭搜索框并取消高亮。
-  >
-
-### V2.0.7
-
-测试环境：`SiYuan V3.2.0预览版`，`Windows 11家庭中文版24H2`
-
-- **修复问题：** 对于嵌入到白板中的内容块，单击卡片中央的【点击以开始交互】按钮（或双击卡片的边缘区域）进入卡片后，使用鼠标滚轮经常无法滚动页面。
-- **改进：** 支持在白板中渲染数据库的画廊视图。
-
-### V2.0.8
-
-* 修复问题：
-
-  * 部分快捷键在`MacOS`上不兼容。参考：[Issue:68](https://github.com/BryceAndJuly/Whiteboard/issues/68)
-  * 嵌入到白板的`Mermaid`图未适配深色模式。
-* 改进：
-
-  * 白板的主题模式（深色/浅色）默认与笔记软件的保持一致。若软件的主题模式切换后白板未跟随变化，只需刷新一下白板即可。
-  * 保存白板时，记录`吸附至对象（Alt+S）`的状态，记录最后编辑时的字号（currentItemFontSize）
-  * 嵌入到白板的内容块，默认隐藏右上角的`重载`按钮，改为鼠标悬浮于卡片时显示。
-  * `Mermaid`升级到最新版的`V11.7.0`
-
-### V2.0.9
-
-- 处理兼容性：在笔记软件`V3.2.0`中，白板的【修复块超链接】功能失效。
-
-### V2.0.10
-测试环境：`SiYuan V3.2.1`，`Windows 11家庭中文版24H2`
-
-修复样式：
-
-- 删除`base.css`中未定义的字体样式
-- `Attribute View`：补充缺失的两个图标，见预览图
-- `Attribute View`——设置——布局——卡片预览，当设置为内容块时，补充缺失的样式
-
-### V2.0.11
-测试环境：`SiYuan V3.3.0`，`Windows 11家庭中文版24H2`
-- 处理兼容性：支持在白板中渲染数据库的分组。参考：[Database grouping by field](https://github.com/siyuan-note/siyuan/issues/10964)
-
----
-### V2.0.12
-测试环境：`SiYuan V3.4.0`，`Windows 11家庭中文版24H2`
-- 处理兼容性：支持在白板中渲染数据库的看板视图。参考：[Database kanban view](https://github.com/siyuan-note/siyuan/issues/8873)
 
 ## 八、参考与感谢
 
 * [Excalidraw](https://github.com/excalidraw/excalidraw)
 * [SiYuan](https://github.com/siyuan-note/siyuan)
-* 画板中的中文字体文件拷贝自 [superdraw](https://github.com/zuoez02/superdraw) 项目；
+* 画板（V2.0.0之前的版本）中的中文字体文件拷贝自 [superdraw](https://github.com/zuoez02/superdraw) 项目；
 * 感谢插件【开放 API】的作者[Zuoqiu-Yingyi](https://github.com/Zuoqiu-Yingyi)。
