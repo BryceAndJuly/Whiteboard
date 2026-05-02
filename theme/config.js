@@ -1114,10 +1114,10 @@ async function avRender() {
           "query": ""
         }).then(response => {
           const view = response.data.view;
-          if (view?.groups?.length - 1 > 0) {
+          if (view?.groups?.length  > 0) {
             let bodyHTML = "";
             // 不显示最后一个空卡片
-            view.groups.pop();
+            //view.groups.pop();
             view.groups.forEach((group) => {
               if (group.groupHidden === 0) {
                 bodyHTML += `<div class="av__kanban-group${group.cardSize === 0 ? " av__kanban-group--small" : (group.cardSize === 2 ? " av__kanban-group--big" : "")}">
