@@ -334,3 +334,8 @@ img.emoji {
     padding: 2px 3px;
     border-radius: 3px;
 }
+/* 数据表格中，文本不换行时，溢出的文本显示为省略号 */
+.av__cell[data-wrap=false] {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
