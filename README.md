@@ -3,6 +3,17 @@
 * 如果在已有其他内容的文档中误嵌入该挂件，可参考：[误操作插入挂件后如何撤销?](https://github.com/BryceAndJuly/Whiteboard/issues/48)
 
 ## 一、当前版本
+### V2.0.19
+
+参考顶部预览图（测试时的软件版本为：`Siyuan V3.6.5`）
+
+- 修复问题：数据表格的看板视图只有单列时，未能在白板中正常渲染。
+- 优化：创建白板时，减少自动刷新的次数（基本只刷新一次）。
+- 样式调整
+  - 禅模式下，不隐藏顶栏快捷键及提示，不隐藏边框阴影，以减少白板刷新时的闪烁。
+  - 数据表格中，文本不换行时，溢出的文本显示为省略号。
+
+---
 ### V2.0.18
 
 参考顶部预览图（测试时的软件版本为：`Siyuan V3.5.8`）
@@ -173,7 +184,7 @@
 
 ---
 
-对于当前版本：**V2.0.18**
+对于当前版本：**V2.0.19**
 
 如果你**不想默认开启自动保存功能**，可以使用VS Code之类的编辑器打开挂件文件夹`Whiteboard`——`custom.js`，
 
@@ -399,7 +410,7 @@ assets/ExcalidrawFiles/20231227015401-w0olmpi.excalidraw
 
 ### 1、手动更改画笔的粗细
 
-对于版本V2.0.18，打开挂件文件夹`Whiteboard`——`assets`——`index-ZsssFvwm.js`,在该js文件中搜索：
+对于版本V2.0.19，打开挂件文件夹`Whiteboard`——`assets`——`index-ZsssFvwm.js`,在该js文件中搜索：
 
 ```css
 n={simulatePressure:e.simulatePressure,size:e.strokeWidth*1.2,thinning

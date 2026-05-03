@@ -3,6 +3,18 @@
 * If this widget is accidentally embedded in a document that already contains other content, please refer to: [How to undo after accidentally inserting a widget?](https://github.com/BryceAndJuly/Whiteboard/issues/70#issuecomment-3027972161)
 
 ## 1. Current Version
+### V2.0.19
+
+Refer to the preview image at the top (the software version used for testing: `Siyuan V3.6.5`)
+
+- Bug Fix: When the board view of a data table has only a single column, it failed to render properly on the whiteboard.
+- Optimization: Reduced the number of automatic refreshes when creating a whiteboard (only refreshes basically once).
+- Style Adjustments
+
+  - In Zen mode, the top bar shortcuts, prompts, border and shadow are no longer hidden to reduce flickering during whiteboard refreshes.
+  - In data tables, overflowing text will be displayed with ellipsis when text wrapping is disabled.
+
+---
 ### V2.0.18
 
 Refer to the preview image at the top (the software version used for testing is: `Siyuan V3.5.8`).
@@ -177,7 +189,7 @@ Before use, it is recommended to add a JS code snippet in `Settings` > `Appearan
 
 ---
 
-For the current version: **V2.0.18**
+For the current version: **V2.0.19**
 
 If you **do not want auto-save to be enabled by default**, open the widget folder `Whiteboard` -> `custom.js` in an editor like VS Code and search for:
 
@@ -401,7 +413,7 @@ A  `Text Search Panel`  is added to the upper right corner, specifically for sea
 
 ### 1. Adjust Brush Thickness Manually
 
-For V2.0.18, open `Whiteboard` -> `assets` -> `index-ZsssFvwm.js` and search for:
+For V2.0.19, open `Whiteboard` -> `assets` -> `index-ZsssFvwm.js` and search for:
 
 ```css
 n={simulatePressure:e.simulatePressure,size:e.strokeWidth*1.2,thinning
