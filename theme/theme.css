@@ -339,3 +339,7 @@ img.emoji {
     white-space: nowrap;
     text-overflow: ellipsis;
 }
+/* 卡片视图——隐藏为空的项 */
+.av__gallery-field[data-empty="true"] {
+    display: none;
+}
