@@ -1232,8 +1232,8 @@ window._cancelHighligh = function () {
 async function main() {
   await renderBody();
   await handleIframeInternalLink()
-  await highlight();
   await renderEmbedBlock();
+  await highlight();
   await renderKatex();
   await avRender();
   await renderMermaid();
