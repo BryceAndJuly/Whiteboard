@@ -129,22 +129,29 @@ checkVersion();
 // 默认关闭悬浮预览
 window._allowPreview = !1;
 // 嵌入到白板的内容块，所使用的主题:深色/浅色
-window._currentThemePath = window.top.siyuan.config.appearance.mode===1 ? "./theme/dark.css" : "./theme/theme.css";
+window._currentThemePath = window.top.siyuan.config.appearance.mode === 1 ? "./theme/dark.css" : "./theme/theme.css";
 // 保存时默认将白板中的文本内容写入到文档——备注中，方便全局检索
 window._allowSetMemo = true;
-// 是否默认开启自动保存
+// 默认开启自动保存
 window._autoSave = true;
 // 自动保存延时时间，单位：ms
 window._autoSaveDelay = 2000;
 // 默认关闭【查看模式】
 window.viewModeEnabled = false;
-
+// 默认开启内容块自动同步功能：内容块修改后，白板上可视区域中的内容块卡片自动更新
+window.contentSync = true;
 
 
 // 发布模式、全局只读模式下，默认以【查看模式】打开白板
 if (window.top.siyuan.config.readonly || window.top.siyuan.config.editor.readOnly) {
   window.viewModeEnabled = true;
 }
+// 初始阶段，执行一次全量清空
+if (window.top.openAPI) {
+  window.top.openAPI.plugin.eventBus.off("ws-main");
+}
+
+
 // 消除以查看模式打开白板时出现的闪烁
 if (window.viewModeEnabled) {
   document.body.classList.add("viewmode");
@@ -404,7 +411,7 @@ async function handleInput() {
               icon = `🚨`
               break;
           }
-        } 
+        }
         else {
           switch (item.type) {
             case "NodeDocument":
@@ -612,7 +619,7 @@ document.addEventListener("keydown", (e => {
 
 // 检索面板使用深色主题
 function setColor() {
-  if (window.top.siyuan.config.appearance.mode===1) {
+  if (window.top.siyuan.config.appearance.mode === 1) {
     try {
       let pannel = document.getElementById("searchBlocksPanel");
       pannel.classList.add("dark");

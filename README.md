@@ -3,6 +3,42 @@
 * 如果在已有其他内容的文档中误嵌入该挂件，可参考：[误操作插入挂件后如何撤销?](https://github.com/BryceAndJuly/Whiteboard/issues/48)
 
 ## 一、当前版本
+### V2.0.20
+
+参考顶部预览图（测试时的软件版本为：`Siyuan V3.6.5`）
+
+- 修复问题：嵌入块中的代码未高亮。
+- 优化：
+
+  - 代码块添加浅色模式
+  - 在笔记中修改内容块后，白板中对应卡片的内容自动更新。
+
+
+关于白板中内容块的自动更新，该功能是默认开启的，如果想默认关闭，可以使用VS Code之类的编辑器打开：`工作空间/data/widgets/Whiteboard/custom.js`，
+
+搜索：
+
+```js
+window.contentSync = true;
+```
+
+改成：
+
+```js
+window.contentSync = false;
+```
+
+并有以下注意事项：
+
+> - 该功能需要先启用插件：`开放 API`
+>
+>   - 因为它本质是用插件的`eventBus`来检测内容块的变更，然后实时去修改卡片的DOM。
+>   - 如果只是想临时关闭白板的【内容块自动同步】功能，只需要关闭插件`开放 API`并刷新白板即可。
+> - 内容块对应的白板卡片需要处于可视区域。（通过快捷键是`Shift `+ `1`，可以让所有元素都处于可视区域)
+> - 如果发现白板卡片没有正常触发更新，或者更新后显示异常，可以`双击该卡片边缘区域（进入交互模式）`———`点击卡片右上角的刷新按钮`来手动刷新该卡片。
+
+---
+
 ### V2.0.19
 
 参考顶部预览图（测试时的软件版本为：`Siyuan V3.6.5`）
@@ -184,7 +220,7 @@
 
 ---
 
-对于当前版本：**V2.0.19**
+对于当前版本：**V2.0.20**
 
 如果你**不想默认开启自动保存功能**，可以使用VS Code之类的编辑器打开挂件文件夹`Whiteboard`——`custom.js`，
 
@@ -410,7 +446,7 @@ assets/ExcalidrawFiles/20231227015401-w0olmpi.excalidraw
 
 ### 1、手动更改画笔的粗细
 
-对于版本V2.0.19，打开挂件文件夹`Whiteboard`——`assets`——`index-ZsssFvwm.js`,在该js文件中搜索：
+对于版本V2.0.20，打开挂件文件夹`Whiteboard`——`assets`——`index-ZsssFvwm.js`,在该js文件中搜索：
 
 ```css
 n={simulatePressure:e.simulatePressure,size:e.strokeWidth*1.2,thinning

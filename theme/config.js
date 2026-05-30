@@ -10,23 +10,27 @@ async function renderBody() {
   if (res?.code === 0 && res?.data?.content) {
     // 判断是否是文档块，是的话要另外获取标题
     if (res?.data?.type === "NodeDocument") {
-      // 修复问题：callout icon 设置为动态图标时，获取图标失败
       htmlStr = res.data.content.replaceAll(`"assets/`, `"${window.top.location.origin}/assets/`).replaceAll(`contenteditable="true"`, `contenteditable="false"`).replaceAll(`src="api/icon/getDynamicIcon`, `src="${window.top.location.origin}/api/icon/getDynamicIcon`);
       let response = await request("/api/block/getDocInfo", { id });
       // 读取标题成功,添加文档标题
       if (response?.code === 0 && response?.data?.name && htmlStr) {
-        // 修复问题：当文档标题中包含类似“<iframe>”的字符串时，会被识别成标签，导致文档渲染异常
         let title = response.data.name.replaceAll("<", "&lt;").replaceAll(">", "&gt;")
-        doc = `<h1>${title}</h1>` + htmlStr;
+        doc = `<h1 data-node-id="${response.data.rootID}">${title}</h1>` + htmlStr;
       }
     } else {
-      // 修复问题：callout icon 设置为动态图标时，获取图标失败
       doc = res.data.content.replaceAll(`"assets/`, `"${window.top.location.origin}/assets/`).replaceAll(`contenteditable="true"`, `contenteditable="false"`).replaceAll(`src="api/icon/getDynamicIcon`, `src="${window.top.location.origin}/api/icon/getDynamicIcon`);
     }
   } else {
     doc = "<h2>加载失败，未找到该内容块！</h2><h2>Failed to load. The content block was not found!</h2>"
   }
   document.body.insertAdjacentHTML("afterbegin", doc);
+}
+// 部分内容块需要加载依赖文件来进行渲染
+const libs = {
+  highlight: false,
+  katex: false,
+  av: false,
+  mermaid: false
 }
 
 // 内嵌块中的超链接跳转
@@ -133,7 +137,7 @@ function addStyle(url) {
 
 // 渲染嵌入块
 async function renderEmbedBlock() {
-  let QueryEmbedElements = Array.from(document.querySelectorAll('.render-node[data-type="NodeBlockQueryEmbed"]'));
+  let QueryEmbedElements = Array.from(document.querySelectorAll('.render-node[data-type="NodeBlockQueryEmbed"]:not([render])'));
   if (QueryEmbedElements.length > 0) {
     for (let element of QueryEmbedElements) {
       let SQL = element.getAttribute("data-content");
@@ -153,7 +157,6 @@ async function renderEmbedBlock() {
       let html = "";
       blocks.forEach((blocksItem) => {
         let breadcrumbHTML = "";
-        // 需要修正嵌入块中图片的路径，否则会导致加载失败
         let contentStr = blocksItem.block.content.replaceAll(`"assets/`, `"${window.top.location.origin}/assets/`).replaceAll(`contenteditable="true"`, `contenteditable="false"`);
         // 
         html += `<div class="protyle-wysiwyg__embed" data-id="${blocksItem.block.id}">${breadcrumbHTML}${contentStr}</div>`;
@@ -163,71 +166,70 @@ async function renderEmbedBlock() {
       } else {
         element.lastElementChild.insertAdjacentHTML("beforebegin", `<div class="ft__smaller ft__secondary b3-form__space--small" contenteditable="false">不存在符合条件的内容块</div><div style="position: absolute;">"\u200b"</div>`);
       }
+      element.setAttribute('render', true);
     }
   }
 }
 // 渲染Katex公式
 async function renderKatex() {
-  let inlineMathElements = Array.from(document.querySelectorAll('span[data-type="inline-math"]'));
-  let MathBlockElements = Array.from(document.querySelectorAll('.render-node[data-type="NodeMathBlock"]'));
+  let inlineMathElements = Array.from(document.querySelectorAll('span[data-type="inline-math"]:not([render])'));
+  let MathBlockElements = Array.from(document.querySelectorAll('.render-node[data-type="NodeMathBlock"]:not([render])'));
   if (inlineMathElements.length > 0 || MathBlockElements.length > 0) {
-    addStyle("./theme/katex.min.css");
-    await addScript("./theme/katex.min.js");
-    if (inlineMathElements.length > 0) {
-      for (let element of inlineMathElements) {
-        let katexHTML = katex.renderToString(window.top.Lute.UnEscapeHTMLStr(element.getAttribute("data-content")), {
-          displayMode: false,
-          output: "html",
-          macros: {},
-          trust: true,
-          strict: "ignore"
-        });
-        element.insertAdjacentHTML("afterbegin", katexHTML);
-      }
+    if (!libs.katex) {
+      addStyle("./theme/katex.min.css");
+      await addScript("./theme/katex.min.js");
+      libs.katex = true;
     }
-    if (MathBlockElements.length > 0) {
-      for (let element of MathBlockElements) {
-        let katexHTML = katex.renderToString(
-          window.top.Lute.UnEscapeHTMLStr(element.getAttribute("data-content")), {
-          displayMode: true,
-          output: "html",
-          macros: {},
-          trust: true,
-          strict: "ignore"
-        });
-        element.insertAdjacentHTML("afterbegin", '<div spin="1">' + katexHTML + '</div>');
-      }
+  }
+  if (inlineMathElements.length > 0) {
+    for (let element of inlineMathElements) {
+      let katexHTML = katex.renderToString(window.top.Lute.UnEscapeHTMLStr(element.getAttribute("data-content")), {
+        displayMode: false,
+        output: "html",
+        macros: {},
+        trust: true,
+        strict: "ignore"
+      });
+      element.innerHTML = katexHTML;
+      element.setAttribute('render', true);
+    }
+  }
+  if (MathBlockElements.length > 0) {
+    for (let element of MathBlockElements) {
+      let katexHTML = katex.renderToString(
+        window.top.Lute.UnEscapeHTMLStr(element.getAttribute("data-content")), {
+        displayMode: true,
+        output: "html",
+        macros: {},
+        trust: true,
+        strict: "ignore"
+      });
+      element.firstElementChild.innerHTML = katexHTML;
+      element.setAttribute('render', true);
     }
   }
 }
+
 // 渲染Mermaid图表
 async function renderMermaid() {
   const mermaidElements = Array.from(document.querySelectorAll('.render-node[data-subtype="mermaid"]'));
-  if (mermaidElements.length > 0) {
+  if (mermaidElements.length === 0) { return }
+  if (!libs.mermaid) {
     await addScript("./theme/mermaid.min.js")
-    let graphObj = new Object();
-    // 适配深色模式
-    let mermaidTheme = window?.top?.siyuan?.config?.appearance?.mode === 1 ? "dark" : "light"
-    mermaid.initialize({
-      startOnLoad: false,
-      theme: mermaidTheme
-    });
-    for (let element of mermaidElements) {
-      const content = window.top.Lute.UnEscapeHTMLStr(element.getAttribute("data-content"));
-      const dataID = element.getAttribute('data-node-id');
-      const {
-        svg
-      } = await mermaid.render('graphDiv', content);
-      graphObj[dataID] = svg;
-    }
-    // 全部渲染出图表再一起嵌入文档
+    libs.mermaid = true;
+  }
+  let mermaidTheme = window?.top?.siyuan?.config?.appearance?.mode === 1 ? "dark" : "light"
+  mermaid.initialize({
+    startOnLoad: false,
+    theme: mermaidTheme
+  });
+  for (let element of mermaidElements) {
+    const content = window.top.Lute.UnEscapeHTMLStr(element.getAttribute("data-content"));
+    const {
+      svg
+    } = await mermaid.render('graphDiv', content);
     setTimeout(() => {
-      if (Object.keys(graphObj).length > 0) {
-        for (let element of mermaidElements) {
-          let id = element.getAttribute("data-node-id");
-          element.firstElementChild.insertAdjacentHTML("afterbegin", graphObj[id]);
-        }
-      }
+      element.firstElementChild.insertAdjacentHTML("afterbegin", `<div contenteditable="false">${svg}</div>`);
     }, 0)
   }
 }
@@ -433,7 +435,7 @@ function unicode2Emoji(unicode, className = "", needSpan = false, lazy = false) 
       if (needSpan) {
         emoji = `<span class="${className}">${emoji}</span>`;
       }
-    } catch (e) {}
+    } catch (e) { }
   }
   return emoji;
 };
@@ -952,41 +954,41 @@ function getKanbanTitleHTML(group, counter) {
 
 }
 
-function getKanbanHTML(data){
+function getKanbanHTML(data) {
   let galleryHTML = "";
   // body
   data.cards.forEach((item, rowIndex) => {
-      galleryHTML += `<div data-id="${item.id}" draggable="true" class="av__gallery-item">`;
-      if (data.coverFrom !== 0) {
-          const coverClass = "av__gallery-cover av__gallery-cover--" + data.cardAspectRatio;
-          if (item.coverURL) {
-              if (item.coverURL.startsWith("background")) {
-                  galleryHTML += `<div class="${coverClass}"><img class="av__gallery-img" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" style="${item.coverURL}"></div>`;
-              } else {
-                  galleryHTML += `<div class="${coverClass}"><img loading="lazy" class="av__gallery-img${data.fitImage ? " av__gallery-img--fit" : ""}" src="${getCompressURL(item.coverURL)}"></div>`;
-              }
-          } else if (item.coverContent.trim()) {
-              galleryHTML += `<div class="${coverClass}"><div class="av__gallery-content">${item.coverContent}</div><div></div></div>`;
-          }
+    galleryHTML += `<div data-id="${item.id}" draggable="true" class="av__gallery-item">`;
+    if (data.coverFrom !== 0) {
+      const coverClass = "av__gallery-cover av__gallery-cover--" + data.cardAspectRatio;
+      if (item.coverURL) {
+        if (item.coverURL.startsWith("background")) {
+          galleryHTML += `<div class="${coverClass}"><img class="av__gallery-img" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" style="${item.coverURL}"></div>`;
+        } else {
+          galleryHTML += `<div class="${coverClass}"><img loading="lazy" class="av__gallery-img${data.fitImage ? " av__gallery-img--fit" : ""}" src="${getCompressURL(item.coverURL)}"></div>`;
+        }
+      } else if (item.coverContent.trim()) {
+        galleryHTML += `<div class="${coverClass}"><div class="av__gallery-content">${item.coverContent}</div><div></div></div>`;
       }
-      galleryHTML += '<div class="av__gallery-fields">';
-      item.values.forEach((cell, fieldsIndex) => {
-          if (data.fields[fieldsIndex].hidden) {
-              return;
-          }
-          let checkClass = "";
-          if (cell.valueType === "checkbox") {
-              checkClass = cell.value?.checkbox?.checked ? " av__cell-check" : " av__cell-uncheck";
-          }
-          const isEmpty = cellValueIsEmpty(cell.value);
-          let ariaLabel = escapeAttr(data.fields[fieldsIndex].name) || getColNameByType(data.fields[fieldsIndex].type);
-          if (data.fields[fieldsIndex].desc) {
-              ariaLabel += escapeAttr(`<div class="ft__on-surface">${data.fields[fieldsIndex].desc}</div>`);
-          }
-          if (cell.valueType === "checkbox" && !data.displayFieldName) {
-              cell.value.checkbox.content = data.fields[fieldsIndex].name || getColNameByType(data.fields[fieldsIndex].type);
-          }
-          const cellHTML = `<div class="av__cell${checkClass}${data.displayFieldName ? "" : " ariaLabel"}" 
+    }
+    galleryHTML += '<div class="av__gallery-fields">';
+    item.values.forEach((cell, fieldsIndex) => {
+      if (data.fields[fieldsIndex].hidden) {
+        return;
+      }
+      let checkClass = "";
+      if (cell.valueType === "checkbox") {
+        checkClass = cell.value?.checkbox?.checked ? " av__cell-check" : " av__cell-uncheck";
+      }
+      const isEmpty = cellValueIsEmpty(cell.value);
+      let ariaLabel = escapeAttr(data.fields[fieldsIndex].name) || getColNameByType(data.fields[fieldsIndex].type);
+      if (data.fields[fieldsIndex].desc) {
+        ariaLabel += escapeAttr(`<div class="ft__on-surface">${data.fields[fieldsIndex].desc}</div>`);
+      }
+      if (cell.valueType === "checkbox" && !data.displayFieldName) {
+        cell.value.checkbox.content = data.fields[fieldsIndex].name || getColNameByType(data.fields[fieldsIndex].type);
+      }
+      const cellHTML = `<div class="av__cell${checkClass}${data.displayFieldName ? "" : " ariaLabel"}" 
 data-wrap="${data.fields[fieldsIndex].wrap}" 
 aria-label="${ariaLabel}" 
 data-position="5west"
@@ -996,19 +998,19 @@ data-dtype="${cell.valueType}"
 ${cell.value?.isDetached ? ' data-detached="true"' : ""} 
 style="${cell.bgColor ? `background-color:${cell.bgColor};` : ""}
 ${cell.color ? `color:${cell.color};` : ""}">${renderCell(cell.value, rowIndex, data.showIcon, "kanban")}</div>`;
-          if (data.displayFieldName) {
-              galleryHTML += `<div class="av__gallery-field av__gallery-field--name" data-empty="${isEmpty}">
+      if (data.displayFieldName) {
+        galleryHTML += `<div class="av__gallery-field av__gallery-field--name" data-empty="${isEmpty}">
   <div class="av__gallery-name">
       ${data.fields[fieldsIndex].icon ? unicode2Emoji(data.fields[fieldsIndex].icon, undefined, true) : `<svg><use xlink:href="#${getColIconByType(data.fields[fieldsIndex].type)}"></use></svg>`}${window.top.Lute.EscapeHTMLStr(data.fields[fieldsIndex].name)}
       ${data.fields[fieldsIndex].desc ? `<svg aria-label="${data.fields[fieldsIndex].desc}" data-position="north" class="ariaLabel"><use xlink:href="#iconInfo"></use></svg>` : ""}
   </div>
   ${cellHTML}
 </div>`;
-          } else {
-              galleryHTML += `<div class="av__gallery-field" data-empty="${isEmpty}">${cellHTML}</div>`;
-          }
-      });
-      galleryHTML += `</div></div>`;
+      } else {
+        galleryHTML += `<div class="av__gallery-field" data-empty="${isEmpty}">${cellHTML}</div>`;
+      }
+    });
+    galleryHTML += `</div></div>`;
   });
   return `<div class="av__gallery av__gallery--small">
   ${galleryHTML}
@@ -1022,124 +1024,124 @@ ${cell.color ? `color:${cell.color};` : ""}">${renderCell(cell.value, rowIndex, 
 </div>`.replaceAll(`background-image:url('assets/`, `background-image:url('${window.top.location.origin}/assets/`).replaceAll(`src="assets/`, `src="${window.top.location.origin}/assets/`);
 };
 
+// 渲染单个数据表格
+async function renderSingleAV(e) {
+  request("/api/av/renderAttributeView", {
+    "id": e.getAttribute("data-av-id"),
+    "viewID": e.getAttribute("custom-sy-av-view"),
+    "query": ""
+  }).then(response => {
+    const viewType = response.data.viewType;
+    const view = response.data.view;
+    switch (viewType) {
+      case "table":
+        if (view.groups?.length > 0) {
+          // 表格视图，分组
+          let avBodyHTML = "";
+          view.groups.forEach((group) => {
+            if (group.groupHidden === 0) {
+              avBodyHTML += `${getGroupTitleHTML(group, group.rows.length)}
+  <div data-group-id="${group.id}" data-page-size="${group.pageSize}" data-dtype="${group.groupKey.type}" data-content="${group.groupValue.text?.content}" style="float: left" class="av__body${group.groupFolded ? " fn__none" : ""}">${getTableHTMLs(group, e)}</div>`;
+            }
+          });
 
-// 渲染数据表格——数据库的表格视图、画廊视图
-async function avRender() {
-  let avElements = Array.from(document.querySelectorAll('[data-type="NodeAttributeView"]'));
-  if (avElements.length === 0) {
-    return;
-  }
-  await addScript("./theme/dayjs.js");
-  if (avElements.length > 0) {
-    addAttributeViewIcon();
-    avElements.forEach((e) => {
-      // 表格视图
-      if (e.getAttribute("data-av-type") === "table") {
-        request("/api/av/renderAttributeView", {
-          id: e.getAttribute("data-av-id")
-        }).then(response => {
-          const data = response.data.view;
-          if (data.groups?.length > 0) {
-            // 表格视图，分组
-            let avBodyHTML = "";
-            data.groups.forEach((group) => {
-              if (group.groupHidden === 0) {
-                avBodyHTML += `${getGroupTitleHTML(group, group.rows.length)}
-      <div data-group-id="${group.id}" data-page-size="${group.pageSize}" data-dtype="${group.groupKey.type}" data-content="${group.groupValue.text?.content}" style="float: left" class="av__body${group.groupFolded ? " fn__none" : ""}">${getTableHTMLs(group, e)}</div>`;
-              }
-            });
-
-            e.firstElementChild.outerHTML = `<div class="av__container">
+          e.firstElementChild.outerHTML = `<div class="av__container">
+  ${genTabHeaderHTML(response.data)}
+  <div class="av__scroll">
+    ${avBodyHTML}
+  </div>
+  </div>`;
+        } else {
+          // 表格视图，不分组
+          const avBodyHTML = `<div class="av__body" data-group-id="" data-page-size="${view.pageSize}" style="float: left">
+        ${getTableHTMLs(view, e)}
+    </div>`;
+          e.firstElementChild.outerHTML = `<div class="av__container">
     ${genTabHeaderHTML(response.data)}
     <div class="av__scroll">
         ${avBodyHTML}
     </div>
-</div>`;
-          } else {
-            // 表格视图，不分组
-            const avBodyHTML = `<div class="av__body" data-group-id="" data-page-size="${data.pageSize}" style="float: left">
-            ${getTableHTMLs(data, e)}
-        </div>`;
-            e.firstElementChild.outerHTML = `<div class="av__container">
-        ${genTabHeaderHTML(response.data)}
-        <div class="av__scroll">
-            ${avBodyHTML}
-        </div>
-    </div>`;
-          }
-        })
-      }
-      // 画廊视图
-      else if (e.getAttribute("data-av-type") === "gallery") {
-        request("/api/av/renderAttributeView", {
-          "id": e.getAttribute("data-av-id"),
-          "viewID": e.getAttribute("custom-sy-av-view"),
-          "query": ""
-        }).then(response => {
-          const view = response.data.view;
-          if (view.groups?.length > 0) {
-            // 画廊视图，分组
-            let avBodyHTML = "";
-            view.groups.forEach((group) => {
-              if (group.groupHidden === 0) {
-                  avBodyHTML += `${getGroupTitleHTML(group, group.cards.length)}
-      <div data-group-id="${group.id}" data-page-size="${group.pageSize}" data-dtype="${group.groupKey.type}" data-content="${group.groupValue.text?.content}" class="av__body${group.groupFolded ? " fn__none" : ""}">${getGalleryHTML(group)}</div>`;
-              }
+  </div>`;
+        }
+        break;
+
+      case "gallery":
+        if (view.groups?.length > 0) {
+          // 画廊视图，分组
+          let avBodyHTML = "";
+          view.groups.forEach((group) => {
+            if (group.groupHidden === 0) {
+              avBodyHTML += `${getGroupTitleHTML(group, group.cards.length)}
+  <div data-group-id="${group.id}" data-page-size="${group.pageSize}" data-dtype="${group.groupKey.type}" data-content="${group.groupValue.text?.content}" class="av__body${group.groupFolded ? " fn__none" : ""}">${getGalleryHTML(group)}</div>`;
+            }
           });
           e.firstElementChild.outerHTML = `<div class="av__container fn__block">
-          ${genTabHeaderHTML(response.data)}
-          <div>
-              ${avBodyHTML}
-          </div>
-      </div>`;
-          } else {
-            // 画廊视图，不分组
-            const bodyHTML = getGalleryHTML(view);
-            e.firstElementChild.outerHTML = `<div class="av__container fn__block">
-            ${genTabHeaderHTML(response.data)}
-            <div>
-                <div class="av__body" data-group-id="" data-page-size="${view.pageSize}">
-                    ${bodyHTML}
-                </div>
+      ${genTabHeaderHTML(response.data)}
+      <div>
+          ${avBodyHTML}
+      </div>
+  </div>`;
+        } else {
+          // 画廊视图，不分组
+          const bodyHTML = getGalleryHTML(view);
+          e.firstElementChild.outerHTML = `<div class="av__container fn__block">
+        ${genTabHeaderHTML(response.data)}
+        <div>
+            <div class="av__body" data-group-id="" data-page-size="${view.pageSize}">
+                ${bodyHTML}
             </div>
-        </div>`;
-          }
-        })
-      }
-      // 看板视图
-      else if (e.getAttribute("data-av-type") === "kanban") {
-        request("/api/av/renderAttributeView", {
-          "id": e.getAttribute("data-av-id"),
-          "viewID": e.getAttribute("custom-sy-av-view"),
-          "query": ""
-        }).then(response => {
-          const view = response.data.view;
-          if (view?.groups?.length  > 0) {
-            let bodyHTML = "";
-            // 不显示最后一个空卡片
-            //view.groups.pop();
-            view.groups.forEach((group) => {
-              if (group.groupHidden === 0) {
-                bodyHTML += `<div class="av__kanban-group${group.cardSize === 0 ? " av__kanban-group--small" : (group.cardSize === 2 ? " av__kanban-group--big" : "")}">
-        ${getKanbanTitleHTML(group, group.cardCount)}
-        <div data-group-id="${group.id}" data-page-size="${group.pageSize}" data-dtype="${group.groupKey.type}" class="av__body">${getKanbanHTML(group)}</div>
+        </div>
     </div>`;
-              }
-            });
-            e.firstElementChild.outerHTML = `<div class="av__container fn__block">${genTabHeaderHTML(response.data)}<div class="av__kanban">${bodyHTML}</div></div>`;
-          }
-        })
-      }
-    })
+        }
+        break;
+
+      case "kanban":
+        if (view?.groups?.length > 0) {
+          let bodyHTML = "";
+          // 不显示最后一个空卡片
+          //view.groups.pop();
+          view.groups.forEach((group) => {
+            if (group.groupHidden === 0) {
+              bodyHTML += `<div class="av__kanban-group${group.cardSize === 0 ? " av__kanban-group--small" : (group.cardSize === 2 ? " av__kanban-group--big" : "")}">
+    ${getKanbanTitleHTML(group, group.cardCount)}
+    <div data-group-id="${group.id}" data-page-size="${group.pageSize}" data-dtype="${group.groupKey.type}" class="av__body">${getKanbanHTML(group)}</div>
+  </div>`;
+            }
+          });
+          e.firstElementChild.outerHTML = `<div class="av__container fn__block">${genTabHeaderHTML(response.data)}<div class="av__kanban">${bodyHTML}</div></div>`;
+        }
+        break;
+    }
+    e.setAttribute('render', true);
+  })
+}
+
+// 数据表格
+async function avRender() {
+  let avElements = Array.from(document.querySelectorAll('[data-type="NodeAttributeView"]:not([render])'));
+  if (avElements.length === 0) {
+    return;
   }
+  if (!libs.av) {
+    await addScript("./theme/dayjs.js");
+    addAttributeViewIcon();
+    libs.av = true;
+  }
+  avElements.forEach((e) => {
+    renderSingleAV(e);
+  })
+
 }
 
 // 代码高亮
 async function highlight() {
-  let codeBlocks = document.querySelectorAll('.code-block[data-type="NodeCodeBlock"]');
+  let codeBlocks = document.querySelectorAll('.code-block[data-type="NodeCodeBlock"]:not([render])');
   if (codeBlocks.length > 0) {
-    addStyle("./theme/highlight/atom-one-dark.min.css");
-    await addScript("./theme//highlight/highlight.min.js");
+    if (!libs.highlight) {
+      window.top.siyuan.config.appearance.mode === 1 ? addStyle("./theme/highlight/atom-one-dark.min.css") : addStyle("./theme/highlight/github.min.css");
+      await addScript("./theme//highlight/highlight.min.js");
+      libs.highlight = true;
+    }
     codeBlocks.forEach(codeBlock => {
       let code = codeBlock.querySelector(".hljs");
       let content = code.innerText;
@@ -1150,12 +1152,12 @@ async function highlight() {
           { language: codeLanguage, ignoreIllegals: true }
         ).value
       } catch (err) {
-        // 不支持高亮的语言，就按plaintext渲染
         highlightedCode = hljs.highlight(content,
           { language: "plaintext", ignoreIllegals: true }
         ).value
       }
-      code.innerHTML = highlightedCode
+      code.innerHTML = highlightedCode;
+      codeBlock.setAttribute('render', true);
 
     })
   }
@@ -1179,9 +1181,8 @@ window._searchText = function (keyword) {
     currentNode = treeWalker.nextNode();
   }
   // If the CSS Custom Highlight API is not supported,
-  // display a message and bail-out.
   if (!CSS.highlights) {
-    console.log("CSS Custom Highlight API not supported.");
+    console.error("CSS Custom Highlight API not supported.");
     return;
   }
   CSS.highlights.clear();
@@ -1228,6 +1229,360 @@ window._cancelHighligh = function () {
   CSS.highlights.clear();
 }
 
+
+// util
+function hasClosestByAttribute(element, attr, value, top = false) {
+  if (!element || element.nodeType === 9) {
+    return false;
+  }
+  if (element.nodeType === 3) {
+    element = element.parentElement;
+  }
+  let e = element;
+  let isClosest = false;
+  while (e && !isClosest && (top ? e.tagName !== "BODY" : !e.classList.contains("protyle-wysiwyg"))) {
+    if (typeof value === "string" && e.getAttribute(attr)?.split(" ").includes(value)) {
+      isClosest = true;
+    } else if (typeof value !== "string" && e.hasAttribute(attr)) {
+      isClosest = true;
+    } else {
+      e = e.parentElement;
+    }
+  }
+  return isClosest && e;
+};
+function hasTopClosestByAttribute(element, attr, value, top = false) {
+  let closest = hasClosestByAttribute(element, attr, value, top);
+  let parentClosest = false;
+  let findTop = false;
+  while (closest && !closest.classList.contains("protyle-wysiwyg") && !findTop) {
+    parentClosest = hasClosestByAttribute(closest.parentElement, attr, value, top);
+    if (parentClosest) {
+      closest = parentClosest;
+    } else {
+      findTop = true;
+    }
+  }
+  return closest || false;
+};
+function isInEmbedBlock(element) {
+  const embedElement = hasTopClosestByAttribute(element, "data-type", "NodeBlockQueryEmbed");
+  if (embedElement) {
+    if (embedElement === element) {
+      return false;
+    } else {
+      return embedElement;
+    }
+  } else {
+    return false;
+  }
+};
+function hasClosestBlock(element) {
+  const nodeElement = hasClosestByAttribute(element, "data-node-id", null);
+  if (nodeElement && nodeElement.tagName !== "BUTTON" && nodeElement.getAttribute("data-type")?.startsWith("Node")) {
+    return nodeElement;
+  }
+  return false;
+};
+
+
+// foldHeading
+function handleFoldHeading(operation) {
+  document.querySelectorAll(`[data-node-id="${operation.id}"]`).forEach(item => {
+    item.setAttribute("fold", "1");
+  })
+  if (operation.retData) {
+    operation.retData.forEach((blockID) => {
+      Array.from(document.querySelectorAll(`[data-node-id="${blockID}"]`)).forEach(itemElement => {
+        itemElement.remove();
+      });
+    });
+  }
+}
+// unfoldHeading
+function handleUnfoldHeading(operation) {
+  Array.from(document.querySelectorAll(`[data-node-id="${operation.id}"]`)).forEach(async item => {
+    item.removeAttribute("fold");
+    if (operation.retData) {
+      let dom = operation.retData.replaceAll(`"assets/`, `"${window.top.location.origin}/assets/`).replaceAll(`contenteditable="true"`, `contenteditable="false"`).replaceAll(`src="api/icon/getDynamicIcon`, `src="${window.top.location.origin}/api/icon/getDynamicIcon`);
+      item.insertAdjacentHTML("afterend", dom);
+      await renderEmbedBlock();
+      await highlight();
+      await renderKatex();
+      await avRender();
+      await renderMermaid();
+    }
+    if (operation.data === "remove") {
+      item.remove();
+    }
+  })
+}
+// attributeView change
+function handleAvUpdate(operation) {
+  // 数据库标题的更新，单独处理
+  if (operation.action === "setAttrViewName") {
+    Array.from(document.querySelectorAll(`.av[data-av-id="${operation.id}"]`)).forEach(item => {
+      const titleElement = item.querySelector(".av__title");
+      if (!titleElement) {
+        return;
+      }
+      titleElement.textContent = operation.data;
+      titleElement.dataset.title = operation.data;
+    })
+    return;
+  }
+  // 数据表格的其他变更
+  Array.from(document.querySelectorAll(`[data-av-id="${operation.avID}"]`)).forEach(e => {
+    request("/api/av/renderAttributeView", {
+      "id": operation.avID,
+      "viewID": operation.id,
+      "query": ""
+    }).then(response => {
+      const viewType = response.data.viewType;
+      const view = response.data.view;
+      e.setAttribute("data-av-id", operation.avID);
+      e.setAttribute("custom-sy-av-view", operation.id)
+      e.setAttribute("data-av-type", viewType)
+      switch (viewType) {
+        case "table":
+          if (view.groups?.length > 0) {
+            let avBodyHTML = "";
+            view.groups.forEach((group) => {
+              if (group.groupHidden === 0) {
+                avBodyHTML += `${getGroupTitleHTML(group, group.rows.length)}
+        <div data-group-id="${group.id}" data-page-size="${group.pageSize}" data-dtype="${group.groupKey.type}" data-content="${group.groupValue.text?.content}" style="float: left" class="av__body${group.groupFolded ? " fn__none" : ""}">${getTableHTMLs(group, e)}</div>`;
+              }
+            });
+
+            e.firstElementChild.outerHTML = `<div class="av__container">
+        ${genTabHeaderHTML(response.data)}
+        <div class="av__scroll">
+          ${avBodyHTML}
+        </div>
+        </div>`;
+          } else {
+            const avBodyHTML = `<div class="av__body" data-group-id="" data-page-size="${view.pageSize}" style="float: left">
+              ${getTableHTMLs(view, e)}
+          </div>`;
+            e.firstElementChild.outerHTML = `<div class="av__container">
+          ${genTabHeaderHTML(response.data)}
+          <div class="av__scroll">
+              ${avBodyHTML}
+          </div>
+        </div>`;
+          }
+          break;
+
+        case "gallery":
+          if (view.groups?.length > 0) {
+            let avBodyHTML = "";
+            view.groups.forEach((group) => {
+              if (group.groupHidden === 0) {
+                avBodyHTML += `${getGroupTitleHTML(group, group.cards.length)}
+        <div data-group-id="${group.id}" data-page-size="${group.pageSize}" data-dtype="${group.groupKey.type}" data-content="${group.groupValue.text?.content}" class="av__body${group.groupFolded ? " fn__none" : ""}">${getGalleryHTML(group)}</div>`;
+              }
+            });
+            e.firstElementChild.outerHTML = `<div class="av__container fn__block">
+            ${genTabHeaderHTML(response.data)}
+            <div>
+                ${avBodyHTML}
+            </div>
+        </div>`;
+          } else {
+            const bodyHTML = getGalleryHTML(view);
+            e.firstElementChild.outerHTML = `<div class="av__container fn__block">
+              ${genTabHeaderHTML(response.data)}
+              <div>
+                  <div class="av__body" data-group-id="" data-page-size="${view.pageSize}">
+                      ${bodyHTML}
+                  </div>
+              </div>
+          </div>`;
+          }
+          break;
+
+        case "kanban":
+          if (view?.groups?.length > 0) {
+            let bodyHTML = "";
+            view.groups.forEach((group) => {
+              if (group.groupHidden === 0) {
+                bodyHTML += `<div class="av__kanban-group${group.cardSize === 0 ? " av__kanban-group--small" : (group.cardSize === 2 ? " av__kanban-group--big" : "")}">
+          ${getKanbanTitleHTML(group, group.cardCount)}
+          <div data-group-id="${group.id}" data-page-size="${group.pageSize}" data-dtype="${group.groupKey.type}" class="av__body">${getKanbanHTML(group)}</div>
+        </div>`;
+              }
+            });
+            e.firstElementChild.outerHTML = `<div class="av__container fn__block">${genTabHeaderHTML(response.data)}<div class="av__kanban">${bodyHTML}</div></div>`;
+          }
+          break;
+      }
+    })
+  })
+
+}
+// update
+function handleUpdate(operation) {
+  let items = Array.from(document.querySelectorAll(`[data-node-id="${operation.id}"]`))
+  items.forEach(async item => {
+    let dom = operation.data.replaceAll(`"assets/`, `"${window.top.location.origin}/assets/`).replaceAll(`contenteditable="true"`, `contenteditable="false"`).replaceAll(`src="api/icon/getDynamicIcon`, `src="${window.top.location.origin}/api/icon/getDynamicIcon`);
+    item.outerHTML = dom;
+    await renderEmbedBlock();
+    await highlight();
+    await renderKatex();
+    await avRender();
+    await renderMermaid();
+  });
+}
+
+// insert
+function handleInsert(operation) {
+  if (operation.previousID) {
+    let items = Array.from(document.querySelectorAll(`[data-node-id="${operation.previousID}"]`));
+    items.forEach(async item => {
+      if (item.nextElementSibling?.getAttribute("data-node-id") !== operation.id) {
+        let dom = operation.data.replaceAll(`"assets/`, `"${window.top.location.origin}/assets/`).replaceAll(`contenteditable="true"`, `contenteditable="false"`).replaceAll(`src="api/icon/getDynamicIcon`, `src="${window.top.location.origin}/api/icon/getDynamicIcon`);
+        item.insertAdjacentHTML("afterend", dom);
+        await renderEmbedBlock();
+        await highlight();
+        await renderKatex();
+        await avRender();
+        await renderMermaid();
+      }
+    });
+  } else if (operation.nextID) {
+    Array.from(document.querySelectorAll(`[data-node-id="${operation.nextID}"]`)).forEach(async item => {
+      item.insertAdjacentHTML("beforebegin", operation.data.replaceAll(`"assets/`, `"${window.top.location.origin}/assets/`).replaceAll(`contenteditable="true"`, `contenteditable="false"`).replaceAll(`src="api/icon/getDynamicIcon`, `src="${window.top.location.origin}/api/icon/getDynamicIcon`));
+      await renderEmbedBlock();
+      await highlight();
+      await renderKatex();
+      await avRender();
+      await renderMermaid();
+    });
+  } else {
+    const parentElement = document.querySelectorAll(`[data-node-id="${operation.parentID}"]`);
+    parentElement.forEach(item => {
+      if (!isInEmbedBlock(item)) {
+        item.insertAdjacentHTML("afterend", operation.data.replaceAll(`"assets/`, `"${window.top.location.origin}/assets/`).replaceAll(`contenteditable="true"`, `contenteditable="false"`).replaceAll(`src="api/icon/getDynamicIcon`, `src="${window.top.location.origin}/api/icon/getDynamicIcon`));
+      }
+    });
+  }
+}
+
+// delete
+function handleDelete(operation) {
+  Array.from(document.querySelectorAll(`[data-node-id="${operation.id}"]`)).forEach(item => {
+    item.remove();
+  });
+}
+// move
+function handleMove(operation) {
+  const updateElements = [];
+  Array.from(document.querySelectorAll(`[data-node-id="${operation.id}"]`)).forEach(item => {
+    if (!isInEmbedBlock(item)) {
+      updateElements.push(item);
+    }
+  });
+  let hasFind = false;
+  if (operation.previousID && updateElements.length > 0) {
+    const previousElement = document.querySelectorAll(`[data-node-id="${operation.previousID}"]`);
+    if (previousElement.length > 0) {
+      previousElement.forEach(item => {
+        if (!isInEmbedBlock(item)) {
+          item.after(updateElements[0].cloneNode(true));
+          hasFind = true;
+        }
+      });
+    }
+  } else if (updateElements.length > 0) {
+    Array.from(document.querySelectorAll(`[data-node-id="${operation.parentID}"]`)).forEach(item => {
+      if (!isInEmbedBlock(item)) {
+        const cloneElement = updateElements[0].cloneNode(true);
+        if (item.firstElementChild?.classList.contains("protyle-action")) {
+          item.firstElementChild.after(cloneElement);
+        } else if (item.classList.contains("callout")) {
+          item.querySelector(".callout-content").prepend(cloneElement);
+        } else {
+          item.prepend(cloneElement);
+        }
+        hasFind = true;
+      }
+    });
+  }
+  updateElements.forEach(item => {
+    if (hasFind) {
+      item.remove();
+    }
+  });
+}
+// setAttrs
+
+function handleSetAttrs(operation) {
+  document.querySelectorAll(`[data-node-id="${operation.id}"]`).forEach(item => {
+    if (JSON.parse(operation.data).fold === "1") {
+      item.setAttribute("fold", "1");
+    } else {
+      item.removeAttribute("fold");
+    }
+  });
+}
+// transactions
+function handleEventBus(e) {
+  if (e.detail.cmd !== "transactions") {
+    return;
+  }
+  let operations = Array.from(e.detail.data[0].doOperations);
+  operations.forEach(operation => {
+    if (operation.action === "foldHeading") {
+      handleFoldHeading(operation);
+    }
+    if (operation.action === "unfoldHeading") {
+      handleUnfoldHeading(operation);
+    }
+    if (["addAttrViewCol", "updateAttrViewCol", "updateAttrViewColOptions",
+      "updateAttrViewColOption", "updateAttrViewCell", "sortAttrViewRow", "sortAttrViewCol", "setAttrViewColHidden",
+      "setAttrViewColWrap", "setAttrViewColWidth", "removeAttrViewColOption", "setAttrViewName", "setAttrViewFilters",
+      "setAttrViewSorts", "setAttrViewColCalc", "removeAttrViewCol", "updateAttrViewColNumberFormat", "removeAttrViewBlock",
+      "replaceAttrViewBlock", "updateAttrViewColTemplate", "setAttrViewColPin", "addAttrViewView", "setAttrViewColIcon",
+      "removeAttrViewView", "setAttrViewViewName", "setAttrViewViewIcon", "duplicateAttrViewView", "sortAttrViewView",
+      "updateAttrViewColRelation", "setAttrViewPageSize", "updateAttrViewColRollup", "sortAttrViewKey", "setAttrViewColDesc",
+      "duplicateAttrViewKey", "setAttrViewViewDesc", "setAttrViewCoverFrom", "setAttrViewCoverFromAssetKeyID",
+      "setAttrViewBlockView", "setAttrViewCardSize", "setAttrViewCardAspectRatio", "hideAttrViewName", "setAttrViewShowIcon",
+      "setAttrViewWrapField", "setAttrViewGroup", "removeAttrViewGroup", "hideAttrViewGroup", "sortAttrViewGroup",
+      "foldAttrViewGroup", "hideAttrViewAllGroups", "setAttrViewFitImage", "setAttrViewDisplayFieldName",
+      "insertAttrViewBlock", "setAttrViewColDateFillSpecificTime", "setAttrViewFillColBackgroundColor", "setAttrViewUpdatedIncludeTime",
+      "setAttrViewCreatedIncludeTime"].includes(operation.action)) {
+      handleAvUpdate(operation);
+    }
+    if (operation.action === "update") {
+      handleUpdate(operation);
+    }
+    if (operation.action === "insert") {
+      handleInsert(operation);
+    }
+    if (operation.action === "delete") {
+      handleDelete(operation);
+    }
+    if (operation.action === "move") {
+      handleMove(operation);
+    }
+    if (operation.action === "setAttrs") {
+      handleSetAttrs(operation);
+    }
+  })
+}
+
+async function contentSync() {
+  if (!window.contentSync) {
+    return
+  }
+  if (!window.top?.openAPI) {
+    return
+  }
+  window.top.openAPI.plugin.eventBus.off("ws-main", handleEventBus);
+  window.top.openAPI.plugin.eventBus.on("ws-main", handleEventBus);
+}
+
+
 // 对预览文档进行渲染
 async function main() {
   await renderBody();
@@ -1238,6 +1593,7 @@ async function main() {
   await avRender();
   await renderMermaid();
   await addRefreshBtn();
+  await contentSync();
 }
 
 main().catch(err => { console.error(err); })

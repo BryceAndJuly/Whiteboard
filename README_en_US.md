@@ -3,6 +3,42 @@
 * If this widget is accidentally embedded in a document that already contains other content, please refer to: [How to undo after accidentally inserting a widget?](https://github.com/BryceAndJuly/Whiteboard/issues/70#issuecomment-3027972161)
 
 ## 1. Current Version
+### V2.0.20
+
+Refer to the preview image at the top (tested on software version: `Siyuan V3.6.5`)
+
+- Bug fixes: Code within embedded blocks failed to display syntax highlighting.
+- Optimizations:
+
+  - Added light mode for code blocks.
+  - Content on the corresponding whiteboard cards updates automatically when content blocks are edited in notes.
+
+The auto-update feature for content blocks on the whiteboard is enabled by default. To disable it permanently, open the file` [your workspace]/data/widgets/Whiteboard/custom.js`  with an editor like VS Code
+
+search for:
+
+```js
+window.contentSync = true;
+```
+
+Then change it to:
+
+```js
+window.contentSync = false;
+```
+
+Please note the following:
+
+> - This feature requires enabling the **`Open API`** plugin first.
+>
+>   - Essentially, it uses the plugin's `eventBus` to detect changes to content blocks and dynamically modify the DOM of cards in real time.
+>   - To temporarily disable the **Auto Sync for Content Blocks** on the whiteboard, simply turn off the **Open API** plugin and refresh the whiteboard.
+> - Ensure the whiteboard cards corresponding to content blocks are within the visible area. (Press the shortcut **`Shift`** **+**  **`1`** to display all elements in view.)
+> - If the whiteboard card fails to update normally or shows display errors after updating, manually refresh it by **double-clicking the card edge to enter interaction mode**, then clicking the refresh icon in the upper-right corner of the card.
+
+---
+
+
 ### V2.0.19
 
 Refer to the preview image at the top (the software version used for testing: `Siyuan V3.6.5`)
@@ -189,7 +225,7 @@ Before use, it is recommended to add a JS code snippet in `Settings` > `Appearan
 
 ---
 
-For the current version: **V2.0.19**
+For the current version: **V2.0.20**
 
 If you **do not want auto-save to be enabled by default**, open the widget folder `Whiteboard` -> `custom.js` in an editor like VS Code and search for:
 
@@ -413,7 +449,7 @@ A  `Text Search Panel`  is added to the upper right corner, specifically for sea
 
 ### 1. Adjust Brush Thickness Manually
 
-For V2.0.19, open `Whiteboard` -> `assets` -> `index-ZsssFvwm.js` and search for:
+For V2.0.20, open `Whiteboard` -> `assets` -> `index-ZsssFvwm.js` and search for:
 
 ```css
 n={simulatePressure:e.simulatePressure,size:e.strokeWidth*1.2,thinning
