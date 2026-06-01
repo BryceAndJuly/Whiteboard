@@ -3,6 +3,16 @@
 * 如果在已有其他内容的文档中误嵌入该挂件，可参考：[误操作插入挂件后如何撤销?](https://github.com/BryceAndJuly/Whiteboard/issues/48)
 
 ## 一、当前版本
+### V2.0.21
+
+- 修复Mermaid图表的渲染问题（嵌入的文档存在多个Mermaid图表时）
+
+  - 单个图表的高度过低，未显示完整
+  - 更新Mermaid图表后，因为图表ID的问题，导致部分图表出现渲染空白。
+
+> 更新挂件后，由于缓存的影响，挂件可能加载的还是旧的文件，可参考[禁用缓存后刷新](https://github.com/BryceAndJuly/Whiteboard/issues/100)进行刷新
+---
+
 ### V2.0.20
 
 参考顶部预览图（测试时的软件版本为：`Siyuan V3.6.5`）
@@ -220,7 +230,7 @@ window.contentSync = false;
 
 ---
 
-对于当前版本：**V2.0.20**
+对于当前版本：**V2.0.21**
 
 如果你**不想默认开启自动保存功能**，可以使用VS Code之类的编辑器打开挂件文件夹`Whiteboard`——`custom.js`，
 
@@ -446,7 +456,7 @@ assets/ExcalidrawFiles/20231227015401-w0olmpi.excalidraw
 
 ### 1、手动更改画笔的粗细
 
-对于版本V2.0.20，打开挂件文件夹`Whiteboard`——`assets`——`index-ZsssFvwm.js`,在该js文件中搜索：
+对于版本V2.0.21，打开挂件文件夹`Whiteboard`——`assets`——`index-ZsssFvwm.js`,在该js文件中搜索：
 
 ```css
 n={simulatePressure:e.simulatePressure,size:e.strokeWidth*1.2,thinning

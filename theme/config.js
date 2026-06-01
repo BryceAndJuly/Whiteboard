@@ -212,7 +212,7 @@ async function renderKatex() {
 
 // 渲染Mermaid图表
 async function renderMermaid() {
-  const mermaidElements = Array.from(document.querySelectorAll('.render-node[data-subtype="mermaid"]'));
+  const mermaidElements = Array.from(document.querySelectorAll('.render-node[data-subtype="mermaid"]:not(render)'));
   if (mermaidElements.length === 0) { return }
   if (!libs.mermaid) {
     await addScript("./theme/mermaid.min.js")
@@ -227,10 +227,9 @@ async function renderMermaid() {
     const content = window.top.Lute.UnEscapeHTMLStr(element.getAttribute("data-content"));
     const {
       svg
-    } = await mermaid.render('graphDiv', content);
-    setTimeout(() => {
-      element.firstElementChild.insertAdjacentHTML("afterbegin", `<div contenteditable="false">${svg}</div>`);
-    }, 0)
+    } = await mermaid.render(`mermaid_${element.getAttribute('data-node-id')}`, content);
+    element.firstElementChild.insertAdjacentHTML("afterbegin", `<div contenteditable="false">${svg}</div>`);
+    element.setAttribute('render', true);
   }
 }
 
