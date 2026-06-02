@@ -286,7 +286,7 @@ window._autoSaveDelay = 2000;
 }
 
 /* 如果是新版本，比如SiYuan V3.0.16，还需要以下片段 */
-.protyle-top:has(+ .protyle-wysiwyg.protyle-wysiwyg--attr[alias="whiteboard"]){
+.protyle-top:has(+ .protyle-wysiwyg[alias="whiteboard"]){
    display: none !important;
 }
 
