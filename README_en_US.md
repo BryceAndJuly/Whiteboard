@@ -292,7 +292,7 @@ When creating a whiteboard, the widget sets the document's `Alias` property to `
     display: none !important;
 }
 /* If it is a new version, such as SiYuan V3.0.16, the following snippet is also needed. */
-.protyle-top:has(+ .protyle-wysiwyg.protyle-wysiwyg--attr[alias="whiteboard"]){
+.protyle-top:has(+ .protyle-wysiwyg[alias="whiteboard"]){
    display: none !important;
 }
 
