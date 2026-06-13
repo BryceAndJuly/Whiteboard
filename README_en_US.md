@@ -3,6 +3,23 @@
 * If this widget is accidentally embedded in a document that already contains other content, please refer to: [How to undo after accidentally inserting a widget?](https://github.com/BryceAndJuly/Whiteboard/issues/70#issuecomment-3027972161)
 
 ## 1. Current Version
+### V2.1.0
+
+Refer to the preview image above. The software version used for testing: \`Siyuan V3.6.5\`
+
+- Added support for rendering content blocks in exported SVG files.
+
+> Dependencies used: [html-to-image](https://github.com/bubkoo/html-to-image)
+
+**Usage Instructions:**
+
+- Click the blank area on the whiteboard, then press `Shift + 1` to load all content blocks.
+- Press `Alt + L` to convert content blocks into image `dataUrl` one by one.
+
+  - This process may take some time (approximately 5 seconds or longer). A prompt `Done` will appear in the upper-right corner of the note-taking app once finished.
+- Follow the regular SVG export steps: `Top-left Menu` → `Export Image` → `Download SVG` → `Select target folder` → `Save`
+
+---
 ### V2.0.21
 
 - Fixed rendering issues of Mermaid charts when multiple charts are embedded in a document
@@ -236,7 +253,7 @@ Before use, it is recommended to add a JS code snippet in `Settings` > `Appearan
 
 ---
 
-For the current version: **V2.0.20**
+For the current version: **V2.1.0**
 
 If you **do not want auto-save to be enabled by default**, open the widget folder `Whiteboard` -> `custom.js` in an editor like VS Code and search for:
 
@@ -460,7 +477,7 @@ A  `Text Search Panel`  is added to the upper right corner, specifically for sea
 
 ### 1. Adjust Brush Thickness Manually
 
-For V2.0.20, open `Whiteboard` -> `assets` -> `index-ZsssFvwm.js` and search for:
+For V2.1.0, open `Whiteboard` -> `assets` -> `index-ZsssFvwm.js` and search for:
 
 ```css
 n={simulatePressure:e.simulatePressure,size:e.strokeWidth*1.2,thinning

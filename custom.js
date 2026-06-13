@@ -27,7 +27,13 @@ let zh_CN = {
   "msgNoLink": "当前白板未检测到块超链接",
   "msgNoList": "未检测到引用块列表",
   "msgFixLink": "已尝试修复失效的块超链接",
-  "msgFixLinkFailed": "操作失败！未能修复失效的块超链接"
+  "msgFixLinkFailed": "操作失败！未能修复失效的块超链接",
+
+  "msgDone": "✅ 已完成",
+  "msgNoCards": "❓ 没有需要处理的卡片",
+  "msgCardCount": "卡片数量为："
+
+
 }
 let en_US = {
   "msgSaved": "Saved",
@@ -57,7 +63,11 @@ let en_US = {
   "msgNoLink": "No block hyperlinks have been detected in the current whiteboard.",
   "msgNoList": "The list of reference blocks has not been detected.",
   "msgFixLink": "An attempt has been made to repair the invalid block hyperlinks.",
-  "msgFixLinkFailed": "Operation failed! The invalid block hyperlinks could not be repaired."
+  "msgFixLinkFailed": "Operation failed! The invalid block hyperlinks could not be repaired.",
+
+  "msgDone": "✅ Done",
+  "msgNoCards": "❓ There are no cards to handle",
+  "msgCardCount":"Number of cards: "
 }
 
 // 笔记软件设置语言为简体中文、繁体中文时，左上角弹出中文提示，否者弹出英文提示
@@ -565,8 +575,58 @@ document.addEventListener("click", (e) => {
   }
 }, false)
 
+function sendMessage(msg, duration = 3000) {
+  request("/api/notification/pushMsg", {
+    "msg": msg,
+    "timeout": duration
+  })
+}
+
+function Iframe2Image() {
+  let articles = document.querySelectorAll("iframe[srcdoc]");
+  window._dataUrl = {};
+  if (articles.length > 0) {
+    showMessage(`${window._languages['msgCardCount']}${articles.length}`);
+    const scale = 2;
+    articles.forEach(async (article, index) => {
+      let id = article.getAttribute('id');
+      let dom = article?.contentDocument?.body
+      if (id && dom) {
+        dom.classList.add('no-pseudo');
+        let dataUrl = await htmlToImage.toPng(dom, {
+          quality: 1,
+          scale: scale,
+          pixelRatio: window.devicePixelRatio * scale,
+          useCORS: true,
+          backgroundColor: '#ffffff',
+          includeBackground: true,
+          cacheBust: true,
+          style: {
+            overflow: 'hidden',
+            '-webkit-font-smoothing': 'antialiased',
+            'image-rendering': '-webkit-optimize-contrast'
+          },
+        });
+        dom.classList.remove('no-pseudo');
+        window._dataUrl[id] = dataUrl;
+        dom = null;
+        id = null;
+        if (index === articles.length - 1) {
+          sendMessage(window._languages['msgDone']);
+        }
+      }
+    });
+  } else {
+    sendMessage(window._languages['msgNoCards'])
+  }
+}
+
 // 快捷键
 document.addEventListener("keydown", (e => {
+  // 获取iframe的截图
+  if (e.altKey && "KeyL" === e.code) {
+    Iframe2Image();
+  }
   // 开启预览
   if (e.altKey && "KeyQ" === e.code) {
     window._allowPreview = !0;

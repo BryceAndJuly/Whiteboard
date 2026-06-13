@@ -3,6 +3,21 @@
 * 如果在已有其他内容的文档中误嵌入该挂件，可参考：[误操作插入挂件后如何撤销?](https://github.com/BryceAndJuly/Whiteboard/issues/48)
 
 ## 一、当前版本
+### V2.1.0
+参考顶部预览图（测试时的软件版本为：`Siyuan V3.6.5`）
+- 支持在导出的SVG文件中渲染内容块。
+
+> 用到的依赖库：[html-to-image](https://github.com/bubkoo/html-to-image)
+
+使用方式：
+
+- 单击白板空白处，按`Shift `+ `1`加载所有内容块。
+- 按`Alt`+ `L`将内容块依次转为图片用的`dataUrl`
+
+  - 这个处理会有比较慢（等大概5s或者更久），完成后，笔记软件右上角会弹出提示：`已完成`
+- 然后是常规的导出SVG文件的流程：`左上角菜单`——`导出图片`——`下载SVG`——`选择指定文件夹`——`保存`
+
+---
 ### V2.0.21
 
 - 修复Mermaid图表的渲染问题（嵌入的文档存在多个Mermaid图表时）
@@ -230,7 +245,7 @@ window.contentSync = false;
 
 ---
 
-对于当前版本：**V2.0.21**
+对于当前版本：**V2.1.0**
 
 如果你**不想默认开启自动保存功能**，可以使用VS Code之类的编辑器打开挂件文件夹`Whiteboard`——`custom.js`，
 
@@ -456,7 +471,7 @@ assets/ExcalidrawFiles/20231227015401-w0olmpi.excalidraw
 
 ### 1、手动更改画笔的粗细
 
-对于版本V2.0.21，打开挂件文件夹`Whiteboard`——`assets`——`index-ZsssFvwm.js`,在该js文件中搜索：
+对于版本V2.1.0，打开挂件文件夹`Whiteboard`——`assets`——`index-ZsssFvwm.js`,在该js文件中搜索：
 
 ```css
 n={simulatePressure:e.simulatePressure,size:e.strokeWidth*1.2,thinning
