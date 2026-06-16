@@ -1,6 +1,7 @@
 ## Top Pin  
 * It is recommended to read through this document before use.  
 * If this widget is accidentally embedded in a document that already contains other content, please refer to: [How to undo after accidentally inserting a widget?](https://github.com/BryceAndJuly/Whiteboard/issues/70#issuecomment-3027972161)
+* After updating the widget, it may still load outdated files due to browser caching.Please follow the guide at [Refresh with Caching Disabled](https://github.com/BryceAndJuly/Whiteboard/issues/100) to perform a refresh.
 
 ## 1. Current Version
 ### V2.1.1
