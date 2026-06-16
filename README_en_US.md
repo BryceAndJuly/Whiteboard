@@ -4,6 +4,9 @@
 * After updating the widget, it may still load outdated files due to browser caching.Please follow the guide at [Refresh with Caching Disabled](https://github.com/BryceAndJuly/Whiteboard/issues/100) to perform a refresh.
 
 ## 1. Current Version
+> As a personal tool, the features I need are basically all updated. If you find any bugs while using the widget, you can report them on GitHub, and I’ll try to fix them.
+>
+> I hope this little tool can help people with the same needs.
 ### V2.1.1
 
 For SVG files exported from the whiteboard:
