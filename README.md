@@ -1,6 +1,7 @@
 ## 置顶
 * 使用前建议先阅读完此文档。
 * 如果在已有其他内容的文档中误嵌入该挂件，可参考：[误操作插入挂件后如何撤销?](https://github.com/BryceAndJuly/Whiteboard/issues/48)
+* 更新挂件后，由于缓存的影响，挂件可能加载的还是旧的文件，可参考[禁用缓存后刷新](https://github.com/BryceAndJuly/Whiteboard/issues/100)进行刷新
 
 ## 一、当前版本
 ### V2.1.1
