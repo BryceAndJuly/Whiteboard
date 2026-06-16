@@ -3,6 +3,14 @@
 * If this widget is accidentally embedded in a document that already contains other content, please refer to: [How to undo after accidentally inserting a widget?](https://github.com/BryceAndJuly/Whiteboard/issues/70#issuecomment-3027972161)
 
 ## 1. Current Version
+### V2.1.1
+
+For SVG files exported from the whiteboard:
+
+- `Fixed issue`: The background color set for cards was covered up.
+- Removed the default block hyperlink text displayed in the center of cards (this text was also obscured in v2.1.0).
+
+---
 ### V2.1.0
 
 Refer to the preview image above. The software version used for testing: \`Siyuan V3.6.5\`
@@ -253,7 +261,7 @@ Before use, it is recommended to add a JS code snippet in `Settings` > `Appearan
 
 ---
 
-For the current version: **V2.1.0**
+For the current version: **V2.1.1**
 
 If you **do not want auto-save to be enabled by default**, open the widget folder `Whiteboard` -> `custom.js` in an editor like VS Code and search for:
 
@@ -477,7 +485,7 @@ A  `Text Search Panel`  is added to the upper right corner, specifically for sea
 
 ### 1. Adjust Brush Thickness Manually
 
-For V2.1.0, open `Whiteboard` -> `assets` -> `index-ZsssFvwm.js` and search for:
+For V2.1.1, open `Whiteboard` -> `assets` -> `index-ZsssFvwm.js` and search for:
 
 ```css
 n={simulatePressure:e.simulatePressure,size:e.strokeWidth*1.2,thinning

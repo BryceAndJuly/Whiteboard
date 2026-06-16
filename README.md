@@ -3,6 +3,14 @@
 * 如果在已有其他内容的文档中误嵌入该挂件，可参考：[误操作插入挂件后如何撤销?](https://github.com/BryceAndJuly/Whiteboard/issues/48)
 
 ## 一、当前版本
+### V2.1.1
+
+对于白板导出的SVG文件：
+
+- 修复问题：卡片设置的背景色被遮挡。
+- 去掉卡片中间默认显示的块超链接字样（在V2.1.0中，它也被遮挡了）
+
+---
 ### V2.1.0
 参考顶部预览图（测试时的软件版本为：`Siyuan V3.6.5`）
 - 支持在导出的SVG文件中渲染内容块。
@@ -245,7 +253,7 @@ window.contentSync = false;
 
 ---
 
-对于当前版本：**V2.1.0**
+对于当前版本：**V2.1.1**
 
 如果你**不想默认开启自动保存功能**，可以使用VS Code之类的编辑器打开挂件文件夹`Whiteboard`——`custom.js`，
 
@@ -471,7 +479,7 @@ assets/ExcalidrawFiles/20231227015401-w0olmpi.excalidraw
 
 ### 1、手动更改画笔的粗细
 
-对于版本V2.1.0，打开挂件文件夹`Whiteboard`——`assets`——`index-ZsssFvwm.js`,在该js文件中搜索：
+对于版本V2.1.1，打开挂件文件夹`Whiteboard`——`assets`——`index-ZsssFvwm.js`,在该js文件中搜索：
 
 ```css
 n={simulatePressure:e.simulatePressure,size:e.strokeWidth*1.2,thinning

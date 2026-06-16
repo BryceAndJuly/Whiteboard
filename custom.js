@@ -598,7 +598,7 @@ function Iframe2Image() {
           scale: scale,
           pixelRatio: window.devicePixelRatio * scale,
           useCORS: true,
-          backgroundColor: '#ffffff',
+          backgroundColor: 'transparent',
           includeBackground: true,
           cacheBust: true,
           style: {
