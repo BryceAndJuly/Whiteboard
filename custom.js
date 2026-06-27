@@ -71,9 +71,8 @@ let en_US = {
 }
 
 // 笔记软件设置语言为简体中文、繁体中文时，左上角弹出中文提示，否者弹出英文提示
-window._languages = zh_CN;
 let lang = window.top.siyuan.config.lang;
-if (lang === "zh_CN" || lang === "zh_CHT") {
+if (lang === "zh_CN" || lang === "zh_CHT" || lang === "zh-CN"|| lang === "zh-TW") {
   window._languages = zh_CN;
 } else {
   window._languages = en_US;
@@ -117,17 +116,17 @@ window.showMessage = function (msg, duration = 2000) {
 
 
 // 在笔记软件V3.1.20中，悬浮预览API的参数已修改，需要适配
+window._isNewVersion = true;
 function checkVersion() {
-  window._isNewVersion = false;
   let version = window?.top?.siyuan?.config?.system?.kernelVersion;
   if (version) {
     try {
       let arr = version.split(".");
-      arr[1] = arr[1].padStart(2, '0');
-      arr[2] = arr[2].padStart(2, '0');
+      arr[1] = arr[1].match(/\d+/)[0].padStart(2, '0');
+      arr[2] = arr[2].match(/\d+/)[0].padStart(2, '0');
       version = parseInt(arr.join(""));
-      if (version >= 30120) {
-        window._isNewVersion = true;
+      if (version < 30120) {
+        window._isNewVersion = false;
       }
     } catch (err) {
       console.error(err)

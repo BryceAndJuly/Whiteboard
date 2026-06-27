@@ -7,6 +7,13 @@
 > As a personal tool, the features I need are basically all updated. If you find any bugs while using the widget, you can report them on GitHub, and I’ll try to fix them.
 >
 > I hope this little tool can help people with the same needs.
+
+### V2.1.2
+
+- Compatibility with the changed `lang` value of the UI language in SiYuan V3.7.0, reference: [Issue #17855](https://github.com/siyuan-note/siyuan/issues/17855)
+- Hide the prompt text at the top of the whiteboard to reduce distractions.
+
+---
 ### V2.1.1
 
 For SVG files exported from the whiteboard:
@@ -97,7 +104,7 @@ Refer to the preview image at the top (the software version used for testing is:
 
 - Whiteboard elements support linking to PDF annotations. (The link format is as follows: `assets/User Guide-20250501154835-226lt9b.pdf/20250304154923-lqp5jgy`)
 
-Before use, it is recommended to add a JS code snippet in `Settings` > `Appearance` > `Code Snippets` > `Settings` > `JS` to convert copied annotations into linkable elements that can be directly pasted into the whiteboard.
+Before use, it is recommended to add a JS code snippet via `Settings` → `Appearance` → `Code Snippets` → `Settings` → `JS`. This snippet will add a PDF button in the upper-right corner of the note-taking app. Clicking the button converts copied PDF annotations into link-enabled elements that can be pasted directly onto the whiteboard.
 
 
 ```js
@@ -265,7 +272,7 @@ Before use, it is recommended to add a JS code snippet in `Settings` > `Appearan
 
 ---
 
-For the current version: **V2.1.1**
+For the current version: **V2.1.2**
 
 If you **do not want auto-save to be enabled by default**, open the widget folder `Whiteboard` -> `custom.js` in an editor like VS Code and search for:
 
@@ -489,7 +496,7 @@ A  `Text Search Panel`  is added to the upper right corner, specifically for sea
 
 ### 1. Adjust Brush Thickness Manually
 
-For V2.1.1, open `Whiteboard` -> `assets` -> `index-ZsssFvwm.js` and search for:
+For V2.1.2, open `Whiteboard` -> `assets` -> `index-ZsssFvwm.js` and search for:
 
 ```css
 n={simulatePressure:e.simulatePressure,size:e.strokeWidth*1.2,thinning

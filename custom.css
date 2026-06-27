@@ -402,3 +402,7 @@ div#root:has(.excalidraw.excalidraw-container.excalidraw--view-mode)~#refreshBtn
   top: 30px;
   right: 0px;
 }
+/* 隐藏上方的提示 */
+.excalidraw-app .HintViewer {
+    display: none !important;
+}

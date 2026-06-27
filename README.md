@@ -7,6 +7,13 @@
 > 作为一个自用工具，目前个人需要的功能基本更新完了，如果发现挂件在使用上的BUG可以到Github上提，我会尽量修复的。
 >
 > 希望这个小工具能帮助到有同样需求的人。
+
+### V2.1.2
+
+- 兼容`SiYuan V3.7.0`界面语言 lang 值变更，参考：[Issue #17855](https://github.com/siyuan-note/siyuan/issues/17855)
+- 隐藏白板顶部的提示文本，减少干扰。
+
+---
 ### V2.1.1
 
 对于白板导出的SVG文件：
@@ -93,7 +100,7 @@ window.contentSync = false;
 
 - 白板元素支持链接到PDF标注。（链接格式形如：`assets/User Guide-20250501154835-226lt9b.pdf/20250304154923-lqp5jgy`）
 
-使用前，建议在`设置`——`外观`——`代码片段`——`设置`——`JS`中添加一个JS代码片段，用于将复制的标注转换成可以直接在白板中粘贴的带链接的元素。
+使用前，建议在`设置`——`外观`——`代码片段`——`设置`——`JS`中添加一个JS代码片段，该代码片段会在笔记软件的右上角添加一个PDF按钮，单击该按钮可将复制的PDF标注转换成可以直接在白板中粘贴的带链接的元素。
 
 ```js
 (() => {
@@ -257,7 +264,7 @@ window.contentSync = false;
 
 ---
 
-对于当前版本：**V2.1.1**
+对于当前版本：**V2.1.2**
 
 如果你**不想默认开启自动保存功能**，可以使用VS Code之类的编辑器打开挂件文件夹`Whiteboard`——`custom.js`，
 
@@ -483,7 +490,7 @@ assets/ExcalidrawFiles/20231227015401-w0olmpi.excalidraw
 
 ### 1、手动更改画笔的粗细
 
-对于版本V2.1.1，打开挂件文件夹`Whiteboard`——`assets`——`index-ZsssFvwm.js`,在该js文件中搜索：
+对于版本V2.1.2，打开挂件文件夹`Whiteboard`——`assets`——`index-ZsssFvwm.js`,在该js文件中搜索：
 
 ```css
 n={simulatePressure:e.simulatePressure,size:e.strokeWidth*1.2,thinning
