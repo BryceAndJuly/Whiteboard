@@ -10,8 +10,26 @@
 
 ### V2.1.2
 
-- Compatibility with the changed `lang` value of the UI language in SiYuan V3.7.0, reference: [Issue #17855](https://github.com/siyuan-note/siyuan/issues/17855)
+- Compatibility with the changed `lang` value of the UI language in `SiYuan V3.7.0`, reference: [Issue #17855](https://github.com/siyuan-note/siyuan/issues/17855)
 - Hide the prompt text at the top of the whiteboard to reduce distractions.
+- Add the following two CSS snippets to resolve the whiteboard flickering issue in `SiYuan V3.7.0`. This content has been updated to `3. Pre-Usage Setup` - `1. Add CSS Snippet` of this document.
+
+1、In` SiYuan V3.7.0`, when the note-taking app is set to dark mode, opening the whiteboard briefly shows a white background before switching to dark, causing severe flickering.
+
+```css
+:root[data-theme-mode=dark] {
+    color-scheme: inherit;
+}
+```
+
+2、 Hide the widget borders in SiYuan V3.7.0
+
+```css
+.b3-typography [data-type=NodeWidget] iframe,
+.protyle-wysiwyg [data-type=NodeWidget] iframe {
+    border: none !important;
+}
+```
 
 ---
 ### V2.1.1
@@ -347,6 +365,15 @@ When creating a whiteboard, the widget sets the document's `Alias` property to `
 /* Fix input cursor flicker when filling the document */
 .iframe ,iframe{
     -webkit-user-modify: read-only;
+}
+/* In SiYuan V3.7.0, when the note-taking app is set to dark mode, opening the whiteboard briefly shows a white background before switching to dark, causing severe flickering. */
+:root[data-theme-mode=dark] {
+    color-scheme: inherit;
+}
+/* Hide the widget borders in SiYuan V3.7.0 */
+.b3-typography [data-type=NodeWidget] iframe,
+.protyle-wysiwyg [data-type=NodeWidget] iframe {
+    border: none !important;
 }
 ```
 

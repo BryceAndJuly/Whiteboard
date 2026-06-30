@@ -12,7 +12,24 @@
 
 - 兼容`SiYuan V3.7.0`界面语言 lang 值变更，参考：[Issue #17855](https://github.com/siyuan-note/siyuan/issues/17855)
 - 隐藏白板顶部的提示文本，减少干扰。
+- 新增以下两个CSS代码片段以处理白板在`SiYuan V3.7.0`中出现的闪烁问题。已更新到本文的`三、使用前的设置`——`1、添加CSS代码片段`章节。
 
+1、在`V3.7.0`，笔记软件深色模式下，打开白板时会先显示白色背景，再转成深色，闪烁严重。
+
+```css
+:root[data-theme-mode=dark] {
+    color-scheme: inherit;
+}
+```
+
+2、在`V3.7.0`隐藏挂件的边框
+
+```css
+.b3-typography [data-type=NodeWidget] iframe,
+.protyle-wysiwyg [data-type=NodeWidget] iframe {
+    border: none !important;
+}
+```
 ---
 ### V2.1.1
 
@@ -339,6 +356,15 @@ window._autoSaveDelay = 2000;
 /* 处理问题：挂件铺满文档的过程中，左侧出现明显闪烁的输入光标。 */
 .iframe ,iframe{
     -webkit-user-modify: read-only;
+}
+/* 在 SiYuan V3.7.0，笔记软件深色模式下，打开白板时会先显示白色背景，再转成深色，闪烁严重。 */
+:root[data-theme-mode=dark] {
+    color-scheme: inherit;
+}
+/* 在 SiYuan V3.7.0 隐藏挂件的边框。 */
+.b3-typography [data-type=NodeWidget] iframe,
+.protyle-wysiwyg [data-type=NodeWidget] iframe {
+    border: none !important;
 }
 ```
 
