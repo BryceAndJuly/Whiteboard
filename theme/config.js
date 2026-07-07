@@ -706,17 +706,17 @@ function getFieldsByData(data) {
 function genTabHeaderHTML(data, showSearch = false, editable = false) {
   let tabHTML = "";
   let viewData;
-  let hasFilter = false;
-  getFieldsByData(data).forEach((item) => {
-    if (!hasFilter) {
-      data.view.filters.find(filterItem => {
-        if (filterItem.value.type === item.type && item.id === filterItem.column) {
-          hasFilter = true;
-          return true;
-        }
-      });
-    }
-  });
+  // let hasFilter = false;
+  // getFieldsByData(data).forEach((item) => {
+  //   if (!hasFilter) {
+  //     data.view.filters.find(filterItem => {
+  //       if (filterItem.value.type === item.type && item.id === filterItem.column) {
+  //         hasFilter = true;
+  //         return true;
+  //       }
+  //     });
+  //   }
+  // });
   data.views.forEach((item) => {
     tabHTML += `<div draggable="true" data-position="north" data-av-type="${item.type}" data-id="${item.id}" data-page="${item.pageSize}" data-desc="${escapeAriaLabel(item.desc || "")}" class="ariaLabel item${item.id === data.viewID ? " item--focus" : ""}">
   ${item.icon ? unicode2Emoji(item.icon, "item__graphic", true) : `<svg class="item__graphic"><use xlink:href="#${getViewIcon(item.type)}"></use></svg>`}
