@@ -1,12 +1,22 @@
-## Top Pin  
-* It is recommended to read through this document before use.  
-* If this widget is accidentally embedded in a document that already contains other content, please refer to: [How to undo after accidentally inserting a widget?](https://github.com/BryceAndJuly/Whiteboard/issues/70#issuecomment-3027972161)
-* After updating the widget, it may still load outdated files due to browser caching.Please follow the guide at [Refresh with Caching Disabled](https://github.com/BryceAndJuly/Whiteboard/issues/100) to perform a refresh.
+## Top Pin
+
+- It is recommended to read through this document before use.
+- If this widget is accidentally embedded in a document that already contains other content, please refer to: [How to undo after accidentally inserting a widget?](https://github.com/BryceAndJuly/Whiteboard/issues/70#issuecomment-3027972161)
+- After updating the widget, it may still load outdated files due to browser caching.Please follow the guide at [Refresh with Caching Disabled](https://github.com/BryceAndJuly/Whiteboard/issues/100) to perform a refresh.
 
 ## 1. Current Version
+
 > As a personal tool, the features I need are basically all updated. If you find any bugs while using the widget, you can report them on GitHub, and I’ll try to fix them.
 >
 > I hope this little tool can help people with the same needs.
+
+### V2.1.3
+
+Tested on: `SiYuan V3.7.0`, `V3.7.1`
+
+- **Fix**: Database tables embedded in the whiteboard were not rendering correctly.
+
+---
 
 ### V2.1.2
 
@@ -32,98 +42,274 @@
 ```
 
 ---
-### V2.1.1
 
-For SVG files exported from the whiteboard:
+For the current version: **V2.1.3**
 
-- `Fixed issue`: The background color set for cards was covered up.
-- Removed the default block hyperlink text displayed in the center of cards (this text was also obscured in v2.1.0).
-
----
-### V2.1.0
-
-Refer to the preview image above. The software version used for testing: \`Siyuan V3.6.5\`
-
-- Added support for rendering content blocks in exported SVG files.
-
-> Dependencies used: [html-to-image](https://github.com/bubkoo/html-to-image)
-
-**Usage Instructions:**
-
-- Click the blank area on the whiteboard, then press `Shift + 1` to load all content blocks.
-- Press `Alt + L` to convert content blocks into image `dataUrl` one by one.
-
-  - This process may take some time (approximately 5 seconds or longer). A prompt `Done` will appear in the upper-right corner of the note-taking app once finished.
-- Follow the regular SVG export steps: `Top-left Menu` → `Export Image` → `Download SVG` → `Select target folder` → `Save`
-
----
-### V2.0.21
-
-- Fixed rendering issues of Mermaid charts when multiple charts are embedded in a document
-
-  - Single charts displayed incompletely due to insufficient height
-  - Some charts turned blank after updates, caused by conflicts with chart IDs
-
-
-> After updating the widget, it may still load outdated files due to browser caching.Please follow the guide at [Refresh with Caching Disabled](https://github.com/BryceAndJuly/Whiteboard/issues/100) to perform a refresh.
----
-
-### V2.0.20
-
-Refer to the preview image at the top (tested on software version: `Siyuan V3.6.5`)
-
-- Bug fixes: Code within embedded blocks failed to display syntax highlighting.
-- Optimizations:
-
-  - Added light mode for code blocks.
-  - Content on the corresponding whiteboard cards updates automatically when content blocks are edited in notes.
-
-The auto-update feature for content blocks on the whiteboard is enabled by default. To disable it permanently, open the file` [your workspace]/data/widgets/Whiteboard/custom.js`  with an editor like VS Code
-
-search for:
+If you **do not want auto-save to be enabled by default**, open the widget folder `Whiteboard` -> `custom.js` in an editor like VS Code and search for:
 
 ```js
-window.contentSync = true;
+window._autoSave = true;
 ```
 
 Then change it to:
 
 ```js
+window._autoSave = false;
+```
+
+To **adjust the auto-save delay time** (default is 2000ms), open `Whiteboard` -> `custom.js` in the widget folder and search for:
+
+```js
+window._autoSaveDelay = 2000;
+```
+
+Change the last value `2000` to your preferred time (in milliseconds).
+
+---
+
+## 2. Overview
+
+A widget based on [Excalidraw](https://github.com/excalidraw/excalidraw). After embedding, it will automatically fill the entire document, treating a document as a whiteboard. It integrates small functions such as floating preview, retrieval and embedding of content blocks, etc.
+
+You can embed a whiteboard by referencing the document. To export and share a whiteboard, use the export/import `SiYuan .sy.zip` function.
+
+> It is recommended to click the "Save Block References" button before exporting, and click the "Fix Block Hyperlinks" button after importing.
+>
+> In newer versions (such as`SiYuan V3.7.1`), you must first enable the option under `Settings (Alt + P)` → `Export`→ `Include related documents`\.
+
+ Each whiteboard binds to a file stored in `assets/ExcalidrawFiles/`, which can be deleted manually as an unreferenced resource if the document is removed.
+
+## 3. Pre-Usage Setup
+
+### 3.1  Add CSS Snippet
+
+When creating a whiteboard, the widget sets the document's `Alias` property to `whiteboard` to avoid flashing document titles upon opening. You'll need to add a corresponding CSS snippet in `Settings` -> `Appearance`——`Code Snippet`——`Settings`——`CSS`:
+
+```css
+/* Whiteboard widget - Hide the title and breadcrumbs of the current document. */
+.protyle-title.protyle-wysiwyg--attr:has(+ .protyle-wysiwyg.protyle-wysiwyg--attr[alias="whiteboard"]){
+   display: none !important;
+}
+/* Hide the unordered list in the whiteboard document. */
+.iframe[custom-data-assets^="assets/ExcalidrawFiles/"] ~ .list[data-subtype="u"] {
+  display: none !important;
+}
+
+/* Hide the breadcrumbs on the top bar of the whiteboard document when it is not in focus. */
+.protyle-breadcrumb:has(button.protyle-breadcrumb__icon.ariaLabel.fn__none):has(+ .protyle-content.protyle-content--transition > .protyle-wysiwyg.protyle-wysiwyg--attr[alias="whiteboard"]) {
+    display: none !important;
+}
+/* If it is a new version, such as SiYuan V3.0.16, the following snippet is also needed. */
+.protyle-top:has(+ .protyle-wysiwyg[alias="whiteboard"]){
+   display: none !important;
+}
+
+/* Widget – Remove Border */
+.b3-typography iframe, .protyle-wysiwyg iframe {
+    border: none;   
+}
+/* Fix issue with document tree drag line on the right side in the whiteboard */
+.layout__resize--lr {
+    z-index: 3;
+}
+/* When the whiteboard document is embedded as an embedded block in other documents - hide the possible blank lines at the bottom edge. */
+.protyle-wysiwyg__embed>.iframe[custom-data-assets^="assets/ExcalidrawFiles/"] ~ .p {
+    display: none;
+}
+/* Fix input cursor flicker when filling the document */
+.iframe ,iframe{
+    -webkit-user-modify: read-only;
+}
+/* In SiYuan V3.7.0, when the note-taking app is set to dark mode, opening the whiteboard briefly shows a white background before switching to dark, causing severe flickering. */
+:root[data-theme-mode=dark] {
+    color-scheme: inherit;
+}
+/* Hide the widget borders in SiYuan V3.7.0 */
+.b3-typography [data-type=NodeWidget] iframe,
+.protyle-wysiwyg [data-type=NodeWidget] iframe {
+    border: none !important;
+}
+```
+
+Another optional style adjustment controls the floating window size if you feel the default window width is too wide:
+
+```css
+/* Floating Window */
+.block__popover {
+    width: 735px;
+    min-height: 70vh;
+    max-height: 75vh !important;
+}
+```
+
+### 3.2  Add JavaScript Snippet
+
+You can quickly embed documents/blocks into the whiteboard via drag-and-drop.
+
+Add a JavaScript snippet in  `Settings` -> `Appearance`——`Code Snippet`——`Settings`——`JS`:to aid in obtaining the current dragged block ID.
+
+```js
+document.addEventListener("dragstart", (event) => {
+    if (event.target.tagName === "SPAN" && event.target.parentElement.getAttribute('data-node-id')) {
+        window._currentBlockID = event.target.parentElement.getAttribute('data-node-id');  
+    } else if (event.target.tagName === "LI" && event.target.getAttribute("data-node-id")) {
+        window._currentBlockID = event.target.getAttribute("data-node-id");  
+    } else {
+        window._currentBlockID = null;
+    }
+});
+```
+
+### 3.3  Install the Plugin: Open API
+
+- The purpose of installing this plugin is to:
+
+  1. Enable floating preview of blocks/documents within notes on the whiteboard.
+  2. Automatically update the content of corresponding cards on the whiteboard when content blocks are modified in the notes.
+- Go to `Settings` → `Marketplace` → `Plugins`, then download and enable the `Open API` plugin.
+
+‍
+
+## 4. Getting Started
+
+### 4.1 Inserting a Whiteboard
+
+After downloading the widget, set up a document title in a new blank document, then type `/g` and press Enter. Select `Whiteboard` from the widget list to insert a whiteboard into the document, which fills the entire document by default.
+
+### 4.2 Data Saving
+
+Click the `Save` button in the top left corner or use the shortcut `Ctrl + S` to save the whiteboard data. A "Saved" message will pop up in the top left corner.
+
+Whiteboard data is saved in the `assets/ExcalidrawFiles/` folder, with file paths resembling:
+
+```css
+Workspace/data/assets/ExcalidrawFiles/20231227015401-w0olmpi.excalidraw
+```
+
+The widget uses the block ID as the filename.
+
+- `Auto-save` is enabled by default, typically saving approximately 2 seconds after adding, deleting, or moving elements. To turn off auto-save by default or adjust the delay time, see the instructions at the top of this document.
+- For temporarily toggling auto-save, use `Alt+F` . A message will appear in the top left corner.
+
+**Remember to click save after editing; otherwise, changes might be lost.**   Personally, I use the manual save mode and press `Ctrl+S` frequently, so I haven't lost any data yet.
+
+### 4.3 Floating Preview of Block Hyperlinks
+
+- To insert a link in the whiteboard, copy a link address (external or a `block hyperlink` of a block/document), click an element on the whiteboard, then press `Ctrl + K` to bring up the link input field, paste the link, and press Enter.
+- To enable hovering previews for block hyperlinks, press `Alt + Q` to enable preview mode and `Alt + W` to disable it. When enabled, hovering over a link icon displays a preview window of the block content, which can be closed by pressing `ESC` (If it doesn't take effect, you can first click on the top bar of the floating window and then try again. ) or by clicking `X` in the top right corner.
+
+### 4.4 SaveBlockRef and FixBrokenLinks
+
+> In newer versions (such as`SiYuan V3.7.1`), you must first enable the option under `Settings (Alt + P)` → `Export`→ `Include related documents`\.
+
+Two new functions have been added to the main menu in the upper left corner:`SaveBlockRef` and `FixBrokenLinks`
+
+- `SaveBlockRef`
+
+  - Obtain the block hyperlinks that have been embedded in the whiteboard, and insert them in the form of reference blocks into the unordered list after the whiteboard widget block to establish the reference relationship of the whiteboard to other documents/blocks.
+  - After the reference relationship is established, when the whiteboard document is exported in the form of `SiYuan.sy.zip`, the documents/blocks that have been embedded in the whiteboard can be automatically included to ensure the integrity of the data when the whiteboard is exported.
+- `FixBrokenLinks`
+
+  - Generally, this function is only used after the whiteboard document is imported in the form of `SiYuan.sy.zip`.
+  - The prerequisite for this function to take effect is that the "Save Block Quotation" function needs to be used to update the reference relationship of the whiteboard to other blocks before the whiteboard document is exported in the form of `SiYuan.sy.zip`.
+  - During the import process, the IDs of the documents/blocks are reset by the software, which usually causes the existing block hyperlinks on the whiteboard to become invalid. This function updates the block hyperlinks in the whiteboard according to the corresponding relationship between the old and new block IDs in the reference blocks, so as to achieve the purpose of fixing the invalid block hyperlinks.
+
+### 4.5 Drag and embed the content block.
+
+- Support quickly embedding documents/blocks by dragging.
+- 1、Use dragging to embed a document.
+
+  - In the document tree, hold down the left mouse button on the document and drag it to the whiteboard.
+- 2、Use dragging to embed a block.
+
+  - It is recommended to split the screen first. The whiteboard is on the left and the document is on the right. (At this time, it is recommended to enable Zen Mode for the whiteboard to reduce the interference caused by the pop-up of the editing bar.)
+  - The document is in edit state.
+  - When the mouse hovers over a block, the block mark is displayed in the upper left corner of the block. Hold down the left mouse button on the block mark and drag it to the whiteboard.
+
+> - After dragging a content block from the notes into the whiteboard to generate a card, before dragging the card for the first time, you need to click on the `edge area` of the card (the area other than the `Click to start interaction` in the middle) to re-select it.
+
+### 4.6 Content Block Retrieval Panel
+
+You can use the shortcut keys `Alt` + `P` to open/close the **Content Block Retrieval Panel**. Through this panel, you can quickly retrieve and embed the retrieved content blocks.
+
+**Basic Usage:**
+
+- After clicking on the blank area of the whiteboard with the mouse to gain focus, you can open or close the `Content Block Retrieval Panel` using the shortcut key `Alt` + `P`.
+- Once the panel is opened, the input box automatically gets focused. You can directly input keywords, separating multiple keywords with spaces. Approximately 0.5 seconds after entering the keywords, the search results will be displayed in the list below, with the first search result automatically selected.
+- At this point, you can use the up/down arrow keys on the keyboard to switch the selected search results. Pressing the `Enter` key will embed the currently selected search result in the form of an embedded document into the upper - left corner of the whiteboard. Multiple search results can be embedded in succession by using the up and down arrow keys along with the `Enter` key.
+- After clicking the `Clear` button, the keywords in the input box are cleared and the input box automatically gains focus. You can then continue to enter new keywords for retrieval.
+
+**Other tips:**
+
+- In the note - taking software, in the `Settings` - `Editor` - `[[Search Documents Only` option, if this option is enabled, the search results of the `Content Block Search Panel` on the whiteboard will only retain document blocks.
+- Searching in the `Content Block Search Panel` and searching for reference blocks in the document using `【【+keyword` utilize the same API: `/api/search/searchRefBlock`. Therefore, the settings in `Settings` - `Search` - `Block - level Types` of the note - taking software can directly affect the types of search results in the `Content Block Search Panel`.
+- In the list of search results
+
+  - Clicking on the icon in front of the search result allows you to jump to the corresponding content block.
+  - When you click the `+` icon behind the search result, the corresponding search result can be embedded in the upper - left corner of the whiteboard in the form of an embedded document.
+
+### 4.7  Search within Embedded Content Blocks
+
+A  `Text Search Panel`  is added to the upper right corner, specifically for searching and highlighting text within iframes. This is similar to text search on web pages. — Currently, the search scope of this feature is limited to documents/content blocks embedded in the whiteboard.
+
+**Basic Usage:**
+
+- Before searching, it is recommended to load all iframe elements on the whiteboard. You can use the shortcut key (Shift+1) for the whiteboard's [Zoom to Fit All Elements] function.
+
+  - Since iframes are lazily loaded, they need to be in the visible area to load. Text search is performed within the loaded iframe elements.
+  - Click on the blank area of the whiteboard and press the shortcut key (Shift+1) to make all elements visible.
+- Click on the blank area of the whiteboard and press the shortcut key (Alt+o) to open/close the [Text Search Panel] in the upper right corner. Once opened, it automatically gains focus, allowing you to directly enter a single keyword for searching.
+- After entering a single keyword, if there are matching results, it will default to jumping to the first iframe containing the keyword. The focus remains in the input box; pressing `Enter` will switch to the next iframe.
+
+> **Notes:**
+>
+> - The number of search results refers to the count of iframe cards containing the keyword, not the number of keyword matches. An iframe may have multiple instances of the keyword, and you may need to manually scroll the page to view all highlighted parts.
+
+
+### 4.8  Auto-Update of Content Blocks in the Whiteboard
+
+Content blocks embedded in the whiteboard do not support direct modification. However, when you edit note content via a floating preview window or similar means, the corresponding content block in the whiteboard will update automatically.
+
+This auto-update feature for whiteboard content blocks is enabled by default. To disable it by default, open the following file using an editor like VS Code:`workspace/data/widgets/Whiteboard/custom.js`
+
+Search for:
+
+```css
+window.contentSync = true;
+```
+
+Change it to:
+
+```css
 window.contentSync = false;
 ```
 
 Please note the following:
 
-> - This feature requires enabling the **`Open API`** plugin first.
+> - This feature requires the **Open API** plugin to be enabled first.
 >
->   - Essentially, it uses the plugin's `eventBus` to detect changes to content blocks and dynamically modify the DOM of cards in real time.
->   - To temporarily disable the **Auto Sync for Content Blocks** on the whiteboard, simply turn off the **Open API** plugin and refresh the whiteboard.
-> - Ensure the whiteboard cards corresponding to content blocks are within the visible area. (Press the shortcut **`Shift`** **+**  **`1`** to display all elements in view.)
-> - If the whiteboard card fails to update normally or shows display errors after updating, manually refresh it by **double-clicking the card edge to enter interaction mode**, then clicking the refresh icon in the upper-right corner of the card.
-
----
+>   - Essentially, it uses the plugin's `eventBus` to detect changes in content blocks and then updates the card DOM in real time.
+>   - If you only want to temporarily disable the auto-update of content blocks in the whiteboard, simply disable the **Open API** plugin and refresh the whiteboard.
+> - The whiteboard card corresponding to the content block must be within the visible area. (Use the shortcut `Shift` + `1` to bring all elements into view.)
+> - If a whiteboard card fails to update properly or displays abnormally after updating, you can manually refresh it by **double-clicking the edge area of the card (to enter interactive mode)**  and then **clicking the refresh button in the top-right corner of the card**.
 
 
-### V2.0.19
+### 4.9 Rendering Content Blocks in Exported SVG Files
 
-Refer to the preview image at the top (the software version used for testing: `Siyuan V3.6.5`)
+**How to use:**
 
-- Bug Fix: When the board view of a data table has only a single column, it failed to render properly on the whiteboard.
-- Optimization: Reduced the number of automatic refreshes when creating a whiteboard (only refreshes basically once).
-- Style Adjustments
+- Click on a blank area of the whiteboard and press `Shift` + `1` to load all content blocks.
+- Press `Alt` + `L` to sequentially convert content blocks into `dataUrl` format for images.
 
-  - In Zen mode, the top bar shortcuts, prompts, border and shadow are no longer hidden to reduce flickering during whiteboard refreshes.
-  - In data tables, overflowing text will be displayed with ellipsis when text wrapping is disabled.
+  - This process may be relatively slow. Once completed, a notification reading `Done` will pop up in the top-right corner of the note-taking software.
+- Then follow the standard SVG export workflow: `Top-left Menu` → `Export Image` → `Download SVG` → `Select a specified folder` → `Save`.
 
----
-### V2.0.18
 
-Refer to the preview image at the top (the software version used for testing is: `Siyuan V3.5.8`).
+### 4.10 Embedding PDF Annotations in the Whiteboard
 
-- Whiteboard elements support linking to PDF annotations. (The link format is as follows: `assets/User Guide-20250501154835-226lt9b.pdf/20250304154923-lqp5jgy`)
+- Whiteboard elements support linking to PDF annotations. (The link format looks like: `assets/User Guide-20250501154835-226lt9b.pdf/20250304154923-lqp5jgy`)
 
-Before use, it is recommended to add a JS code snippet via `Settings` → `Appearance` → `Code Snippets` → `Settings` → `JS`. This snippet will add a PDF button in the upper-right corner of the note-taking app. Clicking the button converts copied PDF annotations into link-enabled elements that can be pasted directly onto the whiteboard.
-
+Before using this feature, it is recommended to add a JS code snippet under `Settings` → `Appearance` → `Code Snippets` → `Settings` → `JS`. This snippet adds a PDF button in the top-right corner of the note-taking software. Clicking the button converts copied PDF annotations into linked elements that can be pasted directly into the whiteboard.
 
 ```js
 (() => {
@@ -285,245 +471,19 @@ Before use, it is recommended to add a JS code snippet via `Settings` → `Appea
 })();
 ```
 
-
-
-
----
-
-For the current version: **V2.1.2**
-
-If you **do not want auto-save to be enabled by default**, open the widget folder `Whiteboard` -> `custom.js` in an editor like VS Code and search for:
-
-```js
-window._autoSave = true;
-```
-
-Then change it to:
-
-```js
-window._autoSave = false;
-```
-
-To **adjust the auto-save delay time** (default is 2000ms), open `Whiteboard` -> `custom.js` in the widget folder and search for:
-
-```js
-window._autoSaveDelay = 2000;
-```
-
-Change the last value `2000` to your preferred time (in milliseconds).
-
----
-
-## 2. Overview
-
-A widget based on [Excalidraw](https://github.com/excalidraw/excalidraw). After embedding, it will automatically fill the entire document, treating a document as a whiteboard. It integrates small functions such as floating preview, retrieval and embedding of content blocks, etc.
-
-You can embed a whiteboard by referencing the document. To export and share a whiteboard, use the export/import `SiYuan .sy.zip` function.
-
-> It is recommended to click the "Save Block References" button before exporting, and click the "Fix Block Hyperlinks" button after importing.
-
- Each whiteboard binds to a file stored in `assets/ExcalidrawFiles/`, which can be deleted manually as an unreferenced resource if the document is removed.
-
-
-## 3. Pre-Usage Setup
-
-### 1. Add CSS Snippet
-
-When creating a whiteboard, the widget sets the document's `Alias` property to `whiteboard` to avoid flashing document titles upon opening. You'll need to add a corresponding CSS snippet in `Settings` -> `Appearance`:
-
-```css
-/* Whiteboard widget - Hide the title and breadcrumbs of the current document. */
-.protyle-title.protyle-wysiwyg--attr:has(+ .protyle-wysiwyg.protyle-wysiwyg--attr[alias="whiteboard"]){
-   display: none !important;
-}
-/* Hide the unordered list in the whiteboard document. */
-.iframe[custom-data-assets^="assets/ExcalidrawFiles/"] ~ .list[data-subtype="u"] {
-  display: none !important;
-}
-
-/* Hide the breadcrumbs on the top bar of the whiteboard document when it is not in focus. */
-.protyle-breadcrumb:has(button.protyle-breadcrumb__icon.ariaLabel.fn__none):has(+ .protyle-content.protyle-content--transition > .protyle-wysiwyg.protyle-wysiwyg--attr[alias="whiteboard"]) {
-    display: none !important;
-}
-/* If it is a new version, such as SiYuan V3.0.16, the following snippet is also needed. */
-.protyle-top:has(+ .protyle-wysiwyg[alias="whiteboard"]){
-   display: none !important;
-}
-
-/* Widget – Remove Border */
-.b3-typography iframe, .protyle-wysiwyg iframe {
-    border: none;   
-}
-/* Fix issue with document tree drag line on the right side in the whiteboard */
-.layout__resize--lr {
-    z-index: 3;
-}
-/* When the whiteboard document is embedded as an embedded block in other documents - hide the possible blank lines at the bottom edge. */
-.protyle-wysiwyg__embed>.iframe[custom-data-assets^="assets/ExcalidrawFiles/"] ~ .p {
-    display: none;
-}
-/* Fix input cursor flicker when filling the document */
-.iframe ,iframe{
-    -webkit-user-modify: read-only;
-}
-/* In SiYuan V3.7.0, when the note-taking app is set to dark mode, opening the whiteboard briefly shows a white background before switching to dark, causing severe flickering. */
-:root[data-theme-mode=dark] {
-    color-scheme: inherit;
-}
-/* Hide the widget borders in SiYuan V3.7.0 */
-.b3-typography [data-type=NodeWidget] iframe,
-.protyle-wysiwyg [data-type=NodeWidget] iframe {
-    border: none !important;
-}
-```
-
-Another optional style adjustment controls the floating window size if you feel the default window width is too wide:
-
-```css
-/* Floating Window */
-.block__popover {
-    width: 735px;
-    min-height: 70vh;
-    max-height: 75vh !important;
-}
-```
-
-### 2. Add JavaScript Snippet
-
-You can quickly embed documents/blocks into the whiteboard via drag-and-drop.
-
-Add a JavaScript snippet in `Settings` -> `Appearance` to aid in obtaining the current dragged block ID. 
-
-```js
-document.addEventListener("dragstart", (event) => {
-    if (event.target.tagName === "SPAN" && event.target.parentElement.getAttribute('data-node-id')) {
-        window._currentBlockID = event.target.parentElement.getAttribute('data-node-id');  
-    } else if (event.target.tagName === "LI" && event.target.getAttribute("data-node-id")) {
-        window._currentBlockID = event.target.getAttribute("data-node-id");  
-    } else {
-        window._currentBlockID = null;
-    }
-});
-```
-
-### 3. Install the "Open API" Plugin
-
-* This plugin enables hover previews of note blocks/documents in the whiteboard.
-* Go to `Settings` -> `Market` -> `Plugins` to download and enable the `Open API` plugin.
-
-‍
-
-## 4. Getting Started
-
-### 1. Inserting a Whiteboard
-
-After downloading the widget, set up a document title in a new blank document, then type `/g` and press Enter. Select `Whiteboard` from the widget list to insert a whiteboard into the document, which fills the entire document by default.
-
-### 2. Data Saving
-
-Click the `Save` button in the top left corner or use the shortcut `Ctrl + S` to save the whiteboard data. A "Saved" message will pop up in the top left corner.
-
-Whiteboard data is saved in the `assets/ExcalidrawFiles/` folder, with file paths resembling:
-
-```css
-assets/ExcalidrawFiles/20231227015401-w0olmpi.excalidraw
-```
-
-The widget uses the block ID as the filename.
-
-* `Auto-save` is enabled by default, typically saving approximately 2 seconds after adding, deleting, or moving elements. To turn off auto-save by default or adjust the delay time, see the instructions at the top of this document.
-* For temporarily toggling auto-save, use `Alt+F` (versions after V1.0.8 use this shortcut; earlier versions used `Alt+S`). A message will appear in the top left corner.
-
-**Remember to click save after editing; otherwise, changes might be lost.**  Personally, I use the manual save mode and press Ctrl+S frequently, so I haven't lost any data yet.
-
-### 3. Floating Preview of Block Hyperlinks
-
-* To insert a link in the whiteboard, copy a link address (external or a `block hyperlink` of a block/document), click an element on the whiteboard, then press `Ctrl + K` to bring up the link input field, paste the link, and press Enter.
-* To enable hovering previews for block hyperlinks, press `Alt + Q` to enable preview mode and `Alt + W` to disable it. When enabled, hovering over a link icon displays a preview window of the block content, which can be closed by pressing `ESC` (If it doesn't take effect, you can first click on the top bar of the floating window and then try again. ) or by clicking `X` in the top right corner.
-
-
-### 4.SaveBlockRef and FixBrokenLinks
-
-Two new functions have been added to the main menu in the upper left corner:`SaveBlockRef` and `FixBrokenLinks`
-
-* `SaveBlockRef`
-
-  * Obtain the block hyperlinks that have been embedded in the whiteboard, and insert them in the form of reference blocks into the unordered list after the whiteboard widget block to establish the reference relationship of the whiteboard to other documents/blocks.
-  * After the reference relationship is established, when the whiteboard document is exported in the form of `SiYuan.sy.zip`, the documents/blocks that have been embedded in the whiteboard can be automatically included to ensure the integrity of the data when the whiteboard is exported.
-* `FixBrokenLinks`
-
-  * Generally, this function is only used after the whiteboard document is imported in the form of `SiYuan.sy.zip`.
-  * The prerequisite for this function to take effect is that the "Save Block Quotation" function needs to be used to update the reference relationship of the whiteboard to other blocks before the whiteboard document is exported in the form of `SiYuan.sy.zip`.
-  * During the import process, the IDs of the documents/blocks are reset by the software, which usually causes the existing block hyperlinks on the whiteboard to become invalid. This function updates the block hyperlinks in the whiteboard according to the corresponding relationship between the old and new block IDs in the reference blocks, so as to achieve the purpose of fixing the invalid block hyperlinks.
-
-
-### 5. Drag and embed the content block.
-
-* Support quickly embedding documents/blocks by dragging.
-
-* 1、Use dragging to embed a document.
-
-  * In the document tree, hold down the left mouse button on the document and drag it to the whiteboard.
-* 2、Use dragging to embed a block.
-
-  * It is recommended to split the screen first. The whiteboard is on the left and the document is on the right. (At this time, it is recommended to enable Zen Mode for the whiteboard to reduce the interference caused by the pop-up of the editing bar.)
-  * The document is in edit state.
-  * When the mouse hovers over a block, the block mark is displayed in the upper left corner of the block. Hold down the left mouse button on the block mark and drag it to the whiteboard.
-
-> * After dragging a content block from the notes into the whiteboard to generate a card, before dragging the card for the first time, you need to click on the `edge area` of the card (the area other than the `Click to start interaction` in the middle) to re-select it.
-
-### 6. Content Block Retrieval Panel
-
-You can use the shortcut keys `Alt` + `P` to open/close the **Content Block Retrieval Panel**. Through this panel, you can quickly retrieve and embed the retrieved content blocks.
-
-**Basic Usage:**
-
-* After clicking on the blank area of the whiteboard with the mouse to gain focus, you can open or close the `Content Block Retrieval Panel` using the shortcut key `Alt` + `P`.
-* Once the panel is opened, the input box automatically gets focused. You can directly input keywords, separating multiple keywords with spaces. Approximately 0.5 seconds after entering the keywords, the search results will be displayed in the list below, with the first search result automatically selected.
-* At this point, you can use the up/down arrow keys on the keyboard to switch the selected search results. Pressing the `Enter` key will embed the currently selected search result in the form of an embedded document into the upper - left corner of the whiteboard. Multiple search results can be embedded in succession by using the up and down arrow keys along with the `Enter` key.
-* After clicking the `Clear` button, the keywords in the input box are cleared and the input box automatically gains focus. You can then continue to enter new keywords for retrieval.
-
-**Other tips:**
-
-* In the note - taking software, in the `Settings` - `Editor` - `[[Search Documents Only` option, if this option is enabled, the search results of the `Content Block Search Panel` on the whiteboard will only retain document blocks.
-* Searching in the `Content Block Search Panel` and searching for reference blocks in the document using `【【+keyword` utilize the same API: `/api/search/searchRefBlock`. Therefore, the settings in `Settings` - `Search` - `Block - level Types` of the note - taking software can directly affect the types of search results in the `Content Block Search Panel`.
-* In the list of search results
-
-  * Clicking on the icon in front of the search result allows you to jump to the corresponding content block.
-  * When you click the `+` icon behind the search result, the corresponding search result can be embedded in the upper - left corner of the whiteboard in the form of an embedded document.
-
-
-### 7. Search within Embedded Content Blocks
-
-A  `Text Search Panel`  is added to the upper right corner, specifically for searching and highlighting text within iframes. This is similar to text search on web pages. — Currently, the search scope of this feature is limited to documents/content blocks embedded in the whiteboard.
-
-**Basic Usage:**
-
-* Before searching, it is recommended to load all iframe elements on the whiteboard. You can use the shortcut key (Shift+1) for the whiteboard's [Zoom to Fit All Elements] function.
-
-  * Since iframes are lazily loaded, they need to be in the visible area to load. Text search is performed within the loaded iframe elements.
-  * Click on the blank area of the whiteboard and press the shortcut key (Shift+1) to make all elements visible.
-* Click on the blank area of the whiteboard and press the shortcut key (Alt+o) to open/close the [Text Search Panel] in the upper right corner. Once opened, it automatically gains focus, allowing you to directly enter a single keyword for searching.
-* After entering a single keyword, if there are matching results, it will default to jumping to the first iframe containing the keyword. The focus remains in the input box; pressing `Enter` will switch to the next iframe.
-
-> **Notes:**
->
-> * The number of search results refers to the count of iframe cards containing the keyword, not the number of keyword matches. An iframe may have multiple instances of the keyword, and you may need to manually scroll the page to view all highlighted parts.
-
-
 ## 5. Matters needing attention.
 
-* When `automatic save` is triggered, the right-click pop-up menu of the mouse will be closed. If you think this interference is too great, you can close `automatic save` by default or temporarily. (The shortcut key to temporarily turn off automatic save is `Alt+F`).
-* The corners of the `Web Embedd` box are recommended to be right angles. The corner with a radian may cause the document to be blurred.
-* When rendering database tables in the whiteboard, although there is no scroll bar, you can use Shift + mouse wheel to scroll horizontally to view the data table.
-* After dragging a content block from the notes into the whiteboard to generate a card, before dragging the card for the first time, you need to click on the `edge area` of the card (excluding the part of `Click to start interaction` in the middle) to re-select it.
-* If you mistakenly embed this widget in a document that already has other content, you can refer to: [How to undo after mistakenly inserting a widget?](https://github.com/BryceAndJuly/Whiteboard/issues/48) 
+- When `automatic save` is triggered, the right-click pop-up menu of the mouse will be closed. If you think this interference is too great, you can close `automatic save` by default or temporarily. (The shortcut key to temporarily turn off automatic save is `Alt+F`).
+- The corners of the `Web Embedd` box are recommended to be right angles. The corner with a radian may cause the document to be blurred.
+- When rendering database tables in the whiteboard, although there is no scroll bar, you can use Shift + mouse wheel to scroll horizontally to view the data table.
+- After dragging documents or content blocks from your notes onto the whiteboard to generate cards, you need to first click the edge of the card or a blank area of the whiteboard before dragging the card for the first time (this refocuses the whiteboard).
+- If you mistakenly embed this widget in a document that already has other content, you can refer to: [How to undo after mistakenly inserting a widget?](https://github.com/BryceAndJuly/Whiteboard/issues/48)
 
 ## 6. Other Optional Configurations
 
-### 1. Adjust Brush Thickness Manually
+### 6.1  Adjust Brush Thickness Manually
 
-For V2.1.2, open `Whiteboard` -> `assets` -> `index-ZsssFvwm.js` and search for:
+For `V2.1.3`, open `Whiteboard` -> `assets` -> `index-ZsssFvwm.js` and search for:
 
 ```css
 n={simulatePressure:e.simulatePressure,size:e.strokeWidth*1.2,thinning
@@ -531,10 +491,9 @@ n={simulatePressure:e.simulatePressure,size:e.strokeWidth*1.2,thinning
 
 1.2 is the current value. The initial default was over 4; adjust this value as desired.
 
+### 6.2  Write the text in the whiteboard into the document's property—memo.
 
-### 2. Write the text in the whiteboard into the document's property—memo.
-
-* When saving, it will automatically write the text content on the whiteboard by default into the `Properties` - `memo `of the document where it is located.
+- When saving, it will automatically write the text content on the whiteboard by default into the `Properties` - `memo `of the document where it is located.
 
 The advantage of doing this is that in global search, referenced block search, and embedded block search, in addition to being able to retrieve and locate whiteboard documents by the document name and alias of the whiteboard, you can now also search and find whiteboard documents through the text that has been entered in the whiteboard.
 
@@ -552,8 +511,7 @@ Change it to:
 window._allowSetMemo = false;
 ```
 
-
-### 3. Set Fixed Port (Windows)
+### 6.3  Set Fixed Port (Windows)
 
 If the `material library` of the whiteboard is used frequently, it is best to set a fixed port for starting the notebook. Because the content added to the material library is stored in LocalStorage. After setting this, the content that has been added to the material library will not disappear after the next startup.
 
@@ -569,13 +527,15 @@ Just set the port at the back. For example:
 D:\Siyuan\SiYuan.exe  --port=6806
 ```
 
-## 7. Update records
 
-[Changelog](https://github.com/BryceAndJuly/Whiteboard/issues/98#issuecomment-4015673213)
+## 7. Changelog
+
+- [Changelog](https://github.com/BryceAndJuly/Whiteboard/issues/98#issuecomment-4015673213)
+
 
 ## 8. References and Thanks
 
-* [Excalidraw](https://github.com/excalidraw/excalidraw)
-* [SiYuan](https://github.com/siyuan-note/siyuan)
-* The Chinese font file in the whiteboard (prior to V2.0.0) is copied from the [superdraw](https://github.com/zuoez02/superdraw) project.
-* Thanks to the author [Zuoqiu-Yingyi](https://github.com/Zuoqiu-Yingyi) of the plugin "Open API".
+- [Excalidraw](https://github.com/excalidraw/excalidraw)
+- [SiYuan](https://github.com/siyuan-note/siyuan)
+- The Chinese font file in the whiteboard (prior to V2.0.0) is copied from the [superdraw](https://github.com/zuoez02/superdraw) project.
+- Thanks to the author [Zuoqiu-Yingyi](https://github.com/Zuoqiu-Yingyi) of the plugin `Open API`.
