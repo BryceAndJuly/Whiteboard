@@ -10,6 +10,25 @@
 >
 > I hope this little tool can help people with the same needs.
 
+### V2.1.4
+
+Test Environment: `SiYuan V3.7.4`, `Windows 11`
+
+- Documents embedded in the whiteboard now support rendering document icons and tags, as shown in the preview screenshot at the top.
+
+- A new CSS snippet has been added to hide the breadcrumb navigation on the top bar of whiteboard-embedded documents and the backlink panel at the bottom of documents. This update is included in `Section III. Pre-Usage Configurations` – `1. Add CSS Snippets` of this article.
+
+```css
+/* SiYuan V3.7.4: Hide the breadcrumbs on the top bar of whiteboard documents when unfocused. */
+.protyle-breadcrumb:has(button.protyle-breadcrumb__icon.ariaLabel.fn__none):has(~.protyle-content > .protyle-wysiwyg[alias="whiteboard"]){
+     display:none !important;
+}
+/* SiYuan V3.7.4: Hide the bottom backlink panel for whiteboard documents */
+.protyle-wysiwyg[alias="whiteboard"]~.sy__backlink--bottom {
+    display: none !important;
+}
+```
+---
 ### V2.1.3
 
 Tested on: `SiYuan V3.7.0`, `V3.7.1`
@@ -43,7 +62,7 @@ Tested on: `SiYuan V3.7.0`, `V3.7.1`
 
 ---
 
-For the current version: **V2.1.3**
+For the current version: **V2.1.4**
 
 If you **do not want auto-save to be enabled by default**, open the widget folder `Whiteboard` -> `custom.js` in an editor like VS Code and search for:
 
@@ -483,7 +502,7 @@ Before using this feature, it is recommended to add a JS code snippet under `Set
 
 ### 6.1  Adjust Brush Thickness Manually
 
-For `V2.1.3`, open `Whiteboard` -> `assets` -> `index-ZsssFvwm.js` and search for:
+For `V2.1.4`, open `Whiteboard` -> `assets` -> `index-ZsssFvwm.js` and search for:
 
 ```css
 n={simulatePressure:e.simulatePressure,size:e.strokeWidth*1.2,thinning

@@ -160,12 +160,47 @@ html.dark #refreshBtn:hover {
   }
 }
 
+@media screen and (max-width:729px) {
+  #saveBtn {
+    top: 34px;
+    left: 31px;
+  }
+
+  #refreshBtn {
+    top: 34px;
+    right: -5px;
+  }
+
+  #myMessage {
+    top: 63px;
+    left: -2px;
+  }
+}
+
+@media screen and (max-width:560px) {
+  #saveBtn {
+    top: 81px;
+    left: 31px;
+  }
+
+  #refreshBtn {
+    top: 81px;
+    right: 17px;
+  }
+
+  #myMessage {
+    top: 101px;
+    left: -2px;
+  }
+}
+
 
 
 /* 禅模式——不隐藏【素材库】 */
 :root[dir=ltr] .excalidraw .layer-ui__wrapper .zen-mode-transition.transition-right {
   transform: none !important;
 }
+
 /* 禅模式——不隐藏【撤销】、【重做】按钮 */
 .excalidraw .layer-ui__wrapper .zen-mode-transition.layer-ui__wrapper__footer-left--transition-bottom {
   transform: none !important;
@@ -351,25 +386,38 @@ button#close {
   padding: 2px;
   border-radius: 2px;
 }
+
 /* 搜索iframe中的文字 */
 #searchIframeText {
-    width: 280px;
-    height: 30px;
-    background-color: #4E4E4E;
-    color: rgb(231, 231, 231);
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    position: fixed;
-    top: 56px;
-    right: 15px;
-    z-index: 4;
+  width: 280px;
+  height: 36px;
+  background-color: #4E4E4E;
+  color: rgb(231, 231, 231);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  position: fixed;
+  top: 56px;
+  right: 15px;
+  z-index: 4;
+}
+
+#keywordInIframe {
+  outline: none;
+  border: none;
+  background-color: #4E4E4E;
+  color: rgb(231, 231, 231);
+  border-bottom-left-radius: 6px;
+  border-top-left-radius: 6px;
+  padding-left: 10px;
 }
 
 button.topBarBtn {
   padding: 0px;
   border-width: 0px;
   background-color: transparent;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
 button.topBarBtn:hover {
@@ -388,6 +436,7 @@ body.viewmode .undo-redo-buttons.zen-mode-transition {
   display: none !important;
 
 }
+
 /* 查看模式下，隐藏顶部菜单栏 */
 .excalidraw.excalidraw-container.excalidraw--view-mode .App-menu.App-menu_top {
   visibility: hidden;
@@ -397,12 +446,14 @@ body.viewmode .undo-redo-buttons.zen-mode-transition {
 div#root:has(.excalidraw.excalidraw-container.excalidraw--view-mode)~#saveBtn {
   display: none;
 }
+
 /* 调整查看模式下，刷新按钮的位置 */
 div#root:has(.excalidraw.excalidraw-container.excalidraw--view-mode)~#refreshBtn {
   top: 30px;
   right: 0px;
 }
+
 /* 隐藏上方的提示 */
 .excalidraw-app .HintViewer {
-    display: none !important;
+  display: none !important;
 }

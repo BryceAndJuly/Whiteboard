@@ -10,6 +10,24 @@
 >
 > 希望这个小工具能帮助到有同样需求的人。
 
+## V2.1.4
+
+测试环境：`SiYuan V3.7.4` 、`Windows 11`
+
+- 嵌入到白板中的文档，支持渲染文档图标和标签，见顶部预览图。
+- 新增一个CSS代码片段，用于隐藏白板文档顶栏的面包屑以及文档底部的反链面板。已更新到本文的`三、使用前的设置`——`1、添加CSS代码片段`章节。
+
+  ```css
+  /* SiYuan V3.7.4，在不聚焦的情况下，隐藏白板文档顶栏的面包屑 */
+  .protyle-breadcrumb:has(button.protyle-breadcrumb__icon.ariaLabel.fn__none):has(~.protyle-content > .protyle-wysiwyg[alias="whiteboard"]){
+       display:none !important;
+  }
+  /* SiYuan V3.7.4，【白板文档】隐藏底部的反链面板 */
+  .protyle-wysiwyg[alias="whiteboard"]~.sy__backlink--bottom {
+      display: none !important;
+  }
+  ```
+---
 ### V2.1.3
 
 测试环境：`SiYuan V3.7.0`、`V3.7.1`
@@ -44,7 +62,7 @@
 ---
 
 
-对于当前版本：**V2.1.3**
+对于当前版本：**V2.1.4**
 
 如果你**不想默认开启自动保存功能**，可以使用VS Code之类的编辑器打开挂件文件夹`Whiteboard`——`custom.js`，
 
@@ -487,7 +505,7 @@ window.contentSync = false;
 
 ### 1、手动更改画笔的粗细
 
-对于版本`V2.1.3`，打开挂件文件夹`Whiteboard`——`assets`——`index-ZsssFvwm.js`,在该js文件中搜索：
+对于版本`V2.1.4`，打开挂件文件夹`Whiteboard`——`assets`——`index-ZsssFvwm.js`,在该js文件中搜索：
 
 ```css
 n={simulatePressure:e.simulatePressure,size:e.strokeWidth*1.2,thinning

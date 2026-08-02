@@ -6,16 +6,44 @@ async function renderBody() {
   let id = blockLnk.trim().split('siyuan://blocks/')[1];
   let doc = "";
   let htmlStr = "";
+  let rootIcon = "";
+  let docTags = "";
   let res = await request("/api/filetree/getDoc", { id });
   if (res?.code === 0 && res?.data?.content) {
     // 判断是否是文档块，是的话要另外获取标题
     if (res?.data?.type === "NodeDocument") {
       htmlStr = res.data.content.replaceAll(`"assets/`, `"${window.top.location.origin}/assets/`).replaceAll(`contenteditable="true"`, `contenteditable="false"`).replaceAll(`src="api/icon/getDynamicIcon`, `src="${window.top.location.origin}/api/icon/getDynamicIcon`);
       let response = await request("/api/block/getDocInfo", { id });
-      // 读取标题成功,添加文档标题
       if (response?.code === 0 && response?.data?.name && htmlStr) {
-        let title = response.data.name.replaceAll("<", "&lt;").replaceAll(">", "&gt;")
-        doc = `<h1 data-node-id="${response.data.rootID}">${title}</h1>` + htmlStr;
+         try {
+          // 文档图标
+          if (response.data.icon) {
+            let icon = response.data.icon;
+            if (icon.includes(".")) {
+              rootIcon = `<div class="protyle-background__icon" style="margin-top: 8px;transition:none;margin-bottom:12px;"><img class="" src="${window.top.location.origin + '/emojis/' + icon}"></div> `;
+            } else if (icon.startsWith("api/icon/getDynamicIcon")) {
+              rootIcon = `<div class="protyle-background__icon" style="margin-top: 8px;transition:none;margin-bottom:12px;"><img class="" src="${window.top.location.origin + '/' + icon}"></div> `;
+            } else {
+              rootIcon = `<div class="protyle-background__icon" style="margin-top: 8px;transition:none;margin-bottom:12px;">${String.fromCodePoint(parseInt(icon, 16))}</div> `;
+            }
+          }
+          // 文档的标签
+          if (response.data.ial?.tags) {
+            let tags = response.data.ial.tags;
+            if (tags.includes(",")) {
+              docTags = `<div class="b3-chips b3-chips__doctag">`;
+              tags.split(",").forEach(item => {
+                docTags += `<div class="b3-chip b3-chip--middle b3-chip--pointer" data-type="open-search">${item}</div>`
+              })
+              docTags += `</div>`
+            } else {
+              docTags = `<div class="b3-chips b3-chips__doctag"><div class="b3-chip b3-chip--middle b3-chip--pointer" data-type="open-search">${tags}</div></div>`
+            }
+          }
+        } catch (err) {}
+        // 文档标题
+        let title = response.data.name.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+        doc = `${rootIcon}${docTags}<h1 data-node-id="${response.data.rootID}">${title}</h1>` + htmlStr;
       }
     } else {
       doc = res.data.content.replaceAll(`"assets/`, `"${window.top.location.origin}/assets/`).replaceAll(`contenteditable="true"`, `contenteditable="false"`).replaceAll(`src="api/icon/getDynamicIcon`, `src="${window.top.location.origin}/api/icon/getDynamicIcon`);

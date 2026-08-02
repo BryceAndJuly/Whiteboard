@@ -214,3 +214,17 @@ body:hover {
 .av__kanban-group--big {
     width: 320px;
 }
+
+/* 将其他白板文档拖入到白板中作为卡片，卡片在渲染时会闪现出文档标题、引用块列表、文档图标、标签 */
+h1:has(+ .iframe[custom-data-assets*="/assets/ExcalidrawFiles/"]) {
+    display: none !important;
+}
+.iframe[custom-data-assets*="/assets/ExcalidrawFiles/"]+.list {
+    display: none !important;
+}
+.protyle-background__icon:has(~ .iframe[custom-data-assets*="/assets/ExcalidrawFiles/"]) {
+    display: none !important;
+}
+.b3-chips__doctag:has(~ .iframe[custom-data-assets*="/assets/ExcalidrawFiles/"]) {
+    display: none !important;
+}

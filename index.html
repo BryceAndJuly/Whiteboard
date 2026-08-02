@@ -13,26 +13,26 @@
         if (isNodeBlockQueryEmbed) {
           window.frameElement.setAttribute("style", "width:98%;height:600px;z-index:1;"), window.frameElement.parentElement.setAttribute("style", "width:100%;height:100%;"), window.frameElement.parentElement.parentElement.setAttribute("style", "width:100%;height:100%;margin:0px;padding:0px;");
         } else {
-          window.frameElement.setAttribute("style", "position:absolute;left:0px;top:0px;width:100%;height:100%;z-index:1;"), window.frameElement.parentElement.setAttribute("style", "width:100%;height:100%;"), window.frameElement.parentElement.parentElement.setAttribute("style", "position:absolute;top:0px;left:0px;width:100%;height:100%;overflow:hidden;margin:0px;padding:0px;")
+          window.frameElement.setAttribute("style", "position:absolute;left:0px;top:0px;width:100%;height:100%;z-index:6;"), window.frameElement.parentElement.setAttribute("style", "width:100%;height:100%;"), window.frameElement.parentElement.parentElement.setAttribute("style", "position:absolute;top:0px;left:0px;width:100%;height:100%;overflow:hidden;margin:0px;padding:0px;")
         }
       }
       else {
         if (isNodeBlockQueryEmbed) {
           window.frameElement.setAttribute("style", "width:98%;height:600px;z-index:2;"), window.frameElement.parentElement.setAttribute("style", "width:100%;height:100%;"), window.frameElement.parentElement.parentElement.setAttribute("style", "width:100%;height:100%;margin:0px;padding:0px;");
         } else {
-          window.frameElement.setAttribute("style", "position:absolute;left:0px;top:0px;width:100%;height:100%;z-index:2;"), window.frameElement.parentElement.setAttribute("style", "width:100%;height:100%;"), window.frameElement.parentElement.parentElement.setAttribute("style", "position:absolute;top:0px;left:0px;width:100%;height:100%;overflow:hidden;margin:0px;padding:0px;")
+          window.frameElement.setAttribute("style", "position:absolute;left:0px;top:0px;width:100%;height:100%;z-index:6;"), window.frameElement.parentElement.setAttribute("style", "width:100%;height:100%;"), window.frameElement.parentElement.parentElement.setAttribute("style", "position:absolute;top:0px;left:0px;width:100%;height:100%;overflow:hidden;margin:0px;padding:0px;")
         }
       }
     }
     catch (t) { console.error(t) }
   </script>
   <link rel="stylesheet" href="./custom.css">
-  <meta name="version" content="V2.1.3" />
+  <meta name="version" content="V2.1.4" />
   <script type="module" crossorigin src="./assets/index-ZsssFvwm.js"></script>
   <link rel="stylesheet" crossorigin href="./assets/index-DaQqI7hZ.css">
   <script src="./html-to-image.min.js" defer></script>
 </head>
-<body><noscript>You need to enable JavaScript to run this app.</noscript>
+<body>
   <div id="root"></div>
   <svg style="position:absolute;width:0;height:0;overflow:hidden"
     xmlns="http://www.w3.org/2000/svg">
@@ -193,8 +193,7 @@
     <div id="result" class="resultList"></div>
   </div>
   <div id="searchIframeText" style="visibility: hidden;">
-    <input id="keywordInIframe" type="text"
-        style="outline: none;border: none;background-color: #4E4E4E; color: rgb(231, 231, 231);border-bottom-left-radius: 6px;border-top-left-radius: 6px;padding-left: 4px;">
+    <input id="keywordInIframe" type="text">
     <div style="flex:1;display: flex;justify-content: space-around;align-items: center;">
         <span style="font-size: 12px;user-select: none;min-width: 40px;"><span id="currentIframeIndex">0</span>/<span id="sum">0</span></span>
         <button id="previousItem" class="topBarBtn" title="上一个(previous)">
