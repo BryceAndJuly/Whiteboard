@@ -148,6 +148,14 @@ When creating a whiteboard, the widget sets the document's `Alias` property to `
 .protyle-wysiwyg [data-type=NodeWidget] iframe {
     border: none !important;
 }
+/* SiYuan V3.7.4: Hide the breadcrumbs on the top bar of whiteboard documents when unfocused. */
+.protyle-breadcrumb:has(button.protyle-breadcrumb__icon.ariaLabel.fn__none):has(~.protyle-content > .protyle-wysiwyg[alias="whiteboard"]){
+     display:none !important;
+}
+/* SiYuan V3.7.4: Hide the bottom backlink panel for whiteboard documents */
+.protyle-wysiwyg[alias="whiteboard"]~.sy__backlink--bottom {
+    display: none !important;
+}
 ```
 
 Another optional style adjustment controls the floating window size if you feel the default window width is too wide:
