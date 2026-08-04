@@ -12,18 +12,18 @@
 
 ### V2.1.4
 
-Test Environment: `SiYuan V3.7.4`, `Windows 11`
+Test Environment: `SiYuan V3.8.0`, `Windows 11`
 
 - Documents embedded in the whiteboard now support rendering document icons and tags, as shown in the preview screenshot at the top.
 
 - A new CSS snippet has been added to hide the breadcrumb navigation on the top bar of whiteboard-embedded documents and the backlink panel at the bottom of documents. This update is included in `Section III. Pre-Usage Configurations` – `1. Add CSS Snippets` of this article.
 
 ```css
-/* SiYuan V3.7.4: Hide the breadcrumbs on the top bar of whiteboard documents when unfocused. */
+/* SiYuan V3.8.0: Hide the breadcrumbs on the top bar of whiteboard documents when unfocused. */
 .protyle-breadcrumb:has(button.protyle-breadcrumb__icon.ariaLabel.fn__none):has(~.protyle-content > .protyle-wysiwyg[alias="whiteboard"]){
      display:none !important;
 }
-/* SiYuan V3.7.4: Hide the bottom backlink panel for whiteboard documents */
+/* SiYuan V3.8.0: Hide the bottom backlink panel for whiteboard documents */
 .protyle-wysiwyg[alias="whiteboard"]~.sy__backlink--bottom {
     display: none !important;
 }
@@ -148,11 +148,11 @@ When creating a whiteboard, the widget sets the document's `Alias` property to `
 .protyle-wysiwyg [data-type=NodeWidget] iframe {
     border: none !important;
 }
-/* SiYuan V3.7.4: Hide the breadcrumbs on the top bar of whiteboard documents when unfocused. */
+/* SiYuan V3.8.0: Hide the breadcrumbs on the top bar of whiteboard documents when unfocused. */
 .protyle-breadcrumb:has(button.protyle-breadcrumb__icon.ariaLabel.fn__none):has(~.protyle-content > .protyle-wysiwyg[alias="whiteboard"]){
      display:none !important;
 }
-/* SiYuan V3.7.4: Hide the bottom backlink panel for whiteboard documents */
+/* SiYuan V3.8.0: Hide the bottom backlink panel for whiteboard documents */
 .protyle-wysiwyg[alias="whiteboard"]~.sy__backlink--bottom {
     display: none !important;
 }
