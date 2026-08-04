@@ -12,17 +12,17 @@
 
 ## V2.1.4
 
-测试环境：`SiYuan V3.7.4` 、`Windows 11`
+测试环境：`SiYuan V3.8.0` 、`Windows 11`
 
 - 嵌入到白板中的文档，支持渲染文档图标和标签，见顶部预览图。
 - 新增一个CSS代码片段，用于隐藏白板文档顶栏的面包屑以及文档底部的反链面板。已更新到本文的`三、使用前的设置`——`1、添加CSS代码片段`章节。
 
 ```css
-/* SiYuan V3.7.4，在不聚焦的情况下，隐藏白板文档顶栏的面包屑 */
+/* SiYuan V3.8.0，在不聚焦的情况下，隐藏白板文档顶栏的面包屑 */
 .protyle-breadcrumb:has(button.protyle-breadcrumb__icon.ariaLabel.fn__none):has(~.protyle-content > .protyle-wysiwyg[alias="whiteboard"]){
      display:none !important;
 }
-/* SiYuan V3.7.4，【白板文档】隐藏底部的反链面板 */
+/* SiYuan V3.8.0，【白板文档】隐藏底部的反链面板 */
 .protyle-wysiwyg[alias="whiteboard"]~.sy__backlink--bottom {
     display: none !important;
 }
@@ -149,11 +149,11 @@ window._autoSaveDelay = 2000;
 .protyle-wysiwyg [data-type=NodeWidget] iframe {
     border: none !important;
 }
-/* SiYuan V3.7.4，在不聚焦的情况下，隐藏白板文档顶栏的面包屑 */
+/* SiYuan V3.8.0，在不聚焦的情况下，隐藏白板文档顶栏的面包屑 */
 .protyle-breadcrumb:has(button.protyle-breadcrumb__icon.ariaLabel.fn__none):has(~.protyle-content > .protyle-wysiwyg[alias="whiteboard"]){
      display:none !important;
 }
-/* SiYuan V3.7.4，【白板文档】隐藏底部的反链面板 */
+/* SiYuan V3.8.0，【白板文档】隐藏底部的反链面板 */
 .protyle-wysiwyg[alias="whiteboard"]~.sy__backlink--bottom {
     display: none !important;
 }
