@@ -18,10 +18,6 @@
     "zh_CN": "README.md",
     "en_US": "README_en_US.md"
   },
-  "i18n": [
-    "zh_CN",
-    "en_US"
-  ],
   "funding": {
     "openCollective": "",
     "patreon": "",
