@@ -12,11 +12,9 @@
 
 ### V2.1.4
 
-Test Environment: `SiYuan V3.8.0`, `Windows 11`
-
 - Documents embedded in the whiteboard now support rendering document icons and tags, as shown in the preview screenshot at the top.
 
-- A new CSS snippet has been added to hide the breadcrumb navigation on the top bar of whiteboard-embedded documents and the backlink panel at the bottom of documents. This update is included in `Section III. Pre-Usage Configurations` – `1. Add CSS Snippets` of this article.
+- New CSS snippet for `SiYuan V3.8.0`: hides whiteboard top bar breadcrumbs and bottom backlink panel. Added to `3. Pre-Usage Setup` > `3.1 Add CSS Snippet`.
 
 ```css
 /* SiYuan V3.8.0: Hide the breadcrumbs on the top bar of whiteboard documents when unfocused. */
