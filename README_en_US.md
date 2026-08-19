@@ -21,6 +21,7 @@ Reference: [Improve PDF rectangle annotation image quality across display resolu
 In `SiYuan V3.8.1`, PDF rectangle annotations now append text like `{: style="width: 463.23px;"}` at the end. The original **JS code snippet** cannot match content correctly.
 
 Refer to the preview screenshot at the top. Either manually remove the `$` character from the old JS code snippet, or use the updated **JS code snippet** directly.
+
 ---
 
 ### V2.1.4
