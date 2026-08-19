@@ -10,6 +10,19 @@
 >
 > I hope this little tool can help people with the same needs.
 
+### V2.1.5
+
+**Test Environment:**   `SiYuan V3.8.1` `Windows 11`
+
+- Updated the **JS code snippet** under`4. Getting Started` —`4.10 Embedding PDF Annotations in the Whiteboard` in this document.
+
+Reference: [Improve PDF rectangle annotation image quality across display resolutions · Issue #16665](https://github.com/siyuan-note/siyuan/issues/16665)
+
+In `SiYuan V3.8.1`, PDF rectangle annotations now append text like `{: style="width: 463.23px;"}` at the end. The original **JS code snippet** cannot match content correctly.
+
+Refer to the preview screenshot at the top. Either manually remove the `$` character from the old JS code snippet, or use the updated **JS code snippet** directly.
+---
+
 ### V2.1.4
 
 - Documents embedded in the whiteboard now support rendering document icons and tags, as shown in the preview screenshot at the top.
@@ -60,7 +73,7 @@ Tested on: `SiYuan V3.7.0`, `V3.7.1`
 
 ---
 
-For the current version: **V2.1.4**
+For the current version: **V2.1.5**
 
 If you **do not want auto-save to be enabled by default**, open the widget folder `Whiteboard` -> `custom.js` in an editor like VS Code and search for:
 
@@ -321,6 +334,8 @@ Please note the following:
 
 ### 4.9 Rendering Content Blocks in Exported SVG Files
 
+> Note‑taking app and whiteboard are both in light mode
+
 **How to use:**
 
 - Click on a blank area of the whiteboard and press `Shift` + `1` to load all content blocks.
@@ -441,7 +456,7 @@ Before using this feature, it is recommended to add a JS code snippet under `Set
                 showMessage("操作失败（Operation failed）")
             }
         }
-        let result2 = text.match(/^\<\<((assets\/.+\.pdf)\/(\d{14}\-\w{7})) \".+\"\>\>\r\n\!\[\]\((assets\/.+\.png)\)$/);
+        let result2 = text.match(/^\<\<((assets\/.+\.pdf)\/(\d{14}\-\w{7})) \".+\"\>\>\r\n\!\[\]\((assets\/.+\.png)\)/);
         if (result2) {
             let link = result2[1];
             let pdfPath = result2[2]
@@ -508,7 +523,7 @@ Before using this feature, it is recommended to add a JS code snippet under `Set
 
 ### 6.1  Adjust Brush Thickness Manually
 
-For `V2.1.4`, open `Whiteboard` -> `assets` -> `index-ZsssFvwm.js` and search for:
+For `V2.1.5`, open `Whiteboard` -> `assets` -> `index-ZsssFvwm.js` and search for:
 
 ```css
 n={simulatePressure:e.simulatePressure,size:e.strokeWidth*1.2,thinning
