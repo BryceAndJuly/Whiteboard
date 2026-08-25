@@ -67,12 +67,12 @@ let en_US = {
 
   "msgDone": "✅ Done",
   "msgNoCards": "❓ There are no cards to handle",
-  "msgCardCount":"Number of cards: "
+  "msgCardCount": "Number of cards: "
 }
 
 // 笔记软件设置语言为简体中文、繁体中文时，左上角弹出中文提示，否者弹出英文提示
 let lang = window.top.siyuan.config.lang;
-if (lang === "zh_CN" || lang === "zh_CHT" || lang === "zh-CN"|| lang === "zh-TW") {
+if (lang === "zh_CN" || lang === "zh_CHT" || lang === "zh-CN" || lang === "zh-TW") {
   window._languages = zh_CN;
 } else {
   window._languages = en_US;
@@ -424,7 +424,18 @@ async function handleInput() {
         else {
           switch (item.type) {
             case "NodeDocument":
-              icon = `📄`
+              let docIcon = item?.ial?.icon;
+              if (!docIcon) {
+                icon = `📄`;
+              } else {
+                if (docIcon.includes(".")) {
+                  icon = `<img class="icon" src="${window.top.location.origin + '/emojis/' + docIcon}"> `;
+                } else if (docIcon.startsWith("api/icon/getDynamicIcon")) {
+                  icon = `<img class="icon" src="${window.top.location.origin + '/' + docIcon}">`;
+                } else {
+                  icon = `${String.fromCodePoint(parseInt(docIcon, 16))}`;
+                }
+              }
               break;
             case "NodeParagraph":
               icon = `<svg class="icon"><use xlink:href="#iconParagraph"></use></svg>`
@@ -504,8 +515,12 @@ resultList.addEventListener("click", (e) => {
     e.stopPropagation();
     let url = e.target.parentElement.getAttribute("data-href");
     window.top.openFileByURL(url);
-
-  } else if (e.target.tagName === "use") {
+  } else if (e.target.tagName === "IMG" && e.target.className === "icon") {
+    e.stopPropagation();
+    let url = e.target.parentElement.getAttribute("data-href");
+    window.top.openFileByURL(url);
+  }
+  else if (e.target.tagName === "use") {
     e.stopPropagation();
     let url = e.target.parentElement.parentElement.getAttribute("data-href");
     window.top.openFileByURL(url);
