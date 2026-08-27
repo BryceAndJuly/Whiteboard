@@ -244,6 +244,10 @@ async function renderMermaid() {
   if (mermaidElements.length === 0) { return }
   if (!libs.mermaid) {
     await addScript("./theme/mermaid.min.js")
+    await addScript("./theme/mermaid-zenuml.min.js")
+    await addScript("./theme/mermaid-layout-tidy-tree.min.js")
+    await window.mermaid.registerExternalDiagrams([window.zenuml]);
+    await window.mermaid.registerLayoutLoaders(window.mermaidTidyTree)
     libs.mermaid = true;
   }
   let mermaidTheme = window?.top?.siyuan?.config?.appearance?.mode === 1 ? "dark" : "light"
@@ -251,8 +255,18 @@ async function renderMermaid() {
     startOnLoad: false,
     theme: mermaidTheme
   });
+  const MERMAID_LAYOUTS = new Set([
+    "dagre",
+    "cose-bilkent",
+    "tidy-tree",
+  ]);
   for (let element of mermaidElements) {
-    const content = window.top.Lute.UnEscapeHTMLStr(element.getAttribute("data-content"));
+    let content = window.top.Lute.UnEscapeHTMLStr(element.getAttribute("data-content"));
+    const layout = element.getAttribute("custom-mermaid-layout");
+    if (MERMAID_LAYOUTS.has(layout)) {
+      const separator = content.endsWith("\n") ? "" : "\n";
+      content = `${content}${separator}%%{init: ${JSON.stringify({ layout })}}%%`;
+    }
     const {
       svg
     } = await mermaid.render(`mermaid_${element.getAttribute('data-node-id')}`, content);

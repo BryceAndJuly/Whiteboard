@@ -10,71 +10,19 @@
 >
 > I hope this little tool can help people with the same needs.
 
-### V2.1.5
+### V2.1.6
 
-**Test Environment:**   `SiYuan V3.8.1` `Windows 11`
+See the preview screenshot at the top. Test environment: `SiYuan V3.8.2`, `Windows 11`
 
-- Updated the **JS code snippet** under`4. Getting Started` —`4.10 Embedding PDF Annotations in the Whiteboard` in this document.
+- Added support for rendering newly‑added `ZenUML`sequence diagrams and `Tidy Tree layout` in` SiYuan V3.8.2.`
 
-Reference: [Improve PDF rectangle annotation image quality across display resolutions · Issue #16665](https://github.com/siyuan-note/siyuan/issues/16665)
+- In the block search panel, display icons corresponding to documents instead of uniformly showing 📄.
 
-In `SiYuan V3.8.1`, PDF rectangle annotations now append text like `{: style="width: 463.23px;"}` at the end. The original **JS code snippet** cannot match content correctly.
-
-Refer to the preview screenshot at the top. Either manually remove the `$` character from the old JS code snippet, or use the updated **JS code snippet** directly.
+- Upgraded Mermaid to V11.16.1.
 
 ---
 
-### V2.1.4
-
-- Documents embedded in the whiteboard now support rendering document icons and tags, as shown in the preview screenshot at the top.
-
-- New CSS snippet for `SiYuan V3.8.0`: hides whiteboard top bar breadcrumbs and bottom backlink panel. Added to `3. Pre-Usage Setup` > `3.1 Add CSS Snippet`.
-
-```css
-/* SiYuan V3.8.0: Hide the breadcrumbs on the top bar of whiteboard documents when unfocused. */
-.protyle-breadcrumb:has(button.protyle-breadcrumb__icon.ariaLabel.fn__none):has(~.protyle-content > .protyle-wysiwyg[alias="whiteboard"]){
-     display:none !important;
-}
-/* SiYuan V3.8.0: Hide the bottom backlink panel for whiteboard documents */
-.protyle-wysiwyg[alias="whiteboard"]~.sy__backlink--bottom {
-    display: none !important;
-}
-```
----
-### V2.1.3
-
-Tested on: `SiYuan V3.7.0`, `V3.7.1`
-
-- **Fix**: Database tables embedded in the whiteboard were not rendering correctly.
-
----
-
-### V2.1.2
-
-- Compatibility with the changed `lang` value of the UI language in `SiYuan V3.7.0`, reference: [Issue #17855](https://github.com/siyuan-note/siyuan/issues/17855)
-- Hide the prompt text at the top of the whiteboard to reduce distractions.
-- Add the following two CSS snippets to resolve the whiteboard flickering issue in `SiYuan V3.7.0`. This content has been updated to `3. Pre-Usage Setup` - `1. Add CSS Snippet` of this document.
-
-1、In` SiYuan V3.7.0`, when the note-taking app is set to dark mode, opening the whiteboard briefly shows a white background before switching to dark, causing severe flickering.
-
-```css
-:root[data-theme-mode=dark] {
-    color-scheme: inherit;
-}
-```
-
-2、 Hide the widget borders in SiYuan V3.7.0
-
-```css
-.b3-typography [data-type=NodeWidget] iframe,
-.protyle-wysiwyg [data-type=NodeWidget] iframe {
-    border: none !important;
-}
-```
-
----
-
-For the current version: **V2.1.5**
+For the current version: **V2.1.6**
 
 If you **do not want auto-save to be enabled by default**, open the widget folder `Whiteboard` -> `custom.js` in an editor like VS Code and search for:
 
@@ -524,7 +472,7 @@ Before using this feature, it is recommended to add a JS code snippet under `Set
 
 ### 6.1  Adjust Brush Thickness Manually
 
-For `V2.1.5`, open `Whiteboard` -> `assets` -> `index-ZsssFvwm.js` and search for:
+For `V2.1.6`, open `Whiteboard` -> `assets` -> `index-ZsssFvwm.js` and search for:
 
 ```css
 n={simulatePressure:e.simulatePressure,size:e.strokeWidth*1.2,thinning

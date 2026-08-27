@@ -242,6 +242,7 @@ input#keyword {
 
 .link {
   cursor: pointer;
+  font-family: "Segoe UI Emoji", "Segoe UI Symbol", "Segoe UI", "Apple Color Emoji", "Twemoji Mozilla", "Noto Color Emoji", "Android Emoji";
 }
 
 span.alias {

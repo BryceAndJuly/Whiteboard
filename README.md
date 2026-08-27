@@ -10,70 +10,18 @@
 >
 > 希望这个小工具能帮助到有同样需求的人。
 
-### V2.1.5
+### V2.1.6
 
-测试环境：`SiYuan V3.8.1`  `Windows 11`
+见顶部预览图，测试环境：`SiYuan V3.8.2 `、 `Windows 11`
 
-- 更新本文档`四、开始使用`——`10、在白板中嵌入PDF标注`中的`JS代码片段`
-
-参考： [Improve PDF rectangle annotation image quality across display resolutions · Issue #16665](https://github.com/siyuan-note/siyuan/issues/16665)
-
-在`SiYuan V3.8.1`，PDF矩形标注的末尾新增了形如`{: style="width: 463.23px;"}`的文本，原来的`JS代码片段`未能正确匹配。
-
-可参考顶部预览图，手动删掉`旧JS代码片段`中的`$`字符，或者直接使用更新后的`JS代码片段`。
-
----
-### V2.1.4
-
-- 嵌入到白板中的文档，支持渲染文档图标和标签，见顶部预览图。
-- 新增一个CSS代码片段以适配`SiYuan V3.8.0`，用于隐藏白板文档顶栏的面包屑以及底部的反链面板，已更新到本文的`三、使用前的设置`——`1、添加CSS代码片段`章节。
-
-```css
-/* SiYuan V3.8.0，在不聚焦的情况下，隐藏白板文档顶栏的面包屑 */
-.protyle-breadcrumb:has(button.protyle-breadcrumb__icon.ariaLabel.fn__none):has(~.protyle-content > .protyle-wysiwyg[alias="whiteboard"]){
-     display:none !important;
-}
-/* SiYuan V3.8.0，【白板文档】隐藏底部的反链面板 */
-.protyle-wysiwyg[alias="whiteboard"]~.sy__backlink--bottom {
-    display: none !important;
-}
-```
----
-### V2.1.3
-
-测试环境：`SiYuan V3.7.0`、`V3.7.1`
-
-- 修复问题：嵌入到白板中的数据表格未能正常渲染。
-
----
-
-### V2.1.2
-
-- 兼容`SiYuan V3.7.0`界面语言 lang 值变更，参考：[Issue #17855](https://github.com/siyuan-note/siyuan/issues/17855)
-- 隐藏白板顶部的提示文本，减少干扰。
-- 新增以下两个CSS代码片段以处理白板在`SiYuan V3.7.0`中出现的闪烁问题。已更新到本文的`三、使用前的设置`——`1、添加CSS代码片段`章节。
-
-1、在`V3.7.0`，笔记软件深色模式下，打开白板时会先显示白色背景，再转成深色，闪烁严重。
-
-```css
-:root[data-theme-mode=dark] {
-    color-scheme: inherit;
-}
-```
-
-2、在`V3.7.0`隐藏挂件的边框
-
-```css
-.b3-typography [data-type=NodeWidget] iframe,
-.protyle-wysiwyg [data-type=NodeWidget] iframe {
-    border: none !important;
-}
-```
+- 支持渲染在`SiYuan V3.8.2`中新增的`ZenUML 时序图`、`Tidy Tree 布局`
+- 内容块检索面板中，显示文档对应的图标，而不是统一显示为：📄
+- Mermaid版本升级到`V11.16.1`
 
 ---
 
 
-对于当前版本：**V2.1.5**
+对于当前版本：**V2.1.6**
 
 如果你**不想默认开启自动保存功能**，可以使用VS Code之类的编辑器打开挂件文件夹`Whiteboard`——`custom.js`，
 
@@ -525,7 +473,7 @@ window.contentSync = false;
 
 ### 1、手动更改画笔的粗细
 
-对于版本`V2.1.5`，打开挂件文件夹`Whiteboard`——`assets`——`index-ZsssFvwm.js`,在该js文件中搜索：
+对于版本`V2.1.6`，打开挂件文件夹`Whiteboard`——`assets`——`index-ZsssFvwm.js`,在该js文件中搜索：
 
 ```css
 n={simulatePressure:e.simulatePressure,size:e.strokeWidth*1.2,thinning
