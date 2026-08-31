@@ -3,13 +3,33 @@
 - It is recommended to read through this document before use.
 - If this widget is accidentally embedded in a document that already contains other content, please refer to: [How to undo after accidentally inserting a widget?](https://github.com/BryceAndJuly/Whiteboard/issues/70#issuecomment-3027972161)
 - After updating the widget, it may still load outdated files due to browser caching.Please follow the guide at [Refresh with Caching Disabled](https://github.com/BryceAndJuly/Whiteboard/issues/100) to perform a refresh.
+- When `Auto‑Save` is triggered, the mouse right‑click popup menu will close. If you find this interference too obtrusive, refer to the methods below to disable `Auto‑Save` either by default or temporarily. (The shortcut to temporarily disable auto‑save is `Alt`+`F`.)
 
-## 1. Current Version
 
 > As a personal tool, the features I need are basically all updated. If you find any bugs while using the widget, you can report them on GitHub, and I’ll try to fix them.
 >
 > I hope this little tool can help people with the same needs.
 
+## 1. Current Version
+
+### V2.1.7
+
+- Add a new `CSS snippet` to adapt to the changes in SiYuan Mobile `V3.8.2`. It has been updated to `3. Pre-Usage Setup` — `3.1 Add CSS Snippet` of this document.
+
+  - The main purpose is to resolve the issue: when the first document opened on SiYuan Mobile `V3.8.2` is a whiteboard document, the bottom navigation bar gets obscured, making it impossible to exit the whiteboard document.
+
+```css
+/* 【Mobile V3.8.2】Whiteboard documents now display the bottom navigation bar, with its position raised to prevent obscuring the whiteboard’s bottom bar.*/
+#editor:has( .protyle-wysiwyg[alias="whiteboard"])~#mobileBottomBar{
+    z-index: 7;
+    bottom: calc(var(--mobile-status-height) + var(--mobile-bottom-bar-gap) + var(--mobile-bottom-bar-safe-area) + 30px);
+}
+/* 【Mobile V3.8.2】Whiteboard documents hide the obscured top title bar.*/
+#mobileTopBar:has(~ #editor .protyle-wysiwyg[alias="whiteboard"]) {
+    display: none;
+}
+```
+---
 ### V2.1.6
 
 See the preview screenshot at the top. Test environment: `SiYuan V3.8.2`, `Windows 11`
@@ -22,7 +42,7 @@ See the preview screenshot at the top. Test environment: `SiYuan V3.8.2`, `Windo
 
 ---
 
-For the current version: **V2.1.6**
+For the current version: 
 
 If you **do not want auto-save to be enabled by default**, open the widget folder `Whiteboard` -> `custom.js` in an editor like VS Code and search for:
 
@@ -472,7 +492,7 @@ Before using this feature, it is recommended to add a JS code snippet under `Set
 
 ### 6.1  Adjust Brush Thickness Manually
 
-For `V2.1.6`, open `Whiteboard` -> `assets` -> `index-ZsssFvwm.js` and search for:
+For `V2.1.7`, open `Whiteboard` -> `assets` -> `index-ZsssFvwm.js` and search for:
 
 ```css
 n={simulatePressure:e.simulatePressure,size:e.strokeWidth*1.2,thinning

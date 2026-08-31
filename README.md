@@ -3,12 +3,35 @@
 - 使用前建议先阅读完此文档。
 - 如果在已有其他内容的文档中误嵌入该挂件，可参考：[误操作插入挂件后如何撤销?](https://github.com/BryceAndJuly/Whiteboard/issues/48)
 - 更新挂件后，由于缓存的影响，挂件可能加载的还是旧的文件，可参考[禁用缓存后刷新](https://github.com/BryceAndJuly/Whiteboard/issues/100)进行刷新
+- 触发`自动保存`时，鼠标右键弹出的菜单会被关闭，如果觉得这个干扰太大，可以参考下文中的方法默认关闭或者临时关闭`自动保存`（临时关闭自动保存的快捷键是`Alt`+`F`）。
 
-## 一、当前版本
+
 
 > 作为一个自用工具，目前个人需要的功能基本更新完了，如果发现挂件在使用上的BUG可以到Github上提，我会尽量修复的。
 >
 > 希望这个小工具能帮助到有同样需求的人。
+
+## 一、当前版本
+
+### V2.1.7
+
+- 新增一个`CSS`代码片段以适配`SiYuan`移动端`V3.8.2`的更改。已更新到本文`三、使用前的设置`——`1、添加CSS代码片段`章节。
+
+  - 主要是为了解决：当移动端`V3.8.2`第一个打开的文档是白板文档时，因底部导航栏被遮挡，无法退出白板文档。
+
+
+```css
+/* 【手机端V3.8.2】白板文档显示底部导航栏，并上调其位置以免遮挡白板的底栏*/
+#editor:has( .protyle-wysiwyg[alias="whiteboard"])~#mobileBottomBar{
+    z-index: 7;
+    bottom: calc(var(--mobile-status-height) + var(--mobile-bottom-bar-gap) + var(--mobile-bottom-bar-safe-area) + 30px);
+}
+/* 【手机端V3.8.2】白板文档隐藏顶部已被遮挡的标题栏*/
+#mobileTopBar:has(~ #editor .protyle-wysiwyg[alias="whiteboard"]) {
+    display: none;
+}
+```
+---
 
 ### V2.1.6
 
@@ -21,7 +44,7 @@
 ---
 
 
-对于当前版本：**V2.1.6**
+对于当前版本：
 
 如果你**不想默认开启自动保存功能**，可以使用VS Code之类的编辑器打开挂件文件夹`Whiteboard`——`custom.js`，
 
@@ -473,7 +496,7 @@ window.contentSync = false;
 
 ### 1、手动更改画笔的粗细
 
-对于版本`V2.1.6`，打开挂件文件夹`Whiteboard`——`assets`——`index-ZsssFvwm.js`,在该js文件中搜索：
+对于版本`V2.1.7`，打开挂件文件夹`Whiteboard`——`assets`——`index-ZsssFvwm.js`,在该js文件中搜索：
 
 ```css
 n={simulatePressure:e.simulatePressure,size:e.strokeWidth*1.2,thinning
