@@ -132,6 +132,15 @@ When creating a whiteboard, the widget sets the document's `Alias` property to `
 .protyle-wysiwyg[alias="whiteboard"]~.sy__backlink--bottom {
     display: none !important;
 }
+/* 【Mobile V3.8.2】Whiteboard documents now display the bottom navigation bar, with its position raised to prevent obscuring the whiteboard’s bottom bar.*/
+#editor:has( .protyle-wysiwyg[alias="whiteboard"])~#mobileBottomBar{
+    z-index: 7;
+    bottom: calc(var(--mobile-status-height) + var(--mobile-bottom-bar-gap) + var(--mobile-bottom-bar-safe-area) + 30px);
+}
+/* 【Mobile V3.8.2】Whiteboard documents hide the obscured top title bar.*/
+#mobileTopBar:has(~ #editor .protyle-wysiwyg[alias="whiteboard"]) {
+    display: none;
+}
 ```
 
 Another optional style adjustment controls the floating window size if you feel the default window width is too wide:

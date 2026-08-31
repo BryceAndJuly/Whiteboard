@@ -135,6 +135,15 @@ window._autoSaveDelay = 2000;
 .protyle-wysiwyg[alias="whiteboard"]~.sy__backlink--bottom {
     display: none !important;
 }
+/* 【手机端V3.8.2】白板文档显示底部导航栏，并上调其位置以免遮挡白板的底栏*/
+#editor:has( .protyle-wysiwyg[alias="whiteboard"])~#mobileBottomBar{
+    z-index: 7;
+    bottom: calc(var(--mobile-status-height) + var(--mobile-bottom-bar-gap) + var(--mobile-bottom-bar-safe-area) + 30px);
+}
+/* 【手机端V3.8.2】白板文档隐藏顶部已被遮挡的标题栏*/
+#mobileTopBar:has(~ #editor .protyle-wysiwyg[alias="whiteboard"]) {
+    display: none;
+}
 ```
 
 还有一个可选的样式，是设置悬浮窗大小的，个人感觉默认的窗口有点过于宽了才设置的，可以根据自己的需要来进行修改。
