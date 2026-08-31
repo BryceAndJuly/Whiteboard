@@ -3,12 +3,8 @@
 - It is recommended to read through this document before use.
 - If this widget is accidentally embedded in a document that already contains other content, please refer to: [How to undo after accidentally inserting a widget?](https://github.com/BryceAndJuly/Whiteboard/issues/70#issuecomment-3027972161)
 - After updating the widget, it may still load outdated files due to browser caching.Please follow the guide at [Refresh with Caching Disabled](https://github.com/BryceAndJuly/Whiteboard/issues/100) to perform a refresh.
-- When `Auto‑Save` is triggered, the mouse right‑click popup menu will close. If you find this interference too obtrusive, refer to the methods below to disable `Auto‑Save` either by default or temporarily. (The shortcut to temporarily disable auto‑save is `Alt`+`F`.)
+- When `Auto‑Save` is triggered, the mouse right‑click popup menu will close. If you find this interference too obtrusive, refer to the methods below to disable `Auto‑Save`  by default . (The shortcut to temporarily disable auto‑save is `Alt`+`F`.)
 
-
-> As a personal tool, the features I need are basically all updated. If you find any bugs while using the widget, you can report them on GitHub, and I’ll try to fix them.
->
-> I hope this little tool can help people with the same needs.
 
 ## 1. Current Version
 
