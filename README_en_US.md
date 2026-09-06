@@ -18,7 +18,9 @@ Update the readme document:
 
   - It is recommended to embed content blocks via the retrieval panel described in `4. Getting Started`  **—**  `4.6 Content Block Retrieval Panel` of this document.
   - This feature works normally and remains unaffected for software versions `V3.8.2` or lower.
+
 Tests show that on the desktop client, the whiteboard’s **Embed documents and content blocks via drag‑and‑drop** feature works properly when opened via: `Settings`— `Authentication`— `Use in Browser` — `Open Browser`. Nevertheless, for reliability, it is still advised to use the whiteboard’s content‑block retrieval panel.
+
 ---
 ### V2.1.7
 
