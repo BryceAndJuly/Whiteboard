@@ -8,6 +8,19 @@
 
 ## 1. Current Version
 
+### V2.1.8
+
+Test environment: `SiYuan V3.8.3‑alpha.3`, `Windows 11`
+
+Update the readme document:
+
+- ❗ Regarding the whiteboard feature **Embed documents and content blocks via drag‑and‑drop**: This feature is **unavailable** and **should NOT be used** when the note‑taking software version is` V3.8.3` or higher. Dragged‑and‑dropped documents or content blocks will be embedded directly into the document hosting the whiteboard, rather than into the whiteboard itself, which may easily cause confusion.
+
+  - It is recommended to embed content blocks via the retrieval panel described in `4. Getting Started`  **—**  `4.6 Content Block Retrieval Panel` of this document.
+  - This feature works normally and remains unaffected for software versions `V3.8.2` or lower.
+
+Tests show that on the desktop client, the whiteboard’s **Embed documents and content blocks via drag‑and‑drop** feature works properly when opened via: `Settings`— `Authentication`— `Use in Browser` — `Open Browser`. Nevertheless, for reliability, it is still advised to use the whiteboard’s content‑block retrieval panel.
+---
 ### V2.1.7
 
 - Add a new `CSS snippet` to adapt to the changes in SiYuan Mobile `V3.8.2`. It has been updated to `3. Pre-Usage Setup` — `3.1 Add CSS Snippet` of this document.
@@ -497,7 +510,7 @@ Before using this feature, it is recommended to add a JS code snippet under `Set
 
 ### 6.1  Adjust Brush Thickness Manually
 
-For `V2.1.7`, open `Whiteboard` -> `assets` -> `index-ZsssFvwm.js` and search for:
+For the current version, open `Whiteboard` -> `assets` -> `index-ZsssFvwm.js` and search for:
 
 ```css
 n={simulatePressure:e.simulatePressure,size:e.strokeWidth*1.2,thinning
