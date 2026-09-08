@@ -798,3 +798,16 @@ keywordInput.addEventListener("keydown", (e) => {
 })
 
 
+// 兼容SiYuan V3.8.3 及更高版本，通过拖拽方式在白板中嵌入文档、内容块
+window.frameElement.addEventListener("drop", (e) => {
+  e.stopPropagation();
+  e.preventDefault();
+  if (window.top._currentBlockID) {
+    const state = window.excalidrawAPI.getAppState();
+    // 坐标转换
+    const x = (e.offsetX - state.offsetLeft) / state.zoom.value - state.scrollX;
+    const y = (e.offsetY - state.offsetTop) / state.zoom.value - state.scrollY;
+    window.dispatchEvent(new CustomEvent("createEmbedElement", { detail: { link: `siyuan://blocks/${window.top._currentBlockID}`, x, y } }));
+    window.top._currentBlockID = null;
+  }
+}, true);
