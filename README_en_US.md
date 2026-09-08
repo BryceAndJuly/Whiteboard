@@ -7,6 +7,21 @@
 
 
 ## 1. Current Version
+### V2.1.9
+
+Test Environment: `SiYuan V3.8.4-alpha.1`, `SiYuan V3.8.3`, `Windows 11`
+
+See the preview image at the top:
+
+- Compatibility handling: When the note-taking software version is `V3.8.3` or higher, the whiteboard feature **Embed Documents and Content Blocks via Drag and Drop** is restored.
+- The whiteboard supports rendering `Tab blocks`, a new type of content block introduced in `SiYuan V3.8.3`.
+- The whiteboard supports rendering rich text for database text fields added in `SiYuan V3.8.3`.
+
+Regarding the whiteboard feature **Embed Documents and Content Blocks via Drag and Drop**: after updating the widget, it is recommended to first create a blank whiteboard for testing. Do not test on whiteboards with existing content to avoid disrupting previously created whiteboards.
+
+If the feature does not take effect, it is likely caused by caching — the whiteboard may still be loading old files. Open a whiteboard document and follow the guide at **[Refresh after disabling cache](https://github.com/BryceAndJuly/Whiteboard/issues/100)** to perform a refresh.
+
+---
 
 ### V2.1.8
 

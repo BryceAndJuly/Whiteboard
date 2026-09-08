@@ -488,13 +488,38 @@ function escapeHtml(html) {
   return html.replace(/&/g, "&amp;").replace(/</g, "&lt;");
 }
 
+function getAVTextSource(value) {
+  const rich = value?.type === "text" ? value.text?.rich : undefined;
+  if (rich && rich.spec === 1 && rich.format === "kramdown" &&
+    typeof rich.content === "string") {
+    return { kind: "rich", content: rich.content };
+  }
+  return {
+    kind: "plain", content: value?.type === "text" && typeof value.text?.content === "string" ?
+      value.text.content : ""
+  };
+}
+
 
 function renderCell(cellValue, rowIndex = 0, showIcon = true, type = "table") {
   let text = "";
   if ("template" === cellValue.type) {
     text = `<span class="av__celltext">${cellValue ? (cellValue.template.content || "") : ""}</span>`;
   } else if ("text" === cellValue.type) {
-    text = `<span class="av__celltext">${cellValue ? window.top.Lute.EscapeHTMLStr(cellValue.text.content || "") : ""}</span>`;
+    // 数据库——文本字段——富文本
+    const source = getAVTextSource(cellValue);
+    if (source.kind === "rich") {
+      if (!window.top.lute) {
+        window.top.lute = window.top.Lute.New();
+        window.top.lute.SetHTMLTag2TextMark(true);
+      }
+      // 需要去除空行，否者渲染效果异常
+      let str = source.content.replace(/^\s*[\r\n]/gm, '');
+      const htmlResult = window.top.lute.Md2HTML(str);
+      text = `<div class="av__celltext av__celltext--rich b3-typography" data-protyle-lite-render="safe">${htmlResult}</div>`;
+    } else {
+      text = `<span class="av__celltext">${cellValue ? window.top.Lute.EscapeHTMLStr(cellValue.text.content || "") : ""}</span>`;
+    }    
   } else if (["email", "phone"].includes(cellValue.type)) {
     text = `<span class="av__celltext av__celltext--url" data-type="${cellValue.type}">${cellValue ? window.top.Lute.EscapeHTMLStr(cellValue[cellValue.type].content || "") : ""}</span>`;
   } else if ("url" === cellValue.type) {

@@ -290,3 +290,40 @@ h1:has(+ .iframe[custom-data-assets*="/assets/ExcalidrawFiles/"]) {
 .tabs .tabs-header {
     border-bottom: 1px solid var(--b3-theme-background-light);
 }
+
+/* 数据库——文本字段——富文本 */
+.av__celltext.av__celltext--rich {
+    font-size: 1em;
+    line-height: 1em;
+    cursor: auto;
+    user-select: text;
+}
+
+li:has(>input[type="checkbox"]) {
+    list-style: none;
+}
+
+ul:has(>li.vditor-task) {
+    padding-left: 0.8em;
+}
+
+.av__celltext.av__celltext--rich ol,
+.av__celltext.av__celltext--rich ul {
+    margin-bottom: -20px;
+    padding-bottom: 0px;
+}
+
+.av__celltext.av__celltext--rich> :last-child {
+    margin-bottom: 0px !important;
+}
+
+.av__celltext.av__celltext--rich span {
+    line-height: 1.5em;
+}
+
+.av__celltext.av__celltext--rich pre>code {
+    display: block;
+    box-shadow: none;
+    padding: 10px;
+    line-height: 2em;
+}
