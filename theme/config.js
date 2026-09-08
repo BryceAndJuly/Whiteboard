@@ -1348,6 +1348,7 @@ function handleUnfoldHeading(operation) {
       let dom = operation.retData.replaceAll(`"assets/`, `"${window.top.location.origin}/assets/`).replaceAll(`contenteditable="true"`, `contenteditable="false"`).replaceAll(`src="api/icon/getDynamicIcon`, `src="${window.top.location.origin}/api/icon/getDynamicIcon`);
       item.insertAdjacentHTML("afterend", dom);
       await renderEmbedBlock();
+      await renderNodeTab();
       await highlight();
       await renderKatex();
       await avRender();
@@ -1468,6 +1469,7 @@ function handleUpdate(operation) {
     let dom = operation.data.replaceAll(`"assets/`, `"${window.top.location.origin}/assets/`).replaceAll(`contenteditable="true"`, `contenteditable="false"`).replaceAll(`src="api/icon/getDynamicIcon`, `src="${window.top.location.origin}/api/icon/getDynamicIcon`);
     item.outerHTML = dom;
     await renderEmbedBlock();
+    await renderNodeTab();
     await highlight();
     await renderKatex();
     await avRender();
@@ -1484,6 +1486,7 @@ function handleInsert(operation) {
         let dom = operation.data.replaceAll(`"assets/`, `"${window.top.location.origin}/assets/`).replaceAll(`contenteditable="true"`, `contenteditable="false"`).replaceAll(`src="api/icon/getDynamicIcon`, `src="${window.top.location.origin}/api/icon/getDynamicIcon`);
         item.insertAdjacentHTML("afterend", dom);
         await renderEmbedBlock();
+        await renderNodeTab();
         await highlight();
         await renderKatex();
         await avRender();
@@ -1494,6 +1497,7 @@ function handleInsert(operation) {
     Array.from(document.querySelectorAll(`[data-node-id="${operation.nextID}"]`)).forEach(async item => {
       item.insertAdjacentHTML("beforebegin", operation.data.replaceAll(`"assets/`, `"${window.top.location.origin}/assets/`).replaceAll(`contenteditable="true"`, `contenteditable="false"`).replaceAll(`src="api/icon/getDynamicIcon`, `src="${window.top.location.origin}/api/icon/getDynamicIcon`));
       await renderEmbedBlock();
+      await renderNodeTab();
       await highlight();
       await renderKatex();
       await avRender();
@@ -1623,12 +1627,77 @@ async function contentSync() {
   window.top.openAPI.plugin.eventBus.on("ws-main", handleEventBus);
 }
 
+function getTabItems(tab) {
+  return Array.from(tab.children).filter(item => item.classList.contains("tab-item"))
+}
+function getTabTitle(item) {
+  return item.querySelector(":scope > .tab-item-info > .tab-item-title, :scope > .tab-item-info > [tabs-title] > .tab-item-title");
+}
+function itemID(item) {
+  return item.getAttribute("data-node-id") || item.id;
+}
+function getTabContent(item) {
+  return item.querySelector(":scope > .tab-item-content");
+}
+// 渲染页签块
+async function renderNodeTab() {
+  const nodeTabElements = Array.from(document.querySelectorAll('.tabs[data-type="NodeTabs"]:not(render)'));
+  if (nodeTabElements.length > 0) {
+    nodeTabElements.forEach((tab, tabIndex) => {
+      const activeID = tab.getAttribute("tabs-active-id");
+      const items = getTabItems(tab);
+      const narrow = tab.clientWidth < 420;
+      const vertical = tab.getAttribute("tabs-position") === "left" && !narrow;
+      tab.setAttribute("data-tabs-orientation", vertical ? "vertical" : "horizontal");
+      let header = tab.querySelector(":scope > .tabs-header");
+      if (!header) {
+        header = document.createElement("div");
+        header.className = "tabs-header protyle-action";
+        tab.prepend(header);
+      }
+      const list = document.createElement("div");
+      list.className = "tabs-list";
+      list.setAttribute("role", "tablist");
+      list.setAttribute("aria-label", window.parent._languages["tabLabel"]);
+      items.forEach((item, index) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "tabs-tab ariaLabel";
+        button.setAttribute("role", "tab");
+        const item_id = itemID(item);
+        if (item_id === activeID) {
+          button.setAttribute("aria-selected", true);
+          const itemTitle = item.querySelector(".tab-item-info");
+          itemTitle.classList.add("hidden")
+        } else {
+          item.classList.add("hidden")
+        }
+        button.dataset.tabId = item_id;
+        const title = getTabTitle(item);
+        const label = title?.textContent || window.parent._languages["tabLabel"];
+        if (title?.textContent) {
+          const clone = title.cloneNode(true);
+          clone.className = "tabs-tab-label";
+          button.appendChild(clone);
+        } else {
+          button.innerHTML = '<span class="tabs-tab-label"></span>';
+          button.firstElementChild.textContent = window.parent._languages["tabLabel"];
+        }
+        list.appendChild(button);
+      })
+      header.replaceChildren(list);
+      tab.setAttribute('render', true);
+    })
+    
+  }
+}
 
 // 对预览文档进行渲染
 async function main() {
   await renderBody();
   await handleIframeInternalLink()
   await renderEmbedBlock();
+  await renderNodeTab();
   await highlight();
   await renderKatex();
   await avRender();
