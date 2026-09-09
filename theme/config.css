@@ -294,16 +294,16 @@ h1:has(+ .iframe[custom-data-assets*="/assets/ExcalidrawFiles/"]) {
 /* 数据库——文本字段——富文本 */
 .av__celltext.av__celltext--rich {
     font-size: 1em;
-    line-height: 1em;
+    line-height: 1.2em;
     cursor: auto;
     user-select: text;
 }
 
-li:has(>input[type="checkbox"]) {
+.av__celltext.av__celltext--rich li:has(>input[type="checkbox"]) {
     list-style: none;
 }
 
-ul:has(>li.vditor-task) {
+.av__celltext.av__celltext--rich ul:has(>li.vditor-task) {
     padding-left: 0.8em;
 }
 
@@ -313,12 +313,14 @@ ul:has(>li.vditor-task) {
     padding-bottom: 0px;
 }
 
-.av__celltext.av__celltext--rich> :last-child {
-    margin-bottom: 0px !important;
+.av__celltext.av__celltext--rich>ol,
+.av__celltext.av__celltext--rich>ul {
+    margin-bottom: -10px;
+    margin-top: -10px;
 }
 
-.av__celltext.av__celltext--rich span {
-    line-height: 1.5em;
+.av__celltext.av__celltext--rich> :last-child {
+    margin-bottom: 0px !important;
 }
 
 .av__celltext.av__celltext--rich pre>code {
@@ -326,4 +328,35 @@ ul:has(>li.vditor-task) {
     box-shadow: none;
     padding: 10px;
     line-height: 2em;
+    border: 1px solid rgba(27, 31, 35, 0.144);
+    background-color: rgba(240, 246, 252, .15);
+}
+
+.av__celltext.av__celltext--rich li:has(>ul),
+.av__celltext.av__celltext--rich li:has(>ol),
+.av__celltext.av__celltext--rich li>ul,
+.av__celltext.av__celltext--rich li>ol {
+    margin-bottom: -15px;
+}
+
+/* 换行时，段落之间的距离拉近一点 */
+.av__cell[data-wrap="true"] .av__celltext.av__celltext--rich .line-break {
+    display: block;
+    height: 0px;
+    margin-top: -12px;
+}
+
+/* 不换行时 */
+.av__cell[data-wrap="false"] .av__celltext--rich {
+    max-height: 2em;
+}
+.av__cell[data-wrap="false"] .av__celltext.av__celltext--rich .line-break {
+    margin: 0;
+}
+/* 引述块 */
+.av__cell[data-wrap=true] .av__celltext--rich blockquote {
+    margin: 2 0 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
 }

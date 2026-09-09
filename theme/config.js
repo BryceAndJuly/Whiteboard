@@ -511,11 +511,14 @@ function renderCell(cellValue, rowIndex = 0, showIcon = true, type = "table") {
     if (source.kind === "rich") {
       if (!window.top.lute) {
         window.top.lute = window.top.Lute.New();
+        window.top.lute.SetTextMark(true);
         window.top.lute.SetHTMLTag2TextMark(true);
       }
-      // 需要去除空行，否者渲染效果异常
+      // 需要去除空行，否则渲染效果异常
       let str = source.content.replace(/^\s*[\r\n]/gm, '');
-      const htmlResult = window.top.lute.Md2HTML(str);
+      let  htmlResult = window.top.lute.Md2HTML(str);
+      // 替换换行符，方便控制段落间的间距
+      htmlResult = htmlResult.replace(/\<br\s*\/\>/g, `<span class="line-break"></span>`);
       text = `<div class="av__celltext av__celltext--rich b3-typography" data-protyle-lite-render="safe">${htmlResult}</div>`;
     } else {
       text = `<span class="av__celltext">${cellValue ? window.top.Lute.EscapeHTMLStr(cellValue.text.content || "") : ""}</span>`;
