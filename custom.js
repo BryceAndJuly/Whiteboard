@@ -32,7 +32,7 @@ let zh_CN = {
   "msgDone": "✅ 已完成",
   "msgNoCards": "❓ 没有需要处理的卡片",
   "msgCardCount": "卡片数量为：",
-  "tabLabel":"页签项"
+  "tabLabel": "页签项"
 
 }
 let en_US = {
@@ -68,7 +68,7 @@ let en_US = {
   "msgDone": "✅ Done",
   "msgNoCards": "❓ There are no cards to handle",
   "msgCardCount": "Number of cards: ",
-  "tabLabel":"Tab"
+  "tabLabel": "Tab"
 }
 
 // 笔记软件设置语言为简体中文、繁体中文时，左上角弹出中文提示，否者弹出英文提示
@@ -482,6 +482,12 @@ async function handleInput() {
               break;
             case "NodeListItem":
               icon = `<svg class="icon"><use xlink:href="#iconListItem"></use></svg>`
+              break;
+            case "NodeTabs":
+              icon = `<svg class="icon"><use xlink:href="#iconTabs"></use></svg>`
+              break;
+            case "NodeTabItem":
+              icon = `<svg class="icon"><use xlink:href="#iconTabItem"></use></svg>`
               break;
           }
         }

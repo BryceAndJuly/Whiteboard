@@ -1736,7 +1736,7 @@ async function renderNodeTab() {
   const nodeTabElements = Array.from(document.querySelectorAll('.tabs[data-type="NodeTabs"]:not(render)'));
   if (nodeTabElements.length > 0) {
     nodeTabElements.forEach((tab, tabIndex) => {
-      const activeID = tab.getAttribute("tabs-active-id");
+      let activeID = tab.getAttribute("tabs-active-id");
       // 如果嵌入的是页签块中的单个页签项，则显示该项，忽略原本的选中项
       let EmbedSingleTag = tab.querySelector(`.tab-item[data-node-id="${window._currentDocumentID}"]`);
       if (EmbedSingleTag) {
