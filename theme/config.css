@@ -291,12 +291,19 @@ h1:has(+ .iframe[custom-data-assets*="/assets/ExcalidrawFiles/"]) {
     border-bottom: 1px solid var(--b3-theme-background-light);
 }
 
-/* 数据库——文本字段——富文本 */
+/* 数据库——文本字段——富文本 ======================================================*/
 .av__celltext.av__celltext--rich {
     font-size: 1em;
-    line-height: 1.2em;
     cursor: auto;
     user-select: text;
+}
+
+.av__cell[data-wrap="false"] .av__celltext.av__celltext--rich {
+    line-height: 1.625;
+}
+
+.av__cell[data-wrap="true"] .av__celltext.av__celltext--rich {
+    line-height: 1.3;
 }
 
 .av__celltext.av__celltext--rich li:has(>input[type="checkbox"]) {
@@ -305,18 +312,6 @@ h1:has(+ .iframe[custom-data-assets*="/assets/ExcalidrawFiles/"]) {
 
 .av__celltext.av__celltext--rich ul:has(>li.vditor-task) {
     padding-left: 0.8em;
-}
-
-.av__celltext.av__celltext--rich ol,
-.av__celltext.av__celltext--rich ul {
-    margin-bottom: -20px;
-    padding-bottom: 0px;
-}
-
-.av__celltext.av__celltext--rich>ol,
-.av__celltext.av__celltext--rich>ul {
-    margin-bottom: -10px;
-    margin-top: -10px;
 }
 
 .av__celltext.av__celltext--rich> :last-child {
@@ -332,13 +327,6 @@ h1:has(+ .iframe[custom-data-assets*="/assets/ExcalidrawFiles/"]) {
     background-color: rgba(240, 246, 252, .15);
 }
 
-.av__celltext.av__celltext--rich li:has(>ul),
-.av__celltext.av__celltext--rich li:has(>ol),
-.av__celltext.av__celltext--rich li>ul,
-.av__celltext.av__celltext--rich li>ol {
-    margin-bottom: -15px;
-}
-
 /* 换行时，段落之间的距离拉近一点 */
 .av__cell[data-wrap="true"] .av__celltext.av__celltext--rich .line-break {
     display: block;
@@ -350,13 +338,45 @@ h1:has(+ .iframe[custom-data-assets*="/assets/ExcalidrawFiles/"]) {
 .av__cell[data-wrap="false"] .av__celltext--rich {
     max-height: 2em;
 }
+
 .av__cell[data-wrap="false"] .av__celltext.av__celltext--rich .line-break {
     margin: 0;
 }
+
 /* 引述块 */
 .av__cell[data-wrap=true] .av__celltext--rich blockquote {
     margin: 2 0 0 0;
     padding: 0;
     display: flex;
     flex-direction: column;
+}
+
+/* 列表-------------------------------------------------- */
+.av__celltext.av__celltext--rich ol,
+.av__celltext.av__celltext--rich ul {
+    margin: 0;
+}
+
+.av__cell[data-wrap="true"] .av__celltext.av__celltext--rich>ol,
+.av__cell[data-wrap="true"] .av__celltext.av__celltext--rich>ul {
+    margin: -8px;
+}
+
+.av__cell[data-wrap="false"] .av__celltext.av__celltext--rich>ol,
+.av__cell[data-wrap="false"] .av__celltext.av__celltext--rich>ul {
+    margin: 3px 0;
+}
+
+.av__cell[data-wrap="true"] .av__celltext.av__celltext--rich li:has(>ul),
+.av__cell[data-wrap="true"] .av__celltext.av__celltext--rich li:has(>ol),
+.av__cell[data-wrap="true"] .av__celltext.av__celltext--rich li ul,
+.av__cell[data-wrap="true"] .av__celltext.av__celltext--rich li ol {
+    margin-bottom: -15px;
+}
+
+.av__cell[data-wrap="false"] .av__celltext.av__celltext--rich li:has(>ul),
+.av__cell[data-wrap="false"] .av__celltext.av__celltext--rich li:has(>ol),
+.av__cell[data-wrap="false"] .av__celltext.av__celltext--rich li>ul,
+.av__cell[data-wrap="false"] .av__celltext.av__celltext--rich li>ol {
+    margin-bottom: 5px;
 }
