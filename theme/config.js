@@ -4,6 +4,7 @@ function request(url, data = null) { return new Promise((resolve, reject) => { f
 async function renderBody() {
   let blockLnk = document.getElementById("link").getAttribute("content");
   let id = blockLnk.trim().split('siyuan://blocks/')[1];
+  window._currentDocumentID = id;
   let doc = "";
   let htmlStr = "";
   let rootIcon = "";
@@ -1736,6 +1737,11 @@ async function renderNodeTab() {
   if (nodeTabElements.length > 0) {
     nodeTabElements.forEach((tab, tabIndex) => {
       const activeID = tab.getAttribute("tabs-active-id");
+      // 如果嵌入的是页签块中的单个页签项，则显示该项，忽略原本的选中项
+      let EmbedSingleTag = tab.querySelector(`.tab-item[data-node-id="${window._currentDocumentID}"]`);
+      if (EmbedSingleTag) {
+        activeID = window._currentDocumentID;
+      }
       const items = getTabItems(tab);
       const narrow = tab.clientWidth < 420;
       const vertical = tab.getAttribute("tabs-position") === "left" && !narrow;
