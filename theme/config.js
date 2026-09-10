@@ -15,7 +15,7 @@ async function renderBody() {
       htmlStr = res.data.content.replaceAll(`"assets/`, `"${window.top.location.origin}/assets/`).replaceAll(`contenteditable="true"`, `contenteditable="false"`).replaceAll(`src="api/icon/getDynamicIcon`, `src="${window.top.location.origin}/api/icon/getDynamicIcon`);
       let response = await request("/api/block/getDocInfo", { id });
       if (response?.code === 0 && response?.data?.name && htmlStr) {
-         try {
+        try {
           // 文档图标
           if (response.data.icon) {
             let icon = response.data.icon;
@@ -40,7 +40,7 @@ async function renderBody() {
               docTags = `<div class="b3-chips b3-chips__doctag"><div class="b3-chip b3-chip--middle b3-chip--pointer" data-type="open-search">${tags}</div></div>`
             }
           }
-        } catch (err) {}
+        } catch (err) { }
         // 文档标题
         let title = response.data.name.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
         doc = `${rootIcon}${docTags}<h1 data-node-id="${response.data.rootID}">${title}</h1>` + htmlStr;
@@ -516,13 +516,65 @@ function renderCell(cellValue, rowIndex = 0, showIcon = true, type = "table") {
       }
       // 需要去除空行，否则渲染效果异常
       let str = source.content.replace(/^\s*[\r\n]/gm, '');
-      let  htmlResult = window.top.lute.Md2HTML(str);
+      let htmlResult = window.top.lute.Md2HTML(str);
       // 替换换行符，方便控制段落间的间距
       htmlResult = htmlResult.replace(/\<br\s*\/\>/g, `<span class="line-break"></span>`);
+      let parser = new DOMParser();
+      let doc = parser.parseFromString(htmlResult, 'text/html');
+      // highlight()和renderKatex()中,数据库相关子节点仍未挂载,无法查询到对应节点,需在此单独渲染
+      let codes = doc.querySelectorAll("pre>code");
+      if (codes.length > 0) {
+        codes.forEach(code => {
+          const content = code.innerText;
+          let lang = "plaintext"
+          let class_name = code.getAttribute('class');
+          if (class_name) {
+            lang = class_name.split("-")[1];
+          }
+          let highlightedCode = hljs.highlight(content,
+            { language: lang, ignoreIllegals: true }
+          ).value;
+          code.innerHTML = highlightedCode;
+        })
+      }
+      // 公式块、行内公式
+      let inlineMathElements = doc.querySelectorAll('.render-node[data-type="inline-math"]');
+      let MathBlockElements = doc.querySelectorAll('.language-math');
+      if (inlineMathElements.length > 0) {
+        inlineMathElements.forEach(element => {
+          let katexHTML = katex.renderToString(window.top.Lute.UnEscapeHTMLStr(element.getAttribute("data-content")), {
+            displayMode: false,
+            output: "html",
+            macros: {},
+            trust: true,
+            strict: "ignore"
+          });
+          element.innerHTML = katexHTML;
+        })
+        inlineMathElements = null;
+      }
+      if (MathBlockElements.length > 0) {
+        MathBlockElements.forEach(element => {
+          let katexHTML = katex.renderToString(
+            window.top.Lute.UnEscapeHTMLStr(element.innerText), {
+            displayMode: true,
+            output: "html",
+            macros: {},
+            trust: true,
+            strict: "ignore"
+          });
+          element.innerHTML = katexHTML;
+        })
+        MathBlockElements = null;
+      }
+      htmlResult = doc.body.innerHTML;
       text = `<div class="av__celltext av__celltext--rich b3-typography" data-protyle-lite-render="safe">${htmlResult}</div>`;
+      parser = null;
+      doc = null;
+      htmlResult = null;
     } else {
       text = `<span class="av__celltext">${cellValue ? window.top.Lute.EscapeHTMLStr(cellValue.text.content || "") : ""}</span>`;
-    }    
+    }
   } else if (["email", "phone"].includes(cellValue.type)) {
     text = `<span class="av__celltext av__celltext--url" data-type="${cellValue.type}">${cellValue ? window.top.Lute.EscapeHTMLStr(cellValue[cellValue.type].content || "") : ""}</span>`;
   } else if ("url" === cellValue.type) {
@@ -1196,6 +1248,17 @@ async function avRender() {
     addAttributeViewIcon();
     libs.av = true;
   }
+  // 富文本中的公式、代码高亮
+  if (!libs.highlight) {
+    window.top.siyuan.config.appearance.mode === 1 ? addStyle("./theme/highlight/atom-one-dark.min.css") : addStyle("./theme/highlight/github.min.css");
+    await addScript("./theme//highlight/highlight.min.js");
+    libs.highlight = true;
+  }
+  if (!libs.katex) {
+    addStyle("./theme/katex.min.css");
+    await addScript("./theme/katex.min.js");
+    libs.katex = true;
+  }
   avElements.forEach((e) => {
     renderSingleAV(e);
   })
@@ -1716,7 +1779,7 @@ async function renderNodeTab() {
       header.replaceChildren(list);
       tab.setAttribute('render', true);
     })
-    
+
   }
 }
 
