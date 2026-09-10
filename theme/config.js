@@ -514,8 +514,8 @@ function renderCell(cellValue, rowIndex = 0, showIcon = true, type = "table") {
         window.top.lute.SetTextMark(true);
         window.top.lute.SetHTMLTag2TextMark(true);
       }
-      // 需要去除空行，否则渲染效果异常
-      let str = source.content.replace(/^\s*[\r\n]/gm, '');
+      // 去除空行，处理文字的颜色等单样式
+      let str = source.content.replace(/^\s*[\r\n]/gm, '').replace(/(\<span )(.*?\<\/span\>)\{\: (style\=\".*?\")\}/g, '$1$3 $2');
       let htmlResult = window.top.lute.Md2HTML(str);
       // 替换换行符，方便控制段落间的间距
       htmlResult = htmlResult.replace(/\<br\s*\/\>/g, `<span class="line-break"></span>`);
