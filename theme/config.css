@@ -4,22 +4,27 @@
     height: 16px;
     top: 9px;
 }
+
 /* 有序列表——图标——调整位置 */
-.protyle-wysiwyg [data-node-id][data-subtype="o"].li>.protyle-action{
+.protyle-wysiwyg [data-node-id][data-subtype="o"].li>.protyle-action {
     top: 4px;
 }
+
 /* 代码块折叠后的高度 */
 .code-block[fold="1"] {
     min-height: 140px;
 }
+
 /* 列表视图——前面的复选框 */
 .av__firstcol.av__colsticky {
     visibility: hidden;
 }
+
 /* 更多 */
 span.b3-chip.b3-chip--info.b3-chip--small[data-type="block-more"] {
     visibility: hidden;
 }
+
 /* 画廊视图 */
 .av__gallery {
     display: grid;
@@ -27,11 +32,13 @@ span.b3-chip.b3-chip--info.b3-chip--small[data-type="block-more"] {
     gap: 16px;
     width: 100%;
 }
+
 .av__container {
     overflow-x: auto;
     overflow-y: hidden;
     cursor: auto;
 }
+
 .av__gallery-item {
     border: 1px solid var(--b3-border-color);
     border-radius: var(--b3-border-radius);
@@ -39,16 +46,19 @@ span.b3-chip.b3-chip--info.b3-chip--small[data-type="block-more"] {
     flex-direction: column;
     position: relative;
 }
+
 .av__gallery-img {
     height: 100%;
     object-fit: cover;
     width: 100%;
     object-position: center;
 }
+
 /* 开启【自适应图片大小】 */
 .av__gallery-img--fit {
     object-fit: contain;
 }
+
 .av__gallery-cover {
     border-bottom: 1px solid var(--b3-border-color);
     border-radius: var(--b3-border-radius) var(--b3-border-radius) 0 0;
@@ -56,6 +66,7 @@ span.b3-chip.b3-chip--info.b3-chip--small[data-type="block-more"] {
     position: relative;
     cursor: pointer;
 }
+
 .av__gallery-fields {
     border-radius: 0 0 var(--b3-border-radius) var(--b3-border-radius);
     flex: 1;
@@ -64,9 +75,11 @@ span.b3-chip.b3-chip--info.b3-chip--small[data-type="block-more"] {
     min-height: 23px;
     padding: 5px;
 }
+
 .av[data-av-type=gallery] .av__cell {
     border-right: none;
 }
+
 .av__header .layout-tab-bar .item__graphic {
     height: calc(1.625em - 10px);
     width: calc(1.625em - 10px);
@@ -75,6 +88,7 @@ span.b3-chip.b3-chip--info.b3-chip--small[data-type="block-more"] {
     font-size: inherit;
     text-align: center;
 }
+
 .layout-tab-bar .item__graphic {
     padding: 4px 0 4px 8px;
     height: 14px;
@@ -82,62 +96,81 @@ span.b3-chip.b3-chip--info.b3-chip--small[data-type="block-more"] {
     flex-shrink: 0;
     line-height: 1em;
 }
+
 /* 数据库标题——下划线  */
 .av__title {
     border-bottom: 1px solid var(--b3-theme-surface-lighter);
 }
-.av__colsticky.av__firstcol, .av__colsticky>div:not(.av__cell--select):not(.av__cell--active) {
+
+.av__colsticky.av__firstcol,
+.av__colsticky>div:not(.av__cell--select):not(.av__cell--active) {
     background-color: transparent;
 }
-.av__row--header, .av__row--footer {
+
+.av__row--header,
+.av__row--footer {
     background-color: transparent;
 }
+
 /* 底部——计算栏 */
 .av__calc.av__calc--ashow {
     white-space: normal;
     border-right: 1px solid var(--b3-theme-surface-lighter);
 }
+
 /* 卡片尺寸*/
 .av__gallery--small {
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
 }
+
 .av__gallery--big {
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
 }
+
 /* 卡片宽高比 */
 .av__gallery-cover--0 {
     aspect-ratio: 16 / 9;
 }
+
 .av__gallery-cover--1 {
     aspect-ratio: 9 / 16;
 }
+
 .av__gallery-cover--2 {
     aspect-ratio: 4 / 3;
 }
+
 .av__gallery-cover--3 {
     aspect-ratio: 3 / 4;
 }
+
 .av__gallery-cover--4 {
     aspect-ratio: 3 / 2;
 }
+
 .av__gallery-cover--5 {
     aspect-ratio: 2 / 3;
 }
+
 .av__gallery-cover--6 {
     aspect-ratio: 1;
 }
+
 /* 在iframe中，点击交互后，鼠标滚轮无法滚动页面 */
 body:hover {
     box-shadow: 0px 0px 0px transparent;
 }
+
 /* 数据表格——隐藏复制按钮 */
 .av span.block__icon[data-type="copy"] {
     display: none;
 }
+
 /* 属性视图——关联 */
 .av__cell--relation {
     margin-right: 12px;
 }
+
 /* 属性视图——表格——分组标题 */
 .av__group-title {
     position: sticky;
@@ -149,6 +182,7 @@ body:hover {
     background-color: var(--b3-theme-surface);
     border-radius: 3px;
 }
+
 /* 属性视图——表格——分组条目计数 */
 .av__group-counter {
     font-size: 80%;
@@ -156,13 +190,19 @@ body:hover {
     margin: 0 8px;
 }
 
-.av__gallery-tip img:first-child, .av__gallery-tip svg:first-child, .av__gallery-tip svg.ariaLabel, .av__gallery-name img:first-child, .av__gallery-name svg:first-child, .av__gallery-name svg.ariaLabel {
+.av__gallery-tip img:first-child,
+.av__gallery-tip svg:first-child,
+.av__gallery-tip svg.ariaLabel,
+.av__gallery-name img:first-child,
+.av__gallery-name svg:first-child,
+.av__gallery-name svg.ariaLabel {
     height: 1.625em;
     width: calc(1.625em - 10px);
     margin: 0 5px 0 0;
     font-size: 1em;
     vertical-align: bottom;
 }
+
 .av__gallery-name {
     opacity: .38;
     padding: 2px 4px;
@@ -170,22 +210,25 @@ body:hover {
     white-space: normal;
     box-sizing: border-box;
 }
+
 .av {
     display: flex;
     max-width: 100%;
 }
+
 /* 看板 */
 .av__kanban-group .av__group-title {
     padding-top: 0;
 }
+
 .av__kanban {
     overflow: auto;
     gap: 16px;
     padding: 10px 1px;
-    display: flex
-;
+    display: flex;
     align-items: flex-start;
 }
+
 .av__kanban-group {
     width: 260px;
     padding: 8px;
@@ -193,6 +236,7 @@ body:hover {
     position: relative;
     flex-shrink: 0;
 }
+
 .fn__ellipsis {
     word-break: break-all;
     -webkit-line-clamp: 1;
@@ -202,11 +246,13 @@ body:hover {
     display: -webkit-box;
     display: block;
 }
+
 .av__gallery-fields .av__cell {
     padding: 2px 4px;
     border-right: 0;
     min-height: calc(1.625em + 4px);
 }
+
 .av__kanban-group--small {
     width: 180px;
 }
@@ -219,15 +265,19 @@ body:hover {
 h1:has(+ .iframe[custom-data-assets*="/assets/ExcalidrawFiles/"]) {
     display: none !important;
 }
+
 .iframe[custom-data-assets*="/assets/ExcalidrawFiles/"]+.list {
     display: none !important;
 }
+
 .protyle-background__icon:has(~ .iframe[custom-data-assets*="/assets/ExcalidrawFiles/"]) {
     display: none !important;
 }
+
 .b3-chips__doctag:has(~ .iframe[custom-data-assets*="/assets/ExcalidrawFiles/"]) {
     display: none !important;
 }
+
 /* 页签块 */
 .tabs .hidden {
     display: none;
@@ -236,6 +286,7 @@ h1:has(+ .iframe[custom-data-assets*="/assets/ExcalidrawFiles/"]) {
 .tabs .tabs-control {
     display: none;
 }
+
 .protyle-wysiwyg .tabs {
     min-width: 0;
     padding: 4px;
@@ -244,6 +295,7 @@ h1:has(+ .iframe[custom-data-assets*="/assets/ExcalidrawFiles/"]) {
     border: 1px solid var(--b3-border-color);
     border-radius: var(--b3-border-radius-b);
 }
+
 .tabs .tabs-list {
     display: flex;
     align-items: center;
@@ -252,6 +304,7 @@ h1:has(+ .iframe[custom-data-assets*="/assets/ExcalidrawFiles/"]) {
     overflow: auto;
     gap: 8px;
 }
+
 .tabs button {
     -webkit-appearance: none;
     appearance: none;
@@ -261,15 +314,18 @@ h1:has(+ .iframe[custom-data-assets*="/assets/ExcalidrawFiles/"]) {
     font: inherit;
     outline: none;
 }
+
 .tabs button::-moz-focus-inner {
     padding: 0;
     border: 0;
 }
+
 .tabs .tabs-tab[aria-selected=true] {
     color: var(--b3-theme-on-background);
     background: var(--b3-theme-primary-lightest);
     box-shadow: 0 0 0 1px var(--b3-theme-primary-lighter) inset;
 }
+
 .tabs .tabs-tab {
     color: var(--b3-theme-on-background);
     border: 1px solid var(--b3-border-color);
@@ -287,6 +343,7 @@ h1:has(+ .iframe[custom-data-assets*="/assets/ExcalidrawFiles/"]) {
     max-width: 186px;
     font-size: .85em;
 }
+
 .tabs .tabs-header {
     border-bottom: 1px solid var(--b3-theme-background-light);
 }
@@ -345,10 +402,17 @@ h1:has(+ .iframe[custom-data-assets*="/assets/ExcalidrawFiles/"]) {
 
 /* 引述块 */
 .av__cell[data-wrap=true] .av__celltext--rich blockquote {
-    margin: 2 0 0 0;
+    margin: 0px 0 0 5px;
     padding: 0;
     display: flex;
     flex-direction: column;
+}
+
+/* 引述块下方的分割线 */
+.av__celltext--rich blockquote+hr {
+    border: 0;
+    border-bottom: none !important;
+    margin: 0 !important;
 }
 
 /* 列表-------------------------------------------------- */
