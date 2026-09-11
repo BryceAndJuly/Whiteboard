@@ -13,6 +13,7 @@ See the preview image at the top. Test environment: `SiYuan V3.8.4-alpha.5`,` Wi
 
 - Fixed several styling issues with rich text rendering in the database. Code highlighting and formula rendering are now supported.
 - Added support for rendering rich text content inside tables.
+- Added missing icons for tab blocks and tab items in the **Block Search Panel**. (The purplish one is the tab block, and the black one is the tab item.)
 
 ---
 
