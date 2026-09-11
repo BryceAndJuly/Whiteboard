@@ -203,7 +203,8 @@ async function renderEmbedBlock() {
 async function renderKatex() {
   let inlineMathElements = Array.from(document.querySelectorAll('span[data-type="inline-math"]:not([render])'));
   let MathBlockElements = Array.from(document.querySelectorAll('.render-node[data-type="NodeMathBlock"]:not([render])'));
-  if (inlineMathElements.length > 0 || MathBlockElements.length > 0) {
+  let tableCellKatexElements = Array.from(document.querySelectorAll('.table__cell-rich>.language-math:not([render])'));
+  if (inlineMathElements.length > 0 || MathBlockElements.length > 0 || tableCellKatexElements.length > 0) {
     if (!libs.katex) {
       addStyle("./theme/katex.min.css");
       await addScript("./theme/katex.min.js");
@@ -236,6 +237,20 @@ async function renderKatex() {
       element.firstElementChild.innerHTML = katexHTML;
       element.setAttribute('render', true);
     }
+  }
+  if (tableCellKatexElements.length > 0) {
+    tableCellKatexElements.forEach(element => {
+      let katexHTML = katex.renderToString(
+        window.top.Lute.UnEscapeHTMLStr(element.innerText), {
+        displayMode: true,
+        output: "html",
+        macros: {},
+        trust: true,
+        strict: "ignore"
+      });
+      element.innerHTML = katexHTML;
+      element.setAttribute('render', true);
+    })
   }
 }
 
@@ -1269,12 +1284,15 @@ async function avRender() {
 // 代码高亮
 async function highlight() {
   let codeBlocks = document.querySelectorAll('.code-block[data-type="NodeCodeBlock"]:not([render])');
-  if (codeBlocks.length > 0) {
+  let tableCodeElements = document.querySelectorAll('.table__cell-rich pre>code:not([render])');
+  if (codeBlocks.length > 0 || tableCodeElements.length > 0) {
     if (!libs.highlight) {
       window.top.siyuan.config.appearance.mode === 1 ? addStyle("./theme/highlight/atom-one-dark.min.css") : addStyle("./theme/highlight/github.min.css");
       await addScript("./theme//highlight/highlight.min.js");
       libs.highlight = true;
     }
+  }
+  if (codeBlocks.length > 0) {
     codeBlocks.forEach(codeBlock => {
       let code = codeBlock.querySelector(".hljs");
       let content = code.innerText;
@@ -1291,9 +1309,24 @@ async function highlight() {
       }
       code.innerHTML = highlightedCode;
       codeBlock.setAttribute('render', true);
-
     })
   }
+  if (tableCodeElements.length > 0) {
+    tableCodeElements.forEach(element => {
+      let content = element.innerText;
+      let lang = "plaintext";
+      let attr = element.getAttribute('class');
+      if (attr) {
+        lang = attr.split('-')[1];
+      }
+      highlightedCode = hljs.highlight(content,
+        { language: lang, ignoreIllegals: true }
+      ).value;
+      element.innerHTML = highlightedCode;
+      element.setAttribute('render', true);
+    })
+  }
+
 }
 
 // 添加刷新按钮
@@ -1441,9 +1474,10 @@ function handleUnfoldHeading(operation) {
       item.insertAdjacentHTML("afterend", dom);
       await renderEmbedBlock();
       await renderNodeTab();
+      await handleTable();
+      await avRender();
       await highlight();
       await renderKatex();
-      await avRender();
       await renderMermaid();
     }
     if (operation.data === "remove") {
@@ -1562,9 +1596,10 @@ function handleUpdate(operation) {
     item.outerHTML = dom;
     await renderEmbedBlock();
     await renderNodeTab();
+    await handleTable();
+    await avRender();
     await highlight();
     await renderKatex();
-    await avRender();
     await renderMermaid();
   });
 }
@@ -1579,9 +1614,10 @@ function handleInsert(operation) {
         item.insertAdjacentHTML("afterend", dom);
         await renderEmbedBlock();
         await renderNodeTab();
+        await handleTable();
+        await avRender();
         await highlight();
         await renderKatex();
-        await avRender();
         await renderMermaid();
       }
     });
@@ -1590,9 +1626,10 @@ function handleInsert(operation) {
       item.insertAdjacentHTML("beforebegin", operation.data.replaceAll(`"assets/`, `"${window.top.location.origin}/assets/`).replaceAll(`contenteditable="true"`, `contenteditable="false"`).replaceAll(`src="api/icon/getDynamicIcon`, `src="${window.top.location.origin}/api/icon/getDynamicIcon`));
       await renderEmbedBlock();
       await renderNodeTab();
+      await handleTable();
+      await avRender();
       await highlight();
       await renderKatex();
-      await avRender();
       await renderMermaid();
     });
   } else {
@@ -1789,15 +1826,35 @@ async function renderNodeTab() {
   }
 }
 
+// 表格——富文本：去掉列表中用来包裹文本的p元素
+async function handleTable() {
+  let richCells = document.querySelectorAll('.table__cell-rich:not([render])');
+  if (richCells.length > 0) {
+    richCells.forEach(cell => {
+      let listElements = cell.querySelectorAll('ul, ol');
+      if (listElements.length > 0) {
+        const template = document.createElement("template");
+        template.innerHTML = cell.innerHTML;
+        template.content.querySelectorAll('ul p,ol p').forEach(p => {
+          p.outerHTML = p.innerHTML;
+        })
+        cell.innerHTML = template.innerHTML;
+        cell.setAttribute('render', true);
+      }
+    })
+  }
+}
+
 // 对预览文档进行渲染
 async function main() {
   await renderBody();
   await handleIframeInternalLink()
   await renderEmbedBlock();
   await renderNodeTab();
+  await handleTable();
+  await avRender();
   await highlight();
   await renderKatex();
-  await avRender();
   await renderMermaid();
   await addRefreshBtn();
   await contentSync();

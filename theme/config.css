@@ -444,3 +444,97 @@ h1:has(+ .iframe[custom-data-assets*="/assets/ExcalidrawFiles/"]) {
 .av__cell[data-wrap="false"] .av__celltext.av__celltext--rich li>ol {
     margin-bottom: 5px;
 }
+
+/* 表格富文本================================================ */
+.table__cell-rich {
+    line-height: 1.625;
+}
+
+/* 列表 */
+.table__cell-rich li:has(>input[type="checkbox"]) {
+    list-style: none;
+}
+
+.table__cell-rich>ul:has(>li.vditor-task) {
+    padding-left: 0.8em;
+}
+
+.table__cell-rich ul,
+.table__cell-rich ol {
+    padding-left: 25px;
+    white-space: normal;
+}
+
+.table__cell-rich>ol,
+.table__cell-rich>ul {
+    margin: -0.6em 0;
+}
+
+
+.table__cell-rich> :first-child {
+    margin-top: 0px;
+}
+
+.table__cell-rich li {
+    margin: 0.5em 0;
+}
+
+.table__cell-rich li.vditor-task>input[type="checkbox"] {
+    margin-right: 4px;
+}
+
+/*表格中的引述块 */
+.table__cell-rich blockquote {
+    margin: 2px 0px 0 4px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 单元格：去掉背景色 */
+.b3-typography table td,
+.b3-typography table th,
+.protyle-wysiwyg table td,
+.protyle-wysiwyg table th {
+    background-color: inherit;
+}
+
+/* 首行： 保留背景色*/
+.table thead {
+    background-color: var(--b3-theme-surface);
+}
+
+/* 偶数行 */
+.table tr:nth-child(2n) td,
+.table tr:nth-child(2n) td {
+    background-color: inherit !important;
+}
+
+/* 表格中的代码块 */
+.table__cell-rich pre>code {
+    display: block;
+    box-shadow: none !important;
+    padding: 10px !important;
+    line-height: 1.625;
+    border: 1px solid rgba(27, 31, 35, 0.144);
+    background-color: rgba(240, 246, 252, .15) !important;
+}
+
+.table__cell-rich pre:has(>code) {
+    margin: -0.4em 0;
+}
+
+/* 标题 */
+.table__cell-rich h1,
+.table__cell-rich h2,
+.table__cell-rich h3,
+.table__cell-rich h4,
+.table__cell-rich h5,
+.table__cell-rich h6 {
+    margin: -0.5em 0;
+}
+
+/* 段落 */
+.table__cell-rich>p {
+    margin: -0.7em 0;
+}
