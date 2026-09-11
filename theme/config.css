@@ -387,19 +387,10 @@ h1:has(+ .iframe[custom-data-assets*="/assets/ExcalidrawFiles/"]) {
 
 /* 引述块 */
 .av__cell[data-wrap=true] .av__celltext--rich blockquote {
-    margin: 0px 0 0 5px;
-    padding: 0;
+    margin: 0px 0 0 2px;
+    padding: 2px;
     display: flex;
     flex-direction: column;
-}
-
-/* 分割线，字符串处理阶段通过正则嵌入，防止引述块以及列表下方的普通段落被吞并 */
-.av__celltext--rich blockquote+hr,
-.av__celltext--rich ul+hr,
-.av__celltext--rich ol+hr {
-    border: 0;
-    border-bottom: none !important;
-    margin: 0 !important;
 }
 
 /* 换行的间隔距离 */
@@ -413,6 +404,14 @@ h1:has(+ .iframe[custom-data-assets*="/assets/ExcalidrawFiles/"]) {
     display: block;
     height: 0;
     margin: 0;
+}
+
+.av__cell[data-wrap="true"] .av__celltext.av__celltext--rich li .line-break {
+    margin: 0;
+}
+
+.av__celltext.av__celltext--rich p {
+    padding: 0 0 0 2px;
 }
 
 /* 不换行时 */

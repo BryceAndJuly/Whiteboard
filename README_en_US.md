@@ -7,6 +7,15 @@
 
 
 ## 1. Current Version
+### V2.1.10
+
+See the preview image at the top. Test environment: `SiYuan V3.8.4-alpha.5`,` Windows 11`
+
+- Fixed several styling issues with rich text rendering in the database. Code highlighting and formula rendering are now supported.
+- Added support for rendering rich text content inside tables.
+
+---
+
 ### V2.1.9
 
 Test Environment: `SiYuan V3.8.4-alpha.1`, `SiYuan V3.8.3`, `Windows 11`
