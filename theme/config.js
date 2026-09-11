@@ -530,8 +530,8 @@ function renderCell(cellValue, rowIndex = 0, showIcon = true, type = "table") {
         window.top.lute.SetTextMark(true);
         window.top.lute.SetHTMLTag2TextMark(true);
       }
-      // 去除空行、处理文字的颜色等单样式、处理引述块与下方文本的粘连
-      let str = source.content.replace(/^\s*[\r\n]/gm, '').replace(/(\<span )(.*?\<\/span\>)\{\: (style\=\".*?\")\}/g, '$1$3 $2').replace(/(^\>.*?)\n(?!\>)/mg, '$1\n---\n');
+      // 去除空行、处理文字的颜色等单样式、处理引述块和列表与下方文本的粘连
+      let str = source.content.replace(/^\s*[\r\n]/gm, '').replace(/(\<span )(.*?\<\/span\>)\{\: (style\=\".*?\")\}/g, '$1$3 $2').replace(/(^\>.*?)\n(?!\>)/mg, '$1\n---\n').replace(/(^\s*\-\s.*)\n(?!\s*?\-\s|\s*?\d+\.\s)/mg, '$1\n---\n').replace(/(^\s*\d+\.\s.*)\n(?!\s*?\d+\.\s|\s*?\-\s)/mg, '$1\n---\n');
       let htmlResult = window.top.lute.Md2HTML(str);
       // 替换换行符，方便控制段落间的间距
       htmlResult = htmlResult.replace(/\<br\s*\/\>/g, `<span class="line-break"></span>`);
