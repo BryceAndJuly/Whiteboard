@@ -366,10 +366,11 @@ h1:has(+ .iframe[custom-data-assets*="/assets/ExcalidrawFiles/"]) {
     list-style: none;
 }
 
-.av__celltext.av__celltext--rich ul:has(>li.vditor-task) {
-    padding-left: 0.8em;
+/* 任务列表，位置左移 */
+.av__celltext.av__celltext--rich> ul:has(>li.vditor-task) {
+    position: relative;
+    right: 18px;
 }
-
 
 .av__celltext.av__celltext--rich> :last-child {
     margin-bottom: 0px !important;
