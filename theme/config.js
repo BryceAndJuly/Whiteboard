@@ -550,6 +550,8 @@ function renderCell(cellValue, rowIndex = 0, showIcon = true, type = "table") {
           let highlightedCode = hljs.highlight(content,
             { language: lang, ignoreIllegals: true }
           ).value;
+          // 数据库文本字段中的代码块，需要手动加上类名：hljs，否则代码渲染有点问题，比如：===会被渲染成三根长横线，跟笔记中显示的不一致。
+          code.classList.add("hljs");
           code.innerHTML = highlightedCode;
         })
       }
@@ -1322,6 +1324,8 @@ async function highlight() {
       highlightedCode = hljs.highlight(content,
         { language: lang, ignoreIllegals: true }
       ).value;
+      // 表格中的代码块，需要手动加上类名：hljs，否则代码渲染有点问题，比如：===会被渲染成三根长横线，跟笔记中显示的不一致。
+      element.classList.add("hljs");
       element.innerHTML = highlightedCode;
       element.setAttribute('render', true);
     })
