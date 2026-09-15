@@ -1897,26 +1897,27 @@ async function renderCustomBlock() {
         const info = element.getAttribute("data-info") || "";
         const content = element.getAttribute("data-content") || "";
         const decoded = decodeCustomBlockInfo(info);
-        const plugin = window.top?.siyuan?.ws?.app?.plugins.find(item => item.name === decoded.pluginName);
-        const render = plugin?.customBlockRenders[decoded.blockType]?.render;
-        const contentElement = getContentElement(element);
-        const dispose = render({ element: contentElement, content, setContent: false });
-        if (typeof dispose === "function") {
-          disposeRenderer(dispose);
-        }
-        element.setAttribute("render", true)
-      });
-    } catch (error) {
-      elements.forEach(element => {
-        const info = element.getAttribute("data-info");
-        const contentBlock = element.querySelector(".custom-block__content");
-        if (contentBlock && info) {
-          contentBlock.innerHTML = `⚠️${window.parent._languages["renderCustomBlockFailed"]}<span data-type="text" style="background-color: var(--b3-inline-builtin-error-background-color, var(--b3-card-error-background)); color: var(--b3-inline-builtin-error-color, var(--b3-card-error-color));padding: 4px;border-radius: 4px;">${info.split('/')[0]}</span>`
+        const plugin = window.top?.siyuan?.ws?.app?.plugins.find(item => item.name === decoded?.pluginName);
+        if (plugin) {
+          const render = plugin?.customBlockRenders[decoded.blockType]?.render;
+          const contentElement = getContentElement(element);
+          const dispose = render({ element: contentElement, content, setContent: false });
+          if (typeof dispose === "function") {
+            disposeRenderer(dispose);
+          }
+          element.setAttribute("render", true);
+        } else {
+          const contentElement = getContentElement(element);
+          contentElement.innerHTML = `⚠️${window.parent._languages["renderCustomBlockFailed"]}<span data-type="text" style="background-color: var(--b3-inline-builtin-error-background-color, var(--b3-card-error-background)); color: var(--b3-inline-builtin-error-color, var(--b3-card-error-color));padding: 4px;border-radius: 4px;">${decoded?.pluginName}</span>`;
         }
       });
+    } catch (err) {
+      console.error(err);
     }
   }
 }
+
+
 
 // 对预览文档进行渲染
 async function main() {
