@@ -1483,6 +1483,7 @@ function handleUnfoldHeading(operation) {
       await highlight();
       await renderKatex();
       await renderMermaid();
+      await renderCustomBlock();
     }
     if (operation.data === "remove") {
       item.remove();
@@ -1605,6 +1606,7 @@ function handleUpdate(operation) {
     await highlight();
     await renderKatex();
     await renderMermaid();
+    await renderCustomBlock();
   });
 }
 
@@ -1623,6 +1625,7 @@ function handleInsert(operation) {
         await highlight();
         await renderKatex();
         await renderMermaid();
+        await renderCustomBlock();
       }
     });
   } else if (operation.nextID) {
@@ -1635,6 +1638,7 @@ function handleInsert(operation) {
       await highlight();
       await renderKatex();
       await renderMermaid();
+      await renderCustomBlock();
     });
   } else {
     const parentElement = document.querySelectorAll(`[data-node-id="${operation.parentID}"]`);
@@ -1848,6 +1852,71 @@ async function handleTable() {
     })
   }
 }
+function decodeCustomBlockInfo(info) {
+  const separator = info.indexOf("/");
+  if (separator < 1 || separator !== info.lastIndexOf("/") || separator === info.length - 1) {
+    return;
+  }
+  try {
+    const pluginName = decodeURIComponent(info.slice(0, separator));
+    const blockType = decodeURIComponent(info.slice(separator + 1));
+    if (pluginName && blockType) {
+      return { pluginName, blockType };
+    }
+  } catch {
+    return;
+  }
+};
+function getContentElement(element) {
+  let contentElement = Array.from(element.children).find(item =>
+    item.classList.contains("custom-block__content"));
+  if (contentElement) {
+    contentElement.innerHTML = "";
+  } else {
+    contentElement = element.ownerDocument.createElement("div");
+    contentElement.className = "custom-block__content";
+    const attrElement = Array.from(element.children).find(item => item.classList.contains("protyle-attr"));
+    element.insertBefore(contentElement, attrElement || null);
+  }
+  return contentElement;
+};
+function disposeRenderer(dispose) {
+  try {
+    dispose();
+  } catch (error) {
+    console.error("Custom block cleanup failed:", error);
+  }
+};
+
+// 自定义块
+async function renderCustomBlock() {
+  let elements = document.querySelectorAll('.custom-block[data-type="NodeCustomBlock"]:not(render)');
+  if (elements.length > 0) {
+    try {
+      elements.forEach(element => {
+        const info = element.getAttribute("data-info") || "";
+        const content = element.getAttribute("data-content") || "";
+        const decoded = decodeCustomBlockInfo(info);
+        const plugin = window.top?.siyuan?.ws?.app?.plugins.find(item => item.name === decoded.pluginName);
+        const render = plugin?.customBlockRenders[decoded.blockType]?.render;
+        const contentElement = getContentElement(element);
+        const dispose = render({ element: contentElement, content, setContent: false });
+        if (typeof dispose === "function") {
+          disposeRenderer(dispose);
+        }
+        element.setAttribute("render", true)
+      });
+    } catch (error) {
+      elements.forEach(element => {
+        const info = element.getAttribute("data-info");
+        const contentBlock = element.querySelector(".custom-block__content");
+        if (contentBlock && info) {
+          contentBlock.innerHTML = `⚠️${window.parent._languages["renderCustomBlockFailed"]}<span data-type="text" style="background-color: var(--b3-inline-builtin-error-background-color, var(--b3-card-error-background)); color: var(--b3-inline-builtin-error-color, var(--b3-card-error-color));padding: 4px;border-radius: 4px;">${info.split('/')[0]}</span>`
+        }
+      });
+    }
+  }
+}
 
 // 对预览文档进行渲染
 async function main() {
@@ -1860,6 +1929,7 @@ async function main() {
   await highlight();
   await renderKatex();
   await renderMermaid();
+  await renderCustomBlock();
   await addRefreshBtn();
   await contentSync();
 }

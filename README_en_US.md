@@ -7,73 +7,16 @@
 
 
 ## 1. Current Version
-### V2.1.10
+> As a personal tool, the features I need are basically all updated. If you find any bugs while using the widget, you can report them on GitHub, and I’ll try to fix them.
+>
+> I hope this little tool can help people with the same needs.
 
-See the preview image at the top. Test environment: `SiYuan V3.8.4-alpha.5`,` Windows 11`
+### V2.1.11
 
-- Fixed several styling issues with rich text rendering in the database. Code highlighting and formula rendering are now supported.
-- Added support for rendering rich text content inside tables.
-- Added missing icons for tab blocks and tab items in the **Block Search Panel**. (The purplish one is the tab block, and the black one is the tab item.)
+See the preview image at the top. Test environment: `SiYuan V3.8.4-beta.1`, `Windows 11`
 
----
-
-### V2.1.9
-
-Test Environment: `SiYuan V3.8.4-alpha.1`, `SiYuan V3.8.3`, `Windows 11`
-
-See the preview image at the top:
-
-- Compatibility handling: When the note-taking software version is `V3.8.3` or higher, the whiteboard feature **Embed Documents and Content Blocks via Drag and Drop** is restored.
-- The whiteboard supports rendering `Tab blocks`, a new type of content block introduced in `SiYuan V3.8.3`.
-- The whiteboard supports rendering rich text for database text fields added in `SiYuan V3.8.3`.
-
-Regarding the whiteboard feature **Embed Documents and Content Blocks via Drag and Drop**: after updating the widget, it is recommended to first create a blank whiteboard for testing. Do not test on whiteboards with existing content to avoid disrupting previously created whiteboards.
-
-If the feature does not take effect, it is likely caused by caching — the whiteboard may still be loading old files. Open a whiteboard document and follow the guide at **[Refresh after disabling cache](https://github.com/BryceAndJuly/Whiteboard/issues/100)** to perform a refresh.
-
----
-
-### V2.1.8
-
-Test environment: `SiYuan V3.8.3‑alpha.3`, `Windows 11`
-
-Update the readme document:
-
-- ❗ Regarding the whiteboard feature **Embed documents and content blocks via drag‑and‑drop**: This feature is **unavailable** and **should NOT be used** when the note‑taking software version is` V3.8.3` or higher. Dragged‑and‑dropped documents or content blocks will be embedded directly into the document hosting the whiteboard, rather than into the whiteboard itself, which may easily cause confusion.
-
-  - It is recommended to embed content blocks via the retrieval panel described in `4. Getting Started`  **—**  `4.6 Content Block Retrieval Panel` of this document.
-  - This feature works normally and remains unaffected for software versions `V3.8.2` or lower.
-
-Tests show that on the desktop client, the whiteboard’s **Embed documents and content blocks via drag‑and‑drop** feature works properly when opened via: `Settings`— `Authentication`— `Use in Browser` — `Open Browser`. Nevertheless, for reliability, it is still advised to use the whiteboard’s content‑block retrieval panel.
-
----
-### V2.1.7
-
-- Add a new `CSS snippet` to adapt to the changes in SiYuan Mobile `V3.8.2`. It has been updated to `3. Pre-Usage Setup` — `3.1 Add CSS Snippet` of this document.
-
-  - The main purpose is to resolve the issue: when the first document opened on SiYuan Mobile `V3.8.2` is a whiteboard document, the bottom navigation bar gets obscured, making it impossible to exit the whiteboard document.
-
-```css
-/* 【Mobile V3.8.2】Whiteboard documents now display the bottom navigation bar, with its position raised to prevent obscuring the whiteboard’s bottom bar.*/
-#editor:has( .protyle-wysiwyg[alias="whiteboard"])~#mobileBottomBar{
-    z-index: 7;
-    bottom: calc(var(--mobile-status-height) + var(--mobile-bottom-bar-gap) + var(--mobile-bottom-bar-safe-area) + 30px);
-}
-/* 【Mobile V3.8.2】Whiteboard documents hide the obscured top title bar.*/
-#mobileTopBar:has(~ #editor .protyle-wysiwyg[alias="whiteboard"]) {
-    display: none;
-}
-```
----
-### V2.1.6
-
-See the preview screenshot at the top. Test environment: `SiYuan V3.8.2`, `Windows 11`
-
-- Added support for rendering newly‑added `ZenUML`sequence diagrams and `Tidy Tree layout` in` SiYuan V3.8.2.`
-
-- In the block search panel, display icons corresponding to documents instead of uniformly showing 📄.
-
-- Upgraded Mermaid to V11.16.1.
+- Support rendering custom blocks
+- Fixed text styles and task list styles in the database
 
 ---
 
