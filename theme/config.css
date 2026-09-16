@@ -533,3 +533,9 @@ h1:has(+ .iframe[custom-data-assets*="/assets/ExcalidrawFiles/"]) {
 .table__cell-rich>p {
     margin: -0.7em 0;
 }
+
+/* 表格的内容，对齐上边缘 */
+.table table td,
+.table table th {
+    vertical-align: top;
+}
