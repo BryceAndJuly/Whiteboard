@@ -2908,6 +2908,7 @@ async function renderMindMap() {
 // 对预览文档进行渲染
 async function main() {
   await renderBody();
+  await addRefreshBtn();
   await handleIframeInternalLink()
   await renderEmbedBlock();
   await renderNodeTab();
@@ -2918,7 +2919,6 @@ async function main() {
   await renderMindMap();
   await renderMermaid();
   await renderCustomBlock();
-  await addRefreshBtn();
   await contentSync();
 }
 
