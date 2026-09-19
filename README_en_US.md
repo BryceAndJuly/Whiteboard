@@ -5,11 +5,30 @@
 - After updating the widget, it may still load outdated files due to browser caching.Please follow the guide at [Refresh with Caching Disabled](https://github.com/BryceAndJuly/Whiteboard/issues/100) to perform a refresh.
 - When `Auto‑Save` is triggered, the mouse right‑click popup menu will close. If you find this interference too obtrusive, refer to the methods below to disable `Auto‑Save`  by default . (The shortcut to temporarily disable auto‑save is `Alt`+`F`.)
 
-
-## 1. Current Version
 > As a personal tool, the features I need are basically all updated. If you find any bugs while using the widget, you can report them on GitHub, and I’ll try to fix them.
 >
 > I hope this little tool can help people with the same needs.
+
+## 1. Current Version
+
+### V2.1.12
+
+See the preview image at the top. Test environment: `SiYuan V3.8.5-alpha.4`, `Windows 11`
+
+- Added support for mind map rendering of lists.
+- Style adjustment: Table content aligns to the top edge. (Previously centered)
+
+Notes on the list mind map mode:
+
+> - When embedding a single mind map, its height automatically fills the card instead of using a fixed height. You can drag the card corners to adjust the mind map width and height.
+> - A button showing the `current zoom ratio` is located at the top-left of the mind map. Once the card enters interactive mode, click this button to reset the zoom ratio to 100%.
+> - There is already a refresh button at the top-right of the card. After refreshing, the mind map `zoom ratio` resizes to fit the canvas.
+> - Partial mind map interactions are retained, including:
+>
+>   - Pan canvas: `Left mouse button hold` + drag, `Mouse wheel`, `Shift` + `Mouse wheel`
+>   - Zoom canvas: `Ctrl` + `Mouse wheel`
+
+---
 
 ### V2.1.11
 
