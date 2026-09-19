@@ -2383,7 +2383,7 @@ class ListMindmapView {
         const content = this.getContentHost(id);
         content.replaceChildren();
         if (node.virtual) {
-          content.textContent = "listMindmapRoot";
+          content.textContent = "Mindmap";
         } else {
           node.contentBlocks.forEach((block) => {
             const clone = block.cloneNode(true);
@@ -2887,7 +2887,9 @@ async function renderMindMap() {
     }
     lists.forEach(list => {
       try {
-        list.querySelector('div[data-type="NodeListItem"]')?.setAttribute("style", "display:none;")
+        list.querySelectorAll('div[data-type="NodeListItem"]').forEach(item => {
+          item.setAttribute("style", "display:none;")
+        });
         const model = readListMindmap(list);
         list.querySelector(":scope > .list-mindmap")?.remove();
         const host = document.createElement("div");
