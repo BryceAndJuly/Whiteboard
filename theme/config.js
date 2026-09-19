@@ -2404,8 +2404,6 @@ class ListMindmapView {
           !content.querySelector("img, svg, video, audio, iframe, canvas, hr, [data-content]");
         content.classList.toggle("list-mindmap__content--empty", empty);
         content.dataset.placeholder = "listMindmapPlaceholder";
-        // 副本独立渲染公式，避免源节点的异步渲染完成后脑图仍保留未渲染内容。
-        // void mathRender(content, this.options.cdn)?.then(() => this.refreshLayout()).catch(error => console.error(error));
       }
     });
     if (this.#selectedId && !model.nodes.has(this.#selectedId)) {
@@ -2758,12 +2756,6 @@ class ListMindmapView {
         this.#offsetY += (previous.y - current.y) * this.#scale;
       }
       this.#foldAnchor = undefined;
-      // if (this.#initialFit) {
-      //   this.#initialFit = false;
-      //   this.fit();
-      // } else {
-      //   this.draw();
-      // }
       this.fit();
     });
   }
