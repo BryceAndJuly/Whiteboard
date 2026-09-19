@@ -202,7 +202,7 @@ async function renderEmbedBlock() {
 // 渲染Katex公式
 async function renderKatex() {
   let inlineMathElements = Array.from(document.querySelectorAll('span[data-type="inline-math"]:not([render])'));
-  let MathBlockElements = Array.from(document.querySelectorAll('.render-node[data-type="NodeMathBlock"]:not([render])'));
+  let MathBlockElements = Array.from(document.querySelectorAll('.render-node[data-type="NodeMathBlock"]:not([render]),div.render-node[data-subtype="math"]:not([render])'));
   let tableCellKatexElements = Array.from(document.querySelectorAll('.table__cell-rich>.language-math:not([render])'));
   if (inlineMathElements.length > 0 || MathBlockElements.length > 0 || tableCellKatexElements.length > 0) {
     if (!libs.katex) {
@@ -1482,6 +1482,7 @@ function handleUnfoldHeading(operation) {
       await avRender();
       await highlight();
       await renderKatex();
+      await renderMindMap();
       await renderMermaid();
       await renderCustomBlock();
     }
@@ -1605,6 +1606,7 @@ function handleUpdate(operation) {
     await avRender();
     await highlight();
     await renderKatex();
+    await renderMindMap();
     await renderMermaid();
     await renderCustomBlock();
   });
@@ -1624,6 +1626,7 @@ function handleInsert(operation) {
         await avRender();
         await highlight();
         await renderKatex();
+        await renderMindMap();
         await renderMermaid();
         await renderCustomBlock();
       }
@@ -1637,6 +1640,7 @@ function handleInsert(operation) {
       await avRender();
       await highlight();
       await renderKatex();
+      await renderMindMap();
       await renderMermaid();
       await renderCustomBlock();
     });
@@ -1919,6 +1923,996 @@ async function renderCustomBlock() {
 
 
 
+// ===============================================================================================================================
+
+const isRecord = (value) =>
+  !!value && typeof value === "object" && !Array.isArray(value);
+const directBlocks = (element) => Array.from(element.children).filter(child =>
+  child.hasAttribute("data-node-id"));
+const directItems = (list) => directBlocks(list).filter(child =>
+  child.getAttribute("data-type") === "NodeListItem");
+function parseListMindmapMetadata(value) {
+  if (value === null) {
+    return { version: 1, nodes: Object.create(null), relations: [] };
+  }
+  let data;
+  try {
+    data = JSON.parse(value);
+  } catch {
+    throw new Error("Invalid list mindmap metadata");
+  }
+  if (!isRecord(data) || data.version !== 1 || !isRecord(data.nodes) || !Array.isArray(data.relations)) {
+    throw new Error("Invalid list mindmap metadata");
+  }
+  const stringKeys = ["textColor", "backgroundColor", "borderColor", "lineColor"];
+  const numberKeys = ["fontSize", "borderWidth", "borderRadius", "lineWidth"];
+  const booleanKeys = ["bold", "italic", "lineDash"];
+  for (const [id, style] of Object.entries(data.nodes)) {
+    if (!id || !isRecord(style) ||
+      stringKeys.some(key => key in style && typeof style[key] !== "string") ||
+      numberKeys.some(key => key in style && (typeof style[key] !== "number" ||
+        !Number.isFinite(style[key]) || Number(style[key]) < 0)) ||
+      booleanKeys.some(key => key in style && typeof style[key] !== "boolean")) {
+      throw new Error("Invalid list mindmap metadata");
+    }
+  }
+  const relationIds = new Set();
+  for (const relation of data.relations) {
+    if (!isRecord(relation) || typeof relation.id !== "string" || !relation.id ||
+      relationIds.has(relation.id) || typeof relation.from !== "string" || !relation.from ||
+      typeof relation.to !== "string" || !relation.to || typeof relation.label !== "string" ||
+      ("color" in relation && typeof relation.color !== "string") ||
+      ("width" in relation && (typeof relation.width !== "number" ||
+        !Number.isFinite(relation.width) || relation.width < 0)) ||
+      ("dash" in relation && typeof relation.dash !== "boolean")) {
+      throw new Error("Invalid list mindmap metadata");
+    }
+    relationIds.add(relation.id);
+  }
+  return data;
+};
+function readListMindmap(list) {
+  if (list.getAttribute("data-type") !== "NodeList" || !list.getAttribute("data-node-id")) {
+    throw new Error("A list mindmap requires a list block");
+  }
+  const metadata = parseListMindmapMetadata(list.getAttribute("custom-sy-list-mindmap-data"));
+  const nodes = new Map();
+  const virtualRoot = {
+    id: list.getAttribute("data-node-id"),
+    contentBlocks: [],
+    children: [],
+    collapsed: false,
+    virtual: true,
+  };
+  const pending = [{ list, parent: virtualRoot }];
+  while (pending.length > 0) {
+    const current = pending.pop();
+    for (const item of directItems(current.list)) {
+      const id = item.getAttribute("data-node-id");
+      if (!id || nodes.has(id) || id === virtualRoot.id) {
+        throw new Error("Invalid list mindmap node identity");
+      }
+      const blocks = directBlocks(item);
+      const node = {
+        id,
+        parentId: current.parent.id,
+        element: item,
+        contentBlocks: blocks.filter(block => block.getAttribute("data-type") !== "NodeList"),
+        children: [],
+        collapsed: item.getAttribute("fold") === "1",
+        virtual: false,
+      };
+      current.parent.children.push(node);
+      nodes.set(id, node);
+      blocks.filter(block => block.getAttribute("data-type") === "NodeList").reverse().forEach(child => {
+        pending.push({ list: child, parent: node });
+      });
+    }
+  }
+  const root = virtualRoot.children.length === 1 ? virtualRoot.children[0] : virtualRoot;
+  if (root.virtual) {
+    nodes.set(root.id, root);
+  } else {
+    delete root.parentId;
+  }
+  return { list, root, nodes, metadata };
+};
+
+const createElement = (tag, className) => {
+  const element = document.createElement(tag);
+  element.className = className;
+  return element;
+};
+
+function layoutListMindmap(root, options = {}) {
+  const horizontalGap = options.horizontalGap ?? 40;
+  const verticalGap = options.verticalGap ?? 24;
+  const padding = options.padding ?? 32;
+  if ([horizontalGap, verticalGap, padding].some(value => !Number.isFinite(value) || value < 0)) {
+    throw new Error("Invalid list mindmap layout spacing");
+  }
+  const ordered = [];
+  const pending = [{ node: root, depth: 0, parentId: undefined }];
+  const seen = new Set();
+  while (pending.length > 0) {
+    const current = pending.pop();
+    if (!current.node.id || seen.has(current.node.id) ||
+      !Number.isFinite(current.node.width) || current.node.width <= 0 ||
+      !Number.isFinite(current.node.height) || current.node.height <= 0) {
+      throw new Error("Invalid list mindmap layout node");
+    }
+    seen.add(current.node.id);
+    ordered.push(current);
+    if (!current.node.collapsed) {
+      [...current.node.children].reverse().forEach(node => {
+        pending.push({ node, depth: current.depth + 1, parentId: current.node.id });
+      });
+    }
+  }
+  const heights = new Map();
+  [...ordered].reverse().forEach(({ node }) => {
+    const children = node.collapsed ? [] : node.children;
+    const childHeight = children.reduce((sum, child) => sum + heights.get(child.id), 0) +
+      Math.max(0, children.length - 1) * verticalGap;
+    heights.set(node.id, Math.max(node.height, childHeight));
+  });
+  const tops = new Map([[root.id, padding]]);
+  const nodes = new Map();
+  const edges = [];
+  let width = padding;
+  ordered.forEach(({ node, parentId }) => {
+    const top = tops.get(node.id);
+    const height = heights.get(node.id);
+    const parent = nodes.get(parentId);
+    const position = {
+      id: node.id,
+      parentId,
+      x: parent ? parent.x + parent.width + horizontalGap : padding,
+      y: top + (height - node.height) / 2,
+      width: node.width,
+      height: node.height,
+    };
+    nodes.set(node.id, position);
+    width = Math.max(width, position.x + position.width);
+    if (parentId) {
+      edges.push({ from: parentId, to: node.id });
+    }
+    const children = node.collapsed ? [] : node.children;
+    const childHeight = children.reduce((sum, child) => sum + heights.get(child.id), 0) +
+      Math.max(0, children.length - 1) * verticalGap;
+    let childTop = top + (height - childHeight) / 2;
+    children.forEach(child => {
+      tops.set(child.id, childTop);
+      childTop += heights.get(child.id) + verticalGap;
+    });
+  });
+  return { nodes, edges, width: width + padding, height: heights.get(root.id) + padding * 2 };
+};
+
+function routeMindmapRelation(from, to, nodes, clearance = 12) {
+  const boxes = nodes.flatMap(node => [
+    {
+      left: node.x - clearance, right: node.x + node.width + clearance,
+      top: node.y - clearance, bottom: node.y + node.height + clearance
+    },
+    {
+      left: node.x + node.width - 19, right: node.x + node.width + 46,
+      top: (node.controlY ?? node.y + node.height) - 19, bottom: (node.controlY ?? node.y + node.height) + 19
+    },
+  ]);
+  const ports = (node) => [
+    { x: node.x + node.width / 2, y: node.y - clearance, direction: 1 },
+    { x: node.x + node.width / 2, y: node.y + node.height + clearance, direction: 1 },
+    { x: node.x - clearance, y: node.y + node.height / 2, direction: 0 },
+    { x: node.x + node.width + clearance, y: node.y + Math.max(0, Math.min(node.height / 2, node.height - 22)), direction: 0 },
+  ];
+  const starts = ports(from);
+  const goals = to.width === 0 && to.height === 0 ?
+    [{ x: to.x, y: to.y, direction: 0 }, { x: to.x, y: to.y, direction: 1 }] : ports(to);
+  const xs = [...new Set([...boxes.flatMap(box => [box.left, box.right]), ...starts.map(p => p.x), ...goals.map(p => p.x)])].sort((a, b) => a - b);
+  const ys = [...new Set([...boxes.flatMap(box => [box.top, box.bottom]), ...starts.map(p => p.y), ...goals.map(p => p.y)])].sort((a, b) => a - b);
+  const point = (index) => ({ x: xs[index % xs.length], y: ys[Math.floor(index / xs.length)] });
+  const indexOf = (p) => ys.indexOf(p.y) * xs.length + xs.indexOf(p.x);
+  const columns = new Map();
+  const rows = new Map();
+  const blocked = (a, b) => {
+    if (a.x === b.x) {
+      if (!columns.has(a.x)) {
+        columns.set(a.x, boxes.filter(box => a.x > box.left && a.x < box.right));
+      }
+      return columns.get(a.x).some(box => Math.max(a.y, b.y) > box.top && Math.min(a.y, b.y) < box.bottom);
+    }
+    if (!rows.has(a.y)) {
+      rows.set(a.y, boxes.filter(box => a.y > box.top && a.y < box.bottom));
+    }
+    return rows.get(a.y).some(box => Math.max(a.x, b.x) > box.left && Math.min(a.x, b.x) < box.right);
+  };
+  const heuristic = (p) => Math.min(...goals.map(goal => Math.abs(p.x - goal.x) + Math.abs(p.y - goal.y)));
+  const targets = new Set(goals.map(goal => indexOf(goal) * 2 + goal.direction));
+  const distance = new Map();
+  const previous = new Map();
+  const heap = [];
+  const push = (item) => {
+    let i = heap.length;
+    heap.push(item);
+    while (i > 0) {
+      const parent = (i - 1) >> 1;
+      if (heap[parent].score <= item.score) {
+        break;
+      }
+      heap[i] = heap[parent];
+      i = parent;
+    }
+    heap[i] = item;
+  };
+  const pop = () => {
+    const first = heap[0];
+    const last = heap.pop();
+    if (heap.length) {
+      let i = 0;
+      while (i * 2 + 1 < heap.length) {
+        let child = i * 2 + 1;
+        if (child + 1 < heap.length && heap[child + 1].score < heap[child].score) {
+          child++;
+        }
+        if (last.score <= heap[child].score) {
+          break;
+        }
+        heap[i] = heap[child];
+        i = child;
+      }
+      heap[i] = last;
+    }
+    return first;
+  };
+  starts.forEach(start => {
+    if (blocked(start, start)) {
+      return;
+    }
+    const key = indexOf(start) * 2 + start.direction;
+    distance.set(key, 0);
+    push({ key, cost: 0, score: heuristic(start) });
+  });
+  while (heap.length) {
+    const current = pop();
+    if (distance.get(current.key) !== current.cost) {
+      continue;
+    }
+    const index = Math.floor(current.key / 2);
+    const a = point(index);
+    if (targets.has(current.key) && previous.has(current.key)) {
+      const route = [];
+      let key = current.key;
+      while (key !== undefined) {
+        route.push(point(Math.floor(key / 2)));
+        key = previous.get(key);
+      }
+      route.reverse();
+      return route.filter((p, i) => i === 0 || i === route.length - 1 ||
+        !((route[i - 1].x === p.x && route[i + 1].x === p.x) || (route[i - 1].y === p.y && route[i + 1].y === p.y)));
+    }
+    const x = index % xs.length;
+    const y = Math.floor(index / xs.length);
+    const neighbors = [x > 0 ? index - 1 : -1, x + 1 < xs.length ? index + 1 : -1,
+    y > 0 ? index - xs.length : -1, y + 1 < ys.length ? index + xs.length : -1];
+    neighbors.forEach((next, side) => {
+      if (next < 0) {
+        return;
+      }
+      const b = point(next);
+      const direction = side < 2 ? 0 : 1;
+      if ((!previous.has(current.key) && direction !== current.key % 2) || blocked(a, b)) {
+        return;
+      }
+      const key = next * 2 + direction;
+      const cost = current.cost + Math.abs(a.x - b.x) + Math.abs(a.y - b.y) + (direction === current.key % 2 ? 0 : 24);
+      if (cost >= (distance.get(key) ?? Infinity)) {
+        return;
+      }
+      distance.set(key, cost);
+      previous.set(key, current.key);
+      push({ key, cost, score: cost + heuristic(b) });
+    });
+  }
+  return [];
+};
+
+
+class ListMindmapView {
+  #options;
+  #model;
+  #viewport;
+  #world;
+  #canvas;
+  #toolbar;
+  #inspector;
+  #zoomLabel;
+  #zoomSlider = createElement("input", "b3-slider");
+  #nodeElements = new Map();
+  #relationElements = new Map();
+  #buttons = new Map();
+  #folded = new Map();
+  #colorProbe = createElement("span", "list-mindmap__color-probe");
+  #positions = new Map();
+  #edges = [];
+  #bounds = { width: 1, height: 1 };
+  #selectedId;
+  #selectedRelation;
+  #selectedEdge;
+  #hoveredLine;
+  #finishRelationEdit;
+  #linePaths = [];
+  #relationRoutes = new Map();
+  #relationFrom;
+  #relationPreview = { x: null, y: null, targetId: "" };
+  #editingId;
+  #pointer;
+  #pointerCapture;
+  #pendingPointerId;
+  #linkTimer = 0;
+  #suppressLinkClick = false;
+  #ghost;
+  #scale = 1;
+  #offsetX = 0;
+  #offsetY = 0;
+  #foldAnchor;
+  #frame = 0;
+  #initialFit = true;
+  #destroyed = false;
+  #resizeObserver;
+  #fullscreenMarker;
+  #disposers = [];
+  #printTransform = { scale: null, offsetX: null, offsetY: null };
+  constructor(options) {
+    this.#options = options;
+    this.#model = options.model;
+    this.#selectedId = options.model.root.id;
+    options.host.classList.add("list-mindmap");
+    options.host.contentEditable = "false";
+    options.host.setAttribute("role", "group");
+    options.host.setAttribute("aria-label", "mindmap");
+    options.host.tabIndex = 0;
+    this.#viewport = createElement("div", "list-mindmap__viewport");
+    this.#canvas = createElement("canvas", "list-mindmap__canvas");
+    this.#canvas.setAttribute("aria-hidden", "true");
+    this.#world = createElement("div", "list-mindmap__world");
+    this.#inspector = createElement("div", "list-mindmap__inspector");
+    this.#inspector.hidden = true;
+    this.#zoomLabel = createElement("span", "list-mindmap__zoom");
+    this.#viewport.append(this.#canvas, this.#world);
+    this.#colorProbe.setAttribute("aria-hidden", "true");
+    this.#zoomLabel = createElement("span", "list-mindmap__zoom");
+    options.host.append(this.#viewport, this.#inspector, this.#colorProbe, this.#zoomLabel);
+    this.#resizeObserver = new ResizeObserver(() => this.refreshLayout());
+    this.#resizeObserver.observe(this.#viewport);
+    // 使用鼠标滚轮缩放、移动画布
+    this.listen(this.#viewport, "wheel", this.wheel, { passive: false });
+    // 拖拽方式移动画布
+    this.listen(this.#viewport, "pointerdown", this.pointerDown);
+    this.listen(this.#viewport, "pointermove", this.pointerMove);
+    this.listen(this.#viewport, "pointerup", this.pointerUp);
+    this.listen(this.#viewport, "pointerleave", this.pointerUp);
+    // 缩放重置为：100%
+    this.listen(this.#zoomLabel, "click", () => { this.zoomAt(1) });
+    this.update(this.#model);
+  }
+  pointerDown = (event) => {
+    event.preventDefault();
+    this.#pointer = {
+      pointerdown: true,
+      startX: event.clientX,
+      startY: event.clientY,
+      x: this.#offsetX,
+      y: this.#offsetY,
+      moved: false,
+    };
+  }
+  pointerMove = (event) => {
+    event.preventDefault();
+    if (this.#pointer?.pointerdown) {
+      const dx = event.clientX - this.#pointer.startX;
+      const dy = event.clientY - this.#pointer.startY;
+      this.#offsetX = this.#pointer.x + dx;
+      this.#offsetY = this.#pointer.y + dy;
+      this.draw();
+    }
+  }
+  pointerUp = (event) => {
+    if (this.#pointer) {
+      this.#pointer = undefined;
+    }
+  }
+
+  listen(target, event, handler, options) {
+    target.addEventListener(event, handler, options);
+  }
+  update(model) {
+    if (this.#destroyed) {
+      return;
+    }
+    this.#model = model;
+    const descendants = new Map();
+    const ordered = [model.root];
+    for (let i = 0; i < ordered.length; i++) {
+      ordered.push(...ordered[i].children);
+    }
+    for (let i = ordered.length - 1; i >= 0; i--) {
+      descendants.set(ordered[i].id, ordered[i].children.reduce((count, child) => count + 1 + descendants.get(child.id), 0));
+    }
+    this.#nodeElements.forEach((element, id) => {
+      if (!model.nodes.has(id)) {
+        element.remove();
+        this.#nodeElements.delete(id);
+      }
+    });
+    model.nodes.forEach((node, id) => {
+      let element = this.#nodeElements.get(id);
+      if (!element) {
+        element = createElement("div", "list-mindmap__node");
+        element.dataset.mindmapId = id;
+        element.setAttribute("role", "treeitem");
+        element.append(createElement("div", "list-mindmap__content"));
+        const addBridge = createElement("span", "list-mindmap__add-bridge");
+        addBridge.hidden = !!this.#options.readOnly;
+        addBridge.setAttribute("aria-hidden", "true");
+        element.append(addBridge);
+        const fold = this.makeButton("collapse", "iconDown", "list-mindmap__fold");
+        fold.append(createElement("span", "list-mindmap__fold-count"));
+        element.append(fold);
+        const addChild = this.makeButton("listMindmapChild", "iconAdd", "list-mindmap__add-child");
+        addChild.hidden = !!this.#options.readOnly;
+        addChild.disabled = !!this.#options.readOnly;
+        element.append(addChild);
+        this.#nodeElements.set(id, element);
+        this.#world.append(element);
+      }
+      element.classList.toggle("list-mindmap__node--virtual", node.virtual);
+      element.classList.toggle("list-mindmap__node--root", id === model.root.id);
+      element.classList.toggle("list-mindmap__node--branch", node.children.length > 0);
+      element.style.backgroundColor = model.metadata.nodes[id]?.backgroundColor || "";
+      element.style.color = model.metadata.nodes[id]?.textColor || "";
+      const collapsed = this.#folded.get(id) ?? node.collapsed;
+      element.setAttribute("aria-expanded", String(!collapsed));
+      const fold = element.querySelector(".list-mindmap__fold");
+      fold.hidden = !node.children.length;
+      fold.classList.toggle("list-mindmap__fold--closed", collapsed);
+      fold.setAttribute("aria-label", collapsed ? "expand" : "collapse");
+      fold.querySelector("span").textContent = String(descendants.get(id));
+
+      if (id !== this.#editingId) {
+        const content = this.getContentHost(id);
+        content.replaceChildren();
+        if (node.virtual) {
+          content.textContent = "listMindmapRoot";
+        } else {
+          node.contentBlocks.forEach((block) => {
+            const clone = block.cloneNode(true);
+            clone.querySelectorAll(".protyle-attr, .protyle-action, .protyle-icons, .list-mindmap").forEach(item => item.remove());
+            [clone, ...Array.from(clone.querySelectorAll("*"))].forEach((item) => {
+              item.removeAttribute("contenteditable");
+              item.removeAttribute("data-node-id");
+              item.removeAttribute("spellcheck");
+              item.removeAttribute("draggable");
+              if (item.getAttribute("data-type")?.startsWith("Node")) {
+                item.removeAttribute("data-type");
+              }
+            });
+            content.append(clone);
+          });
+        }
+        const empty = !content.textContent.replace(/[\u200b\ufeff]/g, "").trim() &&
+          !content.querySelector("img, svg, video, audio, iframe, canvas, hr, [data-content]");
+        content.classList.toggle("list-mindmap__content--empty", empty);
+        content.dataset.placeholder = "listMindmapPlaceholder";
+        // 副本独立渲染公式，避免源节点的异步渲染完成后脑图仍保留未渲染内容。
+        // void mathRender(content, this.options.cdn)?.then(() => this.refreshLayout()).catch(error => console.error(error));
+      }
+    });
+    if (this.#selectedId && !model.nodes.has(this.#selectedId)) {
+      this.#selectedId = undefined;
+      this.#inspector.hidden = true;
+    }
+    if (this.#selectedRelation && !model.metadata.relations.some(relation => relation.id === this.#selectedRelation)) {
+      this.#selectedRelation = undefined;
+      this.#inspector.hidden = true;
+    }
+    if (this.#selectedEdge && !model.nodes.has(this.#selectedEdge)) {
+      this.#selectedEdge = undefined;
+      this.#inspector.hidden = true;
+    }
+    this.updateRelations();
+    this.updateSelection();
+    this.renderInspector();
+    this.refreshLayout();
+  }
+  updateSelection() {
+    if (!this.#relationFrom) {
+      this.#relationPreview = undefined;
+    }
+    this.#nodeElements.forEach((element, id) => {
+      element.classList.toggle("list-mindmap__node--selected", this.#selectedId === id);
+      element.classList.toggle("list-mindmap__node--relation", this.#relationFrom === id ||
+        this.#relationPreview?.targetId === id);
+      element.setAttribute("aria-selected", String(this.#selectedId === id));
+    });
+    this.#relationElements.forEach((element, id) => element.classList.toggle("list-mindmap__relation--selected", this.#selectedRelation === id));
+    const node = this.#model.nodes.get(this.#selectedId);
+    const disabled = {
+      relation: !node || node.virtual,
+      style: !node && !this.#selectedRelation && !this.#selectedEdge,
+    };
+    Object.keys(disabled).forEach((key) => {
+      const button = this.#buttons.get(key);
+      if (button) {
+        button.disabled = disabled[key];
+      }
+    });
+    this.#buttons.get("relation")?.classList.toggle("block__icon--active", !!this.#relationFrom);
+    this.draw();
+  }
+  getContentHost(id) {
+    return this.#nodeElements.get(id)?.querySelector(".list-mindmap__content");
+  }
+  relationPath(id, from, to, label) {
+    let points = id ? this.#relationRoutes.get(id) : undefined;
+    if (!points) {
+      points = routeMindmapRelation(from, to, this.routingObstacles());
+      if (id) {
+        this.#relationRoutes.set(id, points);
+      }
+    }
+    if (points.length < 2) {
+      return;
+    }
+    const path = new Path2D();
+    path.moveTo(points[0].x, points[0].y);
+    for (let i = 1; i < points.length - 1; i++) {
+      const a = points[i - 1];
+      const b = points[i];
+      const c = points[i + 1];
+      const before = Math.hypot(b.x - a.x, b.y - a.y);
+      const after = Math.hypot(c.x - b.x, c.y - b.y);
+      const radius = Math.min(8, before / 2, after / 2);
+      path.lineTo(b.x + (a.x - b.x) * radius / before, b.y + (a.y - b.y) * radius / before);
+      path.quadraticCurveTo(b.x, b.y, b.x + (c.x - b.x) * radius / after, b.y + (c.y - b.y) * radius / after);
+    }
+    const end = points[points.length - 1];
+    const previous = points[points.length - 2];
+    path.lineTo(end.x, end.y);
+    if (!label) {
+      return { path, end, previous, labelPoint };
+    }
+    const width = label.offsetWidth;
+    const height = label.offsetHeight;
+    const segments = points.slice(1).map((p, i) => ({
+      a: points[i], b: p,
+      length: Math.hypot(p.x - points[i].x, p.y - points[i].y)
+    })).sort((a, b) => b.length - a.length);
+    let labelPoint;
+    for (const segment of segments) {
+      const center = { x: (segment.a.x + segment.b.x) / 2, y: (segment.a.y + segment.b.y) / 2 };
+      const candidates = [center, { x: center.x + width / 2 + 6, y: center.y },
+        { x: center.x - width / 2 - 6, y: center.y },
+        { x: center.x, y: center.y - height / 2 - 6 }, { x: center.x, y: center.y + height / 2 + 6 }];
+      labelPoint = candidates.find(p => ![...this.#positions.values()].some(node =>
+        p.x + width / 2 > node.x - 4 && p.x - width / 2 < node.x + node.width + 40 &&
+        p.y + height / 2 > node.y - 4 && p.y - height / 2 < node.y + node.height + 4));
+      if (labelPoint) {
+        break;
+      }
+    }
+    label.style.visibility = labelPoint ? "" : "hidden";
+    return { path, end, previous, labelPoint };
+  }
+  makeButton(key, icon, className = "") {
+    const button = createElement("button", "block__icon block__icon--show " + className);
+    button.type = "button";
+    button.setAttribute("aria-label", key);
+    if (icon) {
+      button.innerHTML = `<svg aria-hidden="true"><use xlink:href="#${icon}"></use></svg>`;
+    }
+    return button;
+  }
+  toolButton(key, icon, action, className = "") {
+    const button = createElement("button", "block__icon block__icon--show " + className);
+    button.type = "button";
+    button.setAttribute("aria-label", key);
+    if (icon) {
+      button.innerHTML = `<svg aria-hidden="true"><use xlink:href="#${icon}"></use></svg>`;
+    }
+    button.addEventListener("click", (event) => {
+      event.stopPropagation();
+      action();
+    });
+    return button;
+  }
+  updateRelations() {
+    this.#relationElements.forEach((element, id) => {
+      if (!this.#model.metadata.relations.some(relation => relation.id === id)) {
+        element.remove();
+        this.#relationElements.delete(id);
+      }
+    });
+    this.#model.metadata.relations.forEach((relation) => {
+      let element = this.#relationElements.get(relation.id);
+      if (!element) {
+        element = createElement("button", "list-mindmap__relation");
+        element.type = "button";
+        element.dataset.relationId = relation.id;
+        this.#relationElements.set(relation.id, element);
+        this.#world.append(element);
+      }
+      element.textContent = relation.label || "";
+      element.setAttribute("aria-label", relation.label || "connect");
+      element.style.color = relation.color || "";
+    });
+  }
+  routingObstacles() {
+    return [...this.#positions.values()].map(node => ({
+      ...node,
+      controlY: node.y + (node.id === this.#model.root.id ? node.height / 2 : node.height),
+    }));
+  }
+  fit() {
+    const width = this.#viewport.clientWidth;
+    const height = this.#viewport.clientHeight;
+    this.#scale = Math.min(1, Math.max(.15, Math.min((width - 64) / this.#bounds.width, (height - 64) / this.#bounds.height)));
+    this.#offsetX = (width - this.#bounds.width * this.#scale) / 2;
+    this.#offsetY = (height - this.#bounds.height * this.#scale) / 2;
+    this.draw();
+  }
+  wheel = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    const mode = event.deltaMode;
+    const unitX = mode === 0x01 ? 16 :
+      mode === 0x02 ? this.#viewport.clientWidth : 1;
+    const unitY = mode === 0x01 ? 16 :
+      mode === 0x02 ? this.#viewport.clientHeight : 1;
+    if (event.ctrlKey) {
+      const bounds = this.#viewport.getBoundingClientRect();
+      const delta = Math.max(-24, Math.min(24, event.deltaY * unitY));
+      this.zoomAt(this.#scale * Math.exp(-delta * .01),
+        event.clientX - bounds.left, event.clientY - bounds.top);
+      return;
+    }
+    if (event.shiftKey) {
+      this.#offsetX -= event.deltaX ? event.deltaX * unitX : event.deltaY * unitX;
+    } else {
+      this.#offsetX -= event.deltaX * unitX;
+      this.#offsetY -= event.deltaY * unitY;
+    }
+    this.draw();
+  };
+  zoomAt(scale, x = this.#viewport.clientWidth / 2, y = this.#viewport.clientHeight / 2) {
+    const next = Math.min(2.5, Math.max(.15, scale));
+    this.#offsetX = x - (x - this.#offsetX) * next / this.#scale;
+    this.#offsetY = y - (y - this.#offsetY) * next / this.#scale;
+    this.#scale = next;
+    this.draw();
+  }
+  draw() {
+    this.#world.style.transform = `translate(${this.#offsetX}px, ${this.#offsetY}px) scale(${this.#scale})`;
+    this.#zoomLabel.textContent = `${Math.round(this.#scale * 100)}%`;
+    this.#zoomSlider.value = String(Math.round(this.#scale * 100));
+    const width = this.#viewport.clientWidth;
+    const height = this.#viewport.clientHeight;
+    const ratio = window.devicePixelRatio || 1;
+    if (this.#canvas.width !== Math.round(width * ratio) || this.#canvas.height !== Math.round(height * ratio)) {
+      this.#canvas.width = Math.round(width * ratio);
+      this.#canvas.height = Math.round(height * ratio);
+    }
+    const context = this.#canvas.getContext("2d");
+    this.linePaths = [];
+    if (!context) {
+      return;
+    }
+    context.setTransform(ratio, 0, 0, ratio, 0, 0);
+    context.clearRect(0, 0, width, height);
+    context.translate(this.#offsetX, this.#offsetY);
+    context.scale(this.#scale, this.#scale);
+    const theme = getComputedStyle(this.#options.host);
+    const defaultLine = theme.getPropertyValue("--b3-border-color").trim() || "#a8adb5";
+    const primary = theme.getPropertyValue("--b3-theme-primary").trim() || "#3574f0";
+    const colors = new Map();
+    const resolveColor = (value, fallback) => {
+      const key = value || fallback;
+      if (!colors.has(key)) {
+        this.#colorProbe.style.color = fallback;
+        if (value) {
+          this.#colorProbe.style.color = value;
+        }
+        colors.set(key, getComputedStyle(this.#colorProbe).color);
+      }
+      return colors.get(key);
+    };
+    this.#edges.forEach((edge) => {
+      const from = this.#positions.get(edge.from);
+      const to = this.#positions.get(edge.to);
+      if (!from || !to) {
+        return;
+      }
+      const style = { ...this.#model.metadata.nodes[this.#model.root.id], ...this.#model.metadata.nodes[edge.to] };
+      const startX = from.x + from.width;
+      const startY = from.y + (edge.from === this.#model.root.id ? from.height / 2 : from.height);
+      const endX = to.x;
+      const endY = to.y + to.height;
+      const center = (startX + endX) / 2;
+      const path = new Path2D();
+      path.moveTo(startX, startY);
+      path.bezierCurveTo(center, startY, center, endY, endX, endY);
+      path.lineTo(to.x + to.width, endY);
+      this.#linePaths.push({ id: edge.to, relation: false, path });
+      context.beginPath();
+      context.strokeStyle = resolveColor(style.lineColor, defaultLine);
+      context.lineWidth = (style.lineWidth || 1.5) + (this.#selectedEdge === edge.to ? 1 : 0) +
+        (this.#hoveredLine === `edge:${edge.to}` ? 1.5 / this.#scale : 0);
+      context.setLineDash(style.lineDash ? [6, 4] : []);
+      context.stroke(path);
+    });
+    this.#model.metadata.relations.forEach((relation) => {
+      const from = this.#positions.get(relation.from);
+      const to = this.#positions.get(relation.to);
+      const element = this.#relationElements.get(relation.id);
+      element.hidden = !from || !to || !relation.label?.trim();
+      if (!from || !to) {
+        return;
+      }
+      const route = this.relationPath(relation.id, from, to, element);
+      if (!route) {
+        element.hidden = true;
+        return;
+      }
+      const { path, end, previous, labelPoint } = route;
+      this.#linePaths.push({ id: relation.id, relation: true, path });
+      context.beginPath();
+      context.strokeStyle = resolveColor(relation.color, primary);
+      context.lineWidth = (relation.width || 1.5) + (relation.id === this.#selectedRelation ? 1 : 0) +
+        (this.#hoveredLine === `relation:${relation.id}` ? 1.5 / this.#scale : 0);
+      element.classList.toggle("list-mindmap__relation--hover", this.#hoveredLine === `relation:${relation.id}`);
+      context.setLineDash(relation.dash === false ? [] : [5, 4]);
+      context.stroke(path);
+      context.setLineDash([]);
+      context.beginPath();
+      const direction = Math.atan2(end.y - previous.y, end.x - previous.x);
+      const arrowSize = Math.max(10 / this.scale, (relation.width || 1.5) * 3);
+      context.fillStyle = context.strokeStyle;
+      context.moveTo(end.x - arrowSize * Math.cos(direction - Math.PI / 6), end.y - arrowSize * Math.sin(direction - Math.PI / 6));
+      context.lineTo(end.x, end.y);
+      context.lineTo(end.x - arrowSize * Math.cos(direction + Math.PI / 6), end.y - arrowSize * Math.sin(direction + Math.PI / 6));
+      context.closePath();
+      context.fill();
+      if (labelPoint) {
+        element.style.left = `${labelPoint.x}px`;
+        element.style.top = `${labelPoint.y}px`;
+      }
+    });
+    this.drawRelationPreview(context, primary);
+  }
+  refreshLayout() {
+    if (this.#destroyed || this.#frame) {
+      return;
+    }
+    this.#frame = requestAnimationFrame(() => {
+      this.#frame = 0;
+      if (!this.#viewport.clientWidth || !this.#viewport.clientHeight) {
+        return;
+      }
+      const makeLayoutNode = (id) => {
+        const node = this.#model.nodes.get(id);
+        const element = this.#nodeElements.get(id);
+        return {
+          id,
+          width: Math.max(64, element.offsetWidth),
+          height: Math.max(36, element.offsetHeight),
+          collapsed: this.#folded.get(id) ?? node.collapsed,
+          children: node.children.map(child => makeLayoutNode(child.id)),
+        };
+      };
+      const anchorId = this.#editingId || this.#foldAnchor;
+      const previous = anchorId ? this.#positions.get(anchorId) : undefined;
+      const result = layoutListMindmap(makeLayoutNode(this.#model.root.id));
+      this.#positions = result.nodes;
+      this.#relationRoutes.clear();
+      this.#edges = result.edges;
+      this.#bounds = result;
+      let top = 0;
+      let left = 0;
+      this.#model.metadata.relations.forEach((relation) => {
+        const from = this.#positions.get(relation.from);
+        const to = this.#positions.get(relation.to);
+        if (from && to) {
+          const points = routeMindmapRelation(from, to, this.routingObstacles());
+          this.#relationRoutes.set(relation.id, points);
+          points.forEach(point => {
+            top = Math.min(top, point.y - 24);
+            left = Math.min(left, point.x - 100);
+            this.#bounds.width = Math.max(this.#bounds.width, point.x + 100);
+            this.#bounds.height = Math.max(this.#bounds.height, point.y + 24);
+          });
+        }
+      });
+      if (top < 0 || left < 0) {
+        this.#positions.forEach(position => {
+          position.y -= top;
+          position.x -= left;
+        });
+        this.#relationRoutes.forEach(points => points.forEach(point => {
+          point.x -= left;
+          point.y -= top;
+        }));
+        this.#bounds.height -= top;
+        this.#bounds.width -= left;
+      }
+      this.#nodeElements.forEach((element, id) => {
+        const position = this.#positions.get(id);
+        element.hidden = !position;
+        if (position) {
+          element.style.left = `${position.x}px`;
+          element.style.top = `${position.y - 1}px`;
+        }
+      });
+      const current = anchorId ? this.#positions.get(anchorId) : undefined;
+      if (previous && current) {
+        this.#offsetX += (previous.x - current.x) * this.#scale;
+        this.#offsetY += (previous.y - current.y) * this.#scale;
+      }
+      this.#foldAnchor = undefined;
+      // if (this.#initialFit) {
+      //   this.#initialFit = false;
+      //   this.fit();
+      // } else {
+      //   this.draw();
+      // }
+      this.fit();
+    });
+  }
+  drawRelationPreview(context, color) {
+    const from = this.#positions.get(this.relationFrom);
+    if (!from || !this.#relationPreview) {
+      return;
+    }
+    const target = this.#positions.get(this.#relationPreview.targetId);
+    const route = this.relationPath(undefined, from, target || {
+      id: "", x: this.#relationPreview.x, y: this.#relationPreview.y, width: 0, height: 0,
+    });
+    if (!route) {
+      return;
+    }
+    const { path, end, previous } = route;
+    context.beginPath();
+    context.strokeStyle = color;
+    context.lineWidth = 1.5;
+    context.setLineDash([5, 4]);
+    context.stroke(path);
+    context.setLineDash([]);
+    context.beginPath();
+    const size = Math.max(10 / this.scale, 4.5);
+    const direction = Math.atan2(end.y - previous.y, end.x - previous.x);
+    context.fillStyle = color;
+    context.moveTo(end.x - size * Math.cos(direction - Math.PI / 6), end.y - size * Math.sin(direction - Math.PI / 6));
+    context.lineTo(end.x, end.y);
+    context.lineTo(end.x - size * Math.cos(direction + Math.PI / 6), end.y - size * Math.sin(direction + Math.PI / 6));
+    context.closePath();
+    context.fill();
+  }
+  renderInspector() {
+    this.#inspector.replaceChildren();
+    const lineSelected = !!this.#selectedRelation || !!this.#selectedEdge;
+    this.#inspector.classList.toggle("list-mindmap__inspector--node", !lineSelected);
+    this.#inspector.classList.toggle("list-mindmap__inspector--line", lineSelected);
+    this.#inspector.style.left = "";
+    this.#inspector.style.top = "";
+    const squareButton = (key, icon, action) => {
+      const button = this.makeButton(key, icon, action);
+      button.className = "color__square";
+      button.querySelector("svg").classList.add("svg--mid");
+      return button;
+    };
+    const color = (value, action, key = "color") => {
+      const palette = createElement("div", "list-mindmap__palette");
+      palette.setAttribute("role", "group");
+      palette.setAttribute("aria-label", this.label(key));
+      const colors = [{ label: "default", value: "" }, ...(this.#options.colors?.() || [])];
+      colors.forEach(item => {
+        const button = this.makeButton("color", "", () => action(item.value));
+        const selected = (value || "") === item.value;
+        button.className = "color__square" + (selected ? " color__square--current" : "");
+        button.setAttribute("aria-label", item.label);
+        button.setAttribute("aria-pressed", String(selected));
+        button.style.backgroundColor = item.value || "var(--b3-theme-background)";
+        palette.append(button);
+      });
+      if (this.#options.onManageLineColors) {
+        palette.append(squareButton("manageColors", "iconSettings", this.#options.onManageLineColors));
+      }
+      this.#inspector.append(palette);
+    };
+    if (this.#selectedRelation) {
+      const relation = this.#model.metadata.relations.find(item => item.id === this.selectedRelation);
+      if (!relation) {
+        return;
+      }
+      const change = (patch) => this.#options.onRelationChange?.(relation.id, patch);
+      color(relation.color, value => change({ color: value }));
+      const remove = squareButton("delete", "iconTrashcan", () => this.#options.onRelationDelete?.(relation.id));
+      this.#inspector.append(remove);
+      return;
+    }
+    if (this.#selectedEdge) {
+      const id = this.#selectedEdge;
+      const style = { ...this.#model.metadata.nodes[this.#model.root.id], ...this.#model.metadata.nodes[id] };
+      const change = (patch) => this.#options.onNodeStyle?.(id, patch);
+      color(style.lineColor, value => change({ lineColor: value }));
+      return;
+    }
+    if (!this.#selectedId) {
+      return;
+    }
+    const id = this.#selectedId;
+    const style = this.#model.metadata.nodes[id] || {};
+    const change = (patch) => this.#options.onNodeStyle?.(id, patch);
+    const nodePalette = createElement("div", "fn__flex");
+    nodePalette.setAttribute("role", "group");
+    nodePalette.setAttribute("aria-label", "color");
+    [{ label: "default", color: "", backgroundColor: "" }, ...(this.#options.nodeColors?.() || [])].forEach(item => {
+      const button = this.makeButton("color", "iconFont", () => change({
+        textColor: item.color, backgroundColor: item.backgroundColor,
+      }));
+      const selected = (style.textColor || "") === item.color && (style.backgroundColor || "") === item.backgroundColor;
+      button.className = "color__square" + (selected ? " color__square--current" : "");
+      button.textContent = "A";
+      button.setAttribute("aria-label", item.label);
+      button.setAttribute("aria-pressed", String(selected));
+      button.style.color = item.color;
+      button.style.backgroundColor = item.backgroundColor;
+      nodePalette.append(button);
+    });
+    if (this.#options.onManageNodeColors) {
+      const manage = squareButton("manageColors", "iconSettings", this.#options.onManageNodeColors);
+      nodePalette.append(manage);
+    }
+    this.#inspector.append(nodePalette);
+    const node = this.#model.nodes.get(id);
+    if (node && !node.virtual && node !== this.#model.root) {
+      nodePalette.append(squareButton("delete", "iconTrashcan", () => this.deleteSelection()));
+    }
+  }
+}
+
+
+function isSingleElement(element) {
+  return element.previousElementSibling?.getAttribute('id') === "refreshDoc" && element.nextElementSibling?.getAttribute('id') === "svg"
+}
+
+// 导图
+async function renderMindMap() {
+  const selector = `[data-type="NodeList"][custom-sy-list-mindmap="1"]:not([render])`;
+  const lists = Array.from(document.querySelectorAll(selector));
+  if (lists.length > 0) {
+    if (lists.length === 1 && isSingleElement(lists[0])) {
+      lists[0].classList.add('fullScreen');
+    }
+    lists.forEach(list => {
+      try {
+        list.querySelector('div[data-type="NodeListItem"]')?.setAttribute("style", "display:none;")
+        const model = readListMindmap(list);
+        list.querySelector(":scope > .list-mindmap")?.remove();
+        const host = document.createElement("div");
+        host.className = "list-mindmap";
+        host.contentEditable = "false";
+        list.appendChild(host);
+        new ListMindmapView({ host, model, readOnly: true, labels: "mindmap" });
+        list.setAttribute('render', true);
+      } catch (err) {
+        console.error(err)
+      }
+    })
+  }
+}
+
+// ===============================================================================================================================
+
 // 对预览文档进行渲染
 async function main() {
   await renderBody();
@@ -1929,6 +2923,7 @@ async function main() {
   await avRender();
   await highlight();
   await renderKatex();
+  await renderMindMap();
   await renderMermaid();
   await renderCustomBlock();
   await addRefreshBtn();

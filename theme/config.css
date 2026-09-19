@@ -539,3 +539,174 @@ h1:has(+ .iframe[custom-data-assets*="/assets/ExcalidrawFiles/"]) {
 .table table th {
     vertical-align: top;
 }
+
+
+
+/* 导图======================================================================================== */
+.list-mindmap {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    /* height: 520px; */
+    box-sizing: border-box;
+    overflow: hidden;
+    border-radius: var(--b3-border-radius);
+    color: var(--b3-theme-on-background);
+    text-align: left;
+    font-size: 14px;
+    line-height: 1.5;
+    outline: none;
+    box-shadow: 0 0 2px var(--b3-border-color);
+
+}
+
+.list.fullScreen>.list-mindmap {
+    height: 100%;
+}
+
+.list.fullScreen {
+    height: 100%;
+}
+
+.list:not(.fullScreen)>.list-mindmap {
+    height: 520px;
+}
+
+.list-mindmap__node {
+    position: absolute;
+    min-width: 64px;
+    max-width: 300px;
+    width: max-content;
+    max-width: 420px;
+    min-height: 36px;
+    padding: 7px 12px;
+    box-sizing: border-box;
+    border: 0;
+    border-radius: var(--b3-border-radius);
+    background: rgba(0, 0, 0, 0);
+    color: var(--b3-theme-on-background);
+    font-size: 16px;
+    line-height: 1.5;
+    cursor: grab;
+}
+
+.list-mindmap__viewport {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+}
+
+.list-mindmap__canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.list-mindmap__world {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 0;
+    height: 0;
+    transform-origin: 0 0;
+}
+
+.list-mindmap__fold--closed {
+    visibility: visible;
+}
+
+
+button.block__icon.block__icon--show.list-mindmap__add-child {
+    display: none;
+}
+
+.list-mindmap__add-bridge {
+    position: absolute;
+    left: 100%;
+    top: 0;
+    bottom: 0;
+    width: 26px;
+    visibility: hidden;
+}
+
+.list-mindmap__node--branch>.list-mindmap__add-bridge {
+    width: 38px;
+}
+
+.list-mindmap__node:not(.list-mindmap__node--root)>.list-mindmap__add-bridge {
+    bottom: -11px;
+}
+
+.list-mindmap [hidden] {
+    display: none !important;
+}
+
+.list-mindmap__fold {
+    visibility: hidden;
+    position: absolute;
+    z-index: 1;
+    right: -19px;
+    top: calc(50% - 11px);
+    min-width: 22px;
+    width: 22px;
+    height: 22px;
+    padding: 0px 8px 0 8px;
+    border: 1px solid var(--b3-border-color);
+    border-radius: 50%;
+    background: var(--b3-theme-background);
+    font-size: 10px;
+    box-sizing: border-box;
+    justify-content: center;
+}
+
+.list-mindmap__fold--closed {
+    visibility: visible;
+}
+
+.list-mindmap__relation {
+    position: absolute;
+    max-width: 180px;
+    padding: 2px 6px;
+    overflow: hidden;
+    transform: translate(-50%, -50%);
+    border: 0;
+    border-radius: 10px;
+    background: var(--b3-theme-background);
+    color: var(--b3-theme-primary);
+    font: inherit;
+    font-size: 11px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.list-mindmap__zoom {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    padding: 2px 0px;
+    border-radius: 4px;
+    display: inline-block;
+    flex-shrink: 0;
+    min-width: 34px;
+    color: var(--b3-theme-on-surface);
+    text-align: center;
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+    user-select: none;
+    cursor: default;
+    background-color: var(--b3-theme-primary-lightest)
+}
+
+.list-mindmap .callout {
+    position: relative;
+}
+
+/* 导图======================================================================================== */
