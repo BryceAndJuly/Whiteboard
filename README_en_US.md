@@ -16,7 +16,7 @@
 See the preview image at the top. Test environment: `SiYuan V3.8.5-alpha.4`, `Windows 11`
 
 - Added support for mind map rendering of lists.
-- Style adjustment: Table content aligns to the top edge. (Previously centered)
+- Style adjustment: Table content is aligned to the top. (Previously centered)
 
 Notes on the list mind map mode:
 

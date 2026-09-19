@@ -2554,7 +2554,7 @@ class ListMindmapView {
   fit() {
     const width = this.#viewport.clientWidth;
     const height = this.#viewport.clientHeight;
-    this.#scale = Math.min(1, Math.max(.15, Math.min((width - 64) / this.#bounds.width, (height - 64) / this.#bounds.height)));
+    this.#scale = Math.min(1, Math.max(.15, Math.min((width - 8) / this.#bounds.width, (height - 8) / this.#bounds.height)));
     this.#offsetX = (width - this.#bounds.width * this.#scale) / 2;
     this.#offsetY = (height - this.#bounds.height * this.#scale) / 2;
     this.draw();
