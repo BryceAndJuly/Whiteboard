@@ -2887,9 +2887,6 @@ async function renderMindMap() {
     }
     lists.forEach(list => {
       try {
-        list.querySelectorAll('div[data-type="NodeListItem"]').forEach(item => {
-          item.setAttribute("style", "display:none;")
-        });
         const model = readListMindmap(list);
         list.querySelector(":scope > .list-mindmap")?.remove();
         const host = document.createElement("div");

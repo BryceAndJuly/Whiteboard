@@ -367,7 +367,7 @@ h1:has(+ .iframe[custom-data-assets*="/assets/ExcalidrawFiles/"]) {
 }
 
 /* 任务列表，位置左移 */
-.av__celltext.av__celltext--rich> ul:has(>li.vditor-task) {
+.av__celltext.av__celltext--rich>ul:has(>li.vditor-task) {
     position: relative;
     right: 18px;
 }
@@ -707,6 +707,11 @@ button.block__icon.block__icon--show.list-mindmap__add-child {
 
 .list-mindmap .callout {
     position: relative;
+}
+
+/* 导图模式时，隐藏列表 */
+div[data-type="NodeList"][custom-sy-list-mindmap="1"]>div[data-type="NodeListItem"] {
+    display: none;
 }
 
 /* 导图======================================================================================== */
