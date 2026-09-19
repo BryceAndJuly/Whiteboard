@@ -2673,7 +2673,7 @@ class ListMindmapView {
       context.setLineDash([]);
       context.beginPath();
       const direction = Math.atan2(end.y - previous.y, end.x - previous.x);
-      const arrowSize = Math.max(10 / this.scale, (relation.width || 1.5) * 3);
+      const arrowSize = Math.max(10 / this.#scale, (relation.width || 1.5) * 3);
       context.fillStyle = context.strokeStyle;
       context.moveTo(end.x - arrowSize * Math.cos(direction - Math.PI / 6), end.y - arrowSize * Math.sin(direction - Math.PI / 6));
       context.lineTo(end.x, end.y);
