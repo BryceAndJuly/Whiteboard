@@ -735,6 +735,8 @@ function getViewIcon(type) {
       return "iconGallery";
     case "kanban":
       return "iconBoard";
+    case "list":
+      return "iconList";
   }
 }
 
@@ -833,6 +835,9 @@ function addAttributeViewIcon() {
   <symbol id="iconBoard" viewBox="0 0 32 32">
     <path d="M27.8 4.2h-23.6c-1.623 0-2.95 1.327-2.95 2.95v17.7c0 1.622 1.327 2.95 2.95 2.95h23.6c1.622 0 2.95-1.328 2.95-2.95v-17.7c0-1.623-1.328-2.95-2.95-2.95zM10.1 24.85h-5.9v-17.7h5.9v17.7zM18.95 24.85h-5.9v-17.7h5.9v17.7zM27.8 24.85h-5.9v-17.7h5.9v17.7z"></path>
   </symbol>
+  <symbol id="iconList" viewBox="0 0 32 32">
+    <path d="M7.777 3.929h24.223v3.403h-24.223v-3.403zM7.777 17.701v-3.403h24.223v3.403h-24.223zM7.777 28.071v-3.403h24.223v3.403h-24.223zM2.592 23.777q1.053 0 1.823 0.77t0.77 1.823-0.77 1.823-1.823 0.77-1.823-0.77-0.77-1.823 0.77-1.823 1.823-0.77zM2.592 3.038q1.053 0 1.823 0.729t0.77 1.863-0.77 1.863-1.823 0.729-1.823-0.729-0.77-1.863 0.77-1.863 1.823-0.729zM2.592 13.408q1.053 0 1.823 0.729t0.77 1.863-0.77 1.863-1.823 0.729-1.823-0.729-0.77-1.863 0.77-1.863 1.823-0.729z"></path>
+  </symbol>
 </defs></svg>`
   const svg = document.getElementById("svg");
   svg.insertAdjacentHTML("afterend", icon)
@@ -895,6 +900,7 @@ function getTableHTMLs(data, e) {
   let pinMaxIndex = -1;
   let indexWidth = 0;
   const eWidth = e.clientWidth;
+  let isList = e.dataset.avType === "list" ? true : false;
   data.columns.forEach((item, index) => {
     if (!item.hidden) {
       if (item.pin) {
@@ -955,7 +961,7 @@ style="width: ${column.width || "200px"}">${getCalcValue(column) || `<svg><use x
       if (data.columns[index].hidden) {
         return;
       }
-      // https://github.com/siyuan-note/siyuan/issues/10262
+
       let checkClass = "";
       if (cell.valueType === "checkbox") {
         checkClass = cell.value?.checkbox?.checked ? " av__cell-check" : " av__cell-uncheck";
@@ -964,7 +970,7 @@ style="width: ${column.width || "200px"}">${getCalcValue(column) || `<svg><use x
 data-wrap="${data.columns[index].wrap}" 
 data-dtype="${data.columns[index].type}" 
 ${cell.value?.isDetached ? ' data-detached="true"' : ""} 
-style="width: ${data.columns[index].width || "200px"};${cell.valueType === "number" ? "text-align: right;" : ""}${cell.bgColor ? `background-color:${cell.bgColor};` : ""}${cell.color ? `color:${cell.color};` : ""}">${renderCell(cell.value, rowIndex, data.showIcon)}</div>`;
+style="${isList ? "" : `width: ${data.columns[index].width || "200px;"}`}${cell.valueType === "number" ? "text-align: right;" : ""}${cell.bgColor ? `background-color:${cell.bgColor};` : ""}${cell.color ? `color:${cell.color};` : ""}">${renderCell(cell.value, rowIndex, data.showIcon)}</div>`;
       if (pinIndex === index) {
         contentHTML += "</div>";
       }
@@ -1201,6 +1207,22 @@ async function renderSingleAV(e) {
         ${avBodyHTML}
     </div>
   </div>`;
+        }
+        break;
+      case "list":
+        // 列表视图，分组
+        if (view.groups?.length > 0) {
+          let avBodyHTML = "";
+          view.groups.forEach((group) => {
+            if (group.groupHidden === 0) {
+              avBodyHTML += `${getGroupTitleHTML(group, group.rows.length)}<div data-group-id="${group.id}" data-page-size="${group.pageSize}" data-dtype="${group.groupKey.type}" data-content="${group.groupValue.text?.content}" style="float: left" class="av__body${group.groupFolded ? " fn__none" : ""}">${getTableHTMLs(group, e)}</div>`;
+            }
+          });
+          e.firstElementChild.outerHTML = `<div class="av__container">${genTabHeaderHTML(response.data)}<div class="av__scroll">${avBodyHTML}</div></div>`;
+        } else {
+          // 列表视图，不分组
+          const avBodyHTML = `<div class="av__body" data-group-id="" data-page-size="${view.pageSize}" style="float: left">${getTableHTMLs(view, e)}</div>`;
+          e.firstElementChild.outerHTML = `<div class="av__container">${genTabHeaderHTML(response.data)}<div class="av__scroll">${avBodyHTML}</div></div>`;
         }
         break;
 
@@ -1544,6 +1566,22 @@ function handleAvUpdate(operation) {
               ${avBodyHTML}
           </div>
         </div>`;
+          }
+          break;
+        case "list":
+          // 列表视图，分组
+          if (view.groups?.length > 0) {
+            let avBodyHTML = "";
+            view.groups.forEach((group) => {
+              if (group.groupHidden === 0) {
+                avBodyHTML += `${getGroupTitleHTML(group, group.rows.length)}<div data-group-id="${group.id}" data-page-size="${group.pageSize}" data-dtype="${group.groupKey.type}" data-content="${group.groupValue.text?.content}" style="float: left" class="av__body${group.groupFolded ? " fn__none" : ""}">${getTableHTMLs(group, e)}</div>`;
+              }
+            });
+            e.firstElementChild.outerHTML = `<div class="av__container">${genTabHeaderHTML(response.data)}<div class="av__scroll">${avBodyHTML}</div></div>`;
+          } else {
+            // 列表视图，不分组
+            const avBodyHTML = `<div class="av__body" data-group-id="" data-page-size="${view.pageSize}" style="float: left">${getTableHTMLs(view, e)}</div>`;
+            e.firstElementChild.outerHTML = `<div class="av__container">${genTabHeaderHTML(response.data)}<div class="av__scroll">${avBodyHTML}</div></div>`;
           }
           break;
 

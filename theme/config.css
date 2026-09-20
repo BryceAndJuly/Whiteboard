@@ -714,4 +714,52 @@ div[data-type="NodeList"][custom-sy-list-mindmap="1"]>div[data-type="NodeListIte
     display: none;
 }
 
+/* 被折叠的子节点的数量 */
+.list-mindmap__node:not(.list-mindmap__node--root)>.list-mindmap__fold {
+    top: calc(100% - 10px);
+}
+
 /* 导图======================================================================================== */
+
+
+/* 数据库：列表视图 ============================================================*/
+.av[data-av-type=list] .av__row--header {
+    display: none;
+}
+
+.av[data-av-type=list]>.av__container,
+.av[data-av-type=list] .av__body {
+    width: 100%;
+}
+
+.av[data-av-type=list] .av__row>.av__cell[data-dtype=block] {
+    flex: 1 1 12em;
+    min-width: 8em;
+    max-width: none;
+}
+
+.av[data-av-type=list] .av__row>.av__cell {
+    border-right: 0;
+    border-radius: inherit;
+    flex: 0 1 auto;
+    min-width: 2em;
+    min-height: calc(1.625em + 10px);
+    max-width: 30%;
+    width: auto;
+}
+
+.av[data-av-type=list] .av__row>.av__colsticky {
+    background-color: rgba(0, 0, 0, 0);
+    flex-shrink: 0;
+}
+
+.av[data-av-type=list] .av__row--util,
+.av[data-av-type=list] .av__row--footer {
+    display: none;
+}
+
+.av[data-av-type=list] .av__body:has(+.av__group-title) {
+    margin-bottom: 15px;
+}
+
+/* ======================================================================================== */
