@@ -13,10 +13,11 @@
 
 ### V2.1.12
 
-See the preview image at the top. Test environment: `SiYuan V3.8.5-alpha.4`, `Windows 11`
+See the preview image at the top. Test environment: `SiYuan V3.8.5-beta.1`, `Windows 11`
 
 - Added support for mind map rendering of lists.
 - Style adjustment: Table content is aligned to the top. (Previously centered)
+- Supports rendering the database’s list view.
 
 Notes on the list mind map mode:
 
