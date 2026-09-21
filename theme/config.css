@@ -791,7 +791,7 @@ div[data-type="NodeList"][custom-sy-list-mindmap="1"]>div[data-type="NodeListIte
 }
 
 .av[data-av-type=calendar] .av__calendar-scroll {
-    overflow-x: auto;
+    overflow: hidden;
 }
 
 .av[data-av-type=calendar] .av__calendar-weekdays {
