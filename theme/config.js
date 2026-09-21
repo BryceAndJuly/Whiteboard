@@ -65,6 +65,20 @@ const libs = {
 // 内嵌块中的超链接跳转
 function handleIframeInternalLink() {
   document.addEventListener('click', (e) => {
+    // 数据库日历视图，点击打开某项的属性页面
+    if (e.target.classList.contains("av__calendar-item")) {
+      try {
+        const itemID = e.target.getAttribute('data-calendar-item');
+        const container = e.target.closest('.av');
+        if (container) {
+          const avID = container.getAttribute('data-node-id');
+          const viewID = container.getAttribute('custom-sy-av-view');
+          window.top.openFileByURL(`siyuan://blocks/${avID}?avViewID=${viewID}&avItemID=${itemID}&avStandalone=1`)
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
     // 文档中的超链接
     if (
       e.target.tagName === 'SPAN' &&
@@ -1272,6 +1286,71 @@ async function renderSingleAV(e) {
           e.firstElementChild.outerHTML = `<div class="av__container fn__block">${genTabHeaderHTML(response.data)}<div class="av__kanban">${bodyHTML}</div></div>`;
         }
         break;
+
+      case "calendar":
+        let viewID = e.getAttribute("custom-sy-av-view");
+        let data = response.data;
+        const dateColumn = view.columns.find(field => field.id === view.calendar.dateKeyID && isCalendarDateColumn(field));
+        const state = { anchor: calendarDay(Date.now()), mode: "month", weekStart: 1, expandedWeeks: new Set() };
+        state.weekStart = view.calendar.weekStart;
+        state.dateType = dateColumn?.type;
+        const range = getCalendarRange(state.anchor, state.mode, state.weekStart);
+        const events = [];
+        view.rows.forEach((row, rowIndex) => {
+          const date = row.cells.find(cell => cell.value?.keyID === dateColumn?.id);
+          const interval = getCalendarInterval(date?.value);
+          if (interval) {
+            events.push({ ...interval, row, date, rowIndex });
+          }
+        });
+        const locale = window.top.siyuan.config.lang;
+        const anchor = new Date(state.anchor);
+        const label = state.mode === "month" ? anchor.toLocaleDateString(locale, { year: "numeric", month: "long" }) : `${new Date(range.start).toLocaleDateString(locale)} - ${new Date(addCalendarDays(range.end, -1)).toLocaleDateString(locale)}`;
+        const days = Array.from({ length: 7 }, (_, day) => new Date(addCalendarDays(range.start, day)).toLocaleDateString(locale, { weekday: "short" }));
+        const weekStartDay = new Date(range.start).getDay();
+        let body = "";
+        if (!dateColumn) {
+          return;
+        }
+        for (let start = range.start; start < range.end; start = addCalendarDays(start, 7)) {
+          const segments = packCalendarWeek(events, start);
+          if (data.target?.status === "visible" && segments.some(segment => segment.event.row.id === data.target.itemID)) {
+            state.expandedWeeks.add(start);
+          }
+          const expanded = state.mode === "week" || state.expandedWeeks.has(start);
+          const visible = expanded ? segments : segments.filter(segment => segment.lane < 3);
+          const maxLane = Math.max(0, ...visible.map(segment => segment.lane + 1));
+          const dayHeaders = Array.from({ length: 7 }, (_, day) => {
+            const timestamp = addCalendarDays(start, day);
+            const date = new Date(timestamp);
+            return `<div class="av__calendar-day${date.getMonth() === anchor.getMonth() || state.mode === "week" ? "" : " av__calendar-day--outside"}${calendarDay(Date.now()) === timestamp ? " av__calendar-day--today" : ""}" data-calendar-day="${timestamp}">
+                    <span title="${escapeAttr(date.toLocaleDateString(locale))}">${date.getDate() === 1 ? date.toLocaleDateString(locale, { month: "short", day: "numeric" }) : date.getDate()}</span>
+                    ${dateColumn.type === "date" && date.getFullYear() >= 1 && date.getFullYear() <= 9999 ? `<button type="button" class="block__icon" data-calendar-add="${timestamp}" aria-label="${window.top.siyuan.languages.newRow}"><svg><use xlink:href="#iconAdd"></use></svg></button>` : ""}
+                </div>`;
+          }).join("");
+          const overflow = Array.from({ length: 7 }, (_, day) => {
+            const hidden = segments.filter(segment => segment.lane >= 3 && segment.column <= day && segment.column + segment.span > day).length;
+            return hidden && !expanded ? `<button class="av__calendar-more" data-calendar-expand="${start}" style="grid-column:${day + 1}">${escapeHtml(window.siyuan.languages.calendarMore.replace("${x}", hidden.toString()))}</button>` : "";
+          }).join("");
+          body += `<div class="av__calendar-week" data-calendar-week="${start}"><div class="av__calendar-days">${dayHeaders}</div>
+                <div class="av__calendar-events" style="grid-template-rows:repeat(${Math.max(1, maxLane)},auto)">${visible.map(segment => getEventHTML(segment, view, false)).join("")}</div>
+                ${overflow ? `<div class="av__calendar-overflow">${overflow}</div>` : ""}</div>`;
+        }
+        e.firstElementChild.outerHTML = `<div class="av__container fn__block">
+        ${genTabHeaderHTML(data, false, false, e, false && !!dateColumn)}
+        <div class="av__calendar" contenteditable="false">
+            <div class="av__calendar-toolbar">
+                <span class="av__calendar-label">${escapeHtml(label)}</span>
+            </div>
+            ${dateColumn && dateColumn.type !== "date" ? `<div class="av__calendar-source ft__on-surface">${window.top.siyuan.languages.calendarReadOnlyDate}</div>` : ""}
+            <div class="av__calendar-scroll" data-prevent-swipe="true">
+                ${dateColumn ? `<div class="av__calendar-weekdays">${days.map(day => `<div>${day}</div>`).join("")}</div>` : ""}
+                <div class="av__body av__calendar-grid${dateColumn ? "" : " av__calendar-grid--empty"}" data-group-id="" style="--av-calendar-saturday:${(6 - weekStartDay + 7) % 7};--av-calendar-sunday:${(7 - weekStartDay) % 7};">${body.replaceAll(`background-image:url('assets/`, `background-image:url('${window.top.location.origin}/assets/`).replaceAll(`src="assets/`, `src="${window.top.location.origin}/assets/`)}</div>
+            </div>
+        </div>
+    </div>`;
+
+        break;
     }
     e.setAttribute('render', true);
   })
@@ -1527,18 +1606,20 @@ function handleAvUpdate(operation) {
     })
     return;
   }
-  // 数据表格的其他变更
+  //数据表格的其他变更
   Array.from(document.querySelectorAll(`[data-av-id="${operation.avID}"]`)).forEach(e => {
     request("/api/av/renderAttributeView", {
-      "id": operation.avID,
-      "viewID": operation.id,
+      "id": operation.action === "setAttrViewBlockView" ? operation.avID : e.getAttribute("data-av-id"),
+      "viewID": operation.action === "setAttrViewBlockView" ? operation.id : e.getAttribute("custom-sy-av-view"),
       "query": ""
     }).then(response => {
       const viewType = response.data.viewType;
       const view = response.data.view;
-      e.setAttribute("data-av-id", operation.avID);
-      e.setAttribute("custom-sy-av-view", operation.id)
-      e.setAttribute("data-av-type", viewType)
+      if (operation.action === "setAttrViewBlockView") {
+        e.setAttribute("data-av-id", operation.avID);
+        e.setAttribute("custom-sy-av-view", operation.id)
+        e.setAttribute("data-av-type", viewType);
+      }
       switch (viewType) {
         case "table":
           if (view.groups?.length > 0) {
@@ -1626,6 +1707,70 @@ function handleAvUpdate(operation) {
             });
             e.firstElementChild.outerHTML = `<div class="av__container fn__block">${genTabHeaderHTML(response.data)}<div class="av__kanban">${bodyHTML}</div></div>`;
           }
+          break;
+        case "calendar":
+          let viewID = e.getAttribute("custom-sy-av-view");
+          let data = response.data;
+          const dateColumn = view.columns.find(field => field.id === view.calendar.dateKeyID && isCalendarDateColumn(field));
+          const state = { anchor: calendarDay(Date.now()), mode: "month", weekStart: 1, expandedWeeks: new Set() };
+          state.weekStart = view.calendar.weekStart;
+          state.dateType = dateColumn?.type;
+          const range = getCalendarRange(state.anchor, state.mode, state.weekStart);
+          const events = [];
+          view.rows.forEach((row, rowIndex) => {
+            const date = row.cells.find(cell => cell.value?.keyID === dateColumn?.id);
+            const interval = getCalendarInterval(date?.value);
+            if (interval) {
+              events.push({ ...interval, row, date, rowIndex });
+            }
+          });
+          const locale = window.top.siyuan.config.lang;
+          const anchor = new Date(state.anchor);
+          const label = state.mode === "month" ? anchor.toLocaleDateString(locale, { year: "numeric", month: "long" }) : `${new Date(range.start).toLocaleDateString(locale)} - ${new Date(addCalendarDays(range.end, -1)).toLocaleDateString(locale)}`;
+          const days = Array.from({ length: 7 }, (_, day) => new Date(addCalendarDays(range.start, day)).toLocaleDateString(locale, { weekday: "short" }));
+          const weekStartDay = new Date(range.start).getDay();
+          let body = "";
+          if (!dateColumn) {
+            return;
+          }
+          for (let start = range.start; start < range.end; start = addCalendarDays(start, 7)) {
+            const segments = packCalendarWeek(events, start);
+            if (data.target?.status === "visible" && segments.some(segment => segment.event.row.id === data.target.itemID)) {
+              state.expandedWeeks.add(start);
+            }
+            const expanded = state.mode === "week" || state.expandedWeeks.has(start);
+            const visible = expanded ? segments : segments.filter(segment => segment.lane < 3);
+            const maxLane = Math.max(0, ...visible.map(segment => segment.lane + 1));
+            const dayHeaders = Array.from({ length: 7 }, (_, day) => {
+              const timestamp = addCalendarDays(start, day);
+              const date = new Date(timestamp);
+              return `<div class="av__calendar-day${date.getMonth() === anchor.getMonth() || state.mode === "week" ? "" : " av__calendar-day--outside"}${calendarDay(Date.now()) === timestamp ? " av__calendar-day--today" : ""}" data-calendar-day="${timestamp}">
+                    <span title="${escapeAttr(date.toLocaleDateString(locale))}">${date.getDate() === 1 ? date.toLocaleDateString(locale, { month: "short", day: "numeric" }) : date.getDate()}</span>
+                    ${dateColumn.type === "date" && date.getFullYear() >= 1 && date.getFullYear() <= 9999 ? `<button type="button" class="block__icon" data-calendar-add="${timestamp}" aria-label="${window.top.siyuan.languages.newRow}"><svg><use xlink:href="#iconAdd"></use></svg></button>` : ""}
+                </div>`;
+            }).join("");
+            const overflow = Array.from({ length: 7 }, (_, day) => {
+              const hidden = segments.filter(segment => segment.lane >= 3 && segment.column <= day && segment.column + segment.span > day).length;
+              return hidden && !expanded ? `<button class="av__calendar-more" data-calendar-expand="${start}" style="grid-column:${day + 1}">${escapeHtml(window.siyuan.languages.calendarMore.replace("${x}", hidden.toString()))}</button>` : "";
+            }).join("");
+            body += `<div class="av__calendar-week" data-calendar-week="${start}"><div class="av__calendar-days">${dayHeaders}</div>
+                <div class="av__calendar-events" style="grid-template-rows:repeat(${Math.max(1, maxLane)},auto)">${visible.map(segment => getEventHTML(segment, view, false)).join("")}</div>
+                ${overflow ? `<div class="av__calendar-overflow">${overflow}</div>` : ""}</div>`;
+          }
+          e.firstElementChild.outerHTML = `<div class="av__container fn__block">
+        ${genTabHeaderHTML(data, false, false, e, false && !!dateColumn)}
+        <div class="av__calendar" contenteditable="false">
+            <div class="av__calendar-toolbar">
+                <span class="av__calendar-label">${escapeHtml(label)}</span>
+            </div>
+            ${dateColumn && dateColumn.type !== "date" ? `<div class="av__calendar-source ft__on-surface">${window.top.siyuan.languages.calendarReadOnlyDate}</div>` : ""}
+            <div class="av__calendar-scroll" data-prevent-swipe="true">
+                ${dateColumn ? `<div class="av__calendar-weekdays">${days.map(day => `<div>${day}</div>`).join("")}</div>` : ""}
+                <div class="av__body av__calendar-grid${dateColumn ? "" : " av__calendar-grid--empty"}" data-group-id="" style="--av-calendar-saturday:${(6 - weekStartDay + 7) % 7};--av-calendar-sunday:${(7 - weekStartDay) % 7};">${body.replaceAll(`background-image:url('assets/`, `background-image:url('${window.top.location.origin}/assets/`).replaceAll(`src="assets/`, `src="${window.top.location.origin}/assets/`)}</div>
+            </div>
+        </div>
+    </div>`;
+
           break;
       }
     })

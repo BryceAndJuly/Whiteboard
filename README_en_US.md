@@ -13,11 +13,15 @@
 
 ### V2.1.12
 
-See the preview image at the top. Test environment: `SiYuan V3.8.5-beta.1`, `Windows 11`
+See the preview image at the top. Test environment: `SiYuan V3.8.5-beta.5`, `Windows 11`
 
 - Added support for mind map rendering of lists.
 - Style adjustment: Table content is aligned to the top. (Previously centered)
 - Supports rendering the database’s list view.
+- Support rendering the calendar view (month view) for databases
+
+  - After a card enters interactive mode, clicking a field opens its property panel.
+- Bug fix: Cards on the whiteboard failed to update automatically when database content changed.
 
 Notes on the list mind map mode:
 

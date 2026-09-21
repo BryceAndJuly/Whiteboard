@@ -417,7 +417,7 @@ h1:has(+ .iframe[custom-data-assets*="/assets/ExcalidrawFiles/"]) {
 
 /* 不换行时 */
 .av__cell[data-wrap="false"] .av__celltext--rich {
-    max-height: 2em;
+    max-height: 1.625em;
 }
 
 /* 标题 */
@@ -762,4 +762,200 @@ div[data-type="NodeList"][custom-sy-list-mindmap="1"]>div[data-type="NodeListIte
     margin-bottom: 15px;
 }
 
+/* 修复问题：在白板导出的svg图片中，数据库的列表模式出现小黑点 */
+.av[data-av-type=list] .av__cell[data-wrap=false] {
+    text-overflow: initial;
+}
+
+/* 数据库文本字段，减少第一个子元素的上边距 */
+.av__celltext.av__celltext--rich> :first-child {
+    margin-top: 0 !important;
+}
+
 /* ======================================================================================== */
+
+
+/* 日历视图 =========================================================================================*/
+.av[data-av-type=calendar] .av__calendar {
+    padding-bottom: 8px;
+}
+
+.av[data-av-type=calendar] .av__calendar-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 0;
+    font-size: 12px;
+    line-height: 20px;
+}
+
+.av[data-av-type=calendar] .av__calendar-scroll {
+    overflow-x: auto;
+}
+
+.av[data-av-type=calendar] .av__calendar-weekdays {
+    min-width: 560px;
+    direction: ltr;
+    padding: 8px 0;
+    text-align: center;
+    color: var(--b3-theme-on-surface);
+    font-size: 12px;
+}
+
+.av[data-av-type=calendar] .av__calendar-weekdays,
+.av[data-av-type=calendar] .av__calendar-days,
+.av[data-av-type=calendar] .av__calendar-overflow {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.av[data-av-type=calendar] .av__calendar-grid {
+    min-width: 560px;
+    box-sizing: border-box;
+    border: 1px solid var(--b3-border-color);
+    border-radius: var(--b3-border-radius);
+    direction: ltr;
+}
+
+.av[data-av-type=calendar] .av__calendar-week:first-child {
+    border-top: 0;
+}
+
+.av[data-av-type=calendar] .av__calendar-week {
+    min-height: 130px;
+    border-top: 1px solid var(--b3-border-color);
+    padding-bottom: 6px;
+    background-image: repeating-linear-gradient(to right, transparent, transparent calc(14.2857142857% - 1px), var(--b3-border-color) calc(14.2857142857% - 1px), var(--b3-border-color) 14.2857142857%), linear-gradient(to right, transparent calc(var(--av-calendar-saturday) * 100% / 7), transparent 0, transparent calc((var(--av-calendar-saturday) + 1) * 100% / 7), transparent 0), linear-gradient(to right, transparent calc(var(--av-calendar-sunday) * 100% / 7), transparent 0, transparent calc((var(--av-calendar-sunday) + 1) * 100% / 7), transparent 0);
+}
+
+.av[data-av-type=calendar] .av__calendar-weekdays,
+.av[data-av-type=calendar] .av__calendar-days,
+.av[data-av-type=calendar] .av__calendar-overflow {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.av[data-av-type=calendar] .av__calendar-day--outside {
+    color: var(--b3-theme-on-surface-light);
+    background-color: inherit !important;
+}
+
+.av[data-av-type=calendar] .av__calendar-day {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 30px;
+    padding: 3px 4px;
+    box-sizing: border-box;
+    font-size: 12px;
+    background-color: var(--b3-theme-surface);
+}
+
+.av[data-av-type=calendar] .av__calendar-day>span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-width: 24px;
+    height: 24px;
+    padding: 0 4px;
+    line-height: 24px;
+    text-align: center;
+    border-radius: var(--b3-border-radius);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.av[data-av-type=calendar] .av__calendar-events {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 3px 0;
+    min-height: 24px;
+    align-items: stretch;
+}
+
+.av[data-av-type=calendar] .av__calendar-item--end {
+    border-top-right-radius: var(--b3-border-radius);
+    border-bottom-right-radius: var(--b3-border-radius);
+}
+
+.av[data-av-type=calendar] .av__calendar-item--start {
+    border-top-left-radius: var(--b3-border-radius);
+    border-bottom-left-radius: var(--b3-border-radius);
+}
+
+.av[data-av-type=calendar] .av__calendar-item {
+    position: relative;
+    min-width: 0;
+    margin: 0 2px;
+    padding: 3px 6px;
+    cursor: pointer;
+    font-size: 12px;
+    line-height: 20px;
+    background: color-mix(in srgb, var(--b3-av-calendar-background, var(--b3-theme-primary-lightest)) 50%, var(--b3-theme-background));
+    color: var(--b3-theme-on-background);
+    border: 1px solid rgba(0, 0, 0, 0);
+    outline-offset: -1px;
+}
+
+.av[data-av-type=calendar] .av__calendar-item-content {
+    min-width: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.av[data-av-type=calendar] .av__calendar-time {
+    float: left;
+    margin-right: 4px;
+    font-size: 11px;
+    opacity: .8;
+}
+
+.av[data-av-type=calendar] .av__calendar-field {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    max-height: 64px;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.av[data-av-type=calendar] .av__calendar-field[data-dtype="text"] {
+    align-items: flex-start;
+}
+
+.av[data-av-type=calendar] .av__calendar-week:not(.av__calendar-item) {
+    min-height: 60px;
+}
+
+.av__calendar-week:not(:has(>.av__calendar-days> .av__calendar-day:not(.av__calendar-day--outside))) {
+    display: none;
+}
+
+.av[data-av-type=calendar] .av__calendar-day--today>span {
+    background: var(--b3-theme-primary);
+    color: var(--b3-theme-on-primary);
+}
+
+.av[data-av-type=calendar] .av__calendar-label {
+    font-weight: 600;
+    margin-right: 8px;
+}
+
+.av[data-av-type=calendar] .av__calendar-item:hover,
+.av[data-av-type=calendar] .av__calendar-item:focus-visible {
+    border-color: var(--b3-theme-primary);
+}
+
+
+.av[data-av-type=calendar] .av__calendar-field:not(:empty) {
+    min-height: 20px;
+}
+
+.av[data-av-type=calendar] span.b3-chip.b3-chip--info.b3-chip--small[data-type="block-more"] {
+    display: none;
+}
+
+/* ============================================================================ */
