@@ -1183,6 +1183,113 @@ ${cell.color ? `color:${cell.color};` : ""}">${renderCell(cell.value, rowIndex, 
 </div>`.replaceAll(`background-image:url('assets/`, `background-image:url('${window.top.location.origin}/assets/`).replaceAll(`src="assets/`, `src="${window.top.location.origin}/assets/`);
 };
 
+
+// ==============================================================================================================
+const isCalendarDateColumn = (column) => ["date", "created", "updated"].includes(column?.type);
+const calendarDay = (value) => {
+  const date = new Date(value);
+  date.setHours(0, 0, 0, 0);
+  return date.getTime();
+};
+const addCalendarDays = (value, days) => {
+  const date = new Date(value);
+  date.setDate(date.getDate() + days);
+  return date.getTime();
+};
+const getCalendarRange = (anchor, mode, weekStart) => {
+  const date = new Date(calendarDay(anchor));
+  if (mode === "month") {
+    date.setDate(1);
+  }
+  const start = addCalendarDays(date.getTime(), -((date.getDay() - weekStart + 7) % 7));
+  return {
+    start, end: addCalendarDays(start, mode === "month" ? 42 : 7),
+    timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC"
+  };
+};
+const getCalendarInterval = (value) => {
+  const date = value?.type === "date" ? value.date : value?.type === "created" ? value.created :
+    value?.type === "updated" ? value.updated : undefined;
+  if (!date) {
+    return;
+  }
+  const hasStart = date.isNotEmpty && Number.isFinite(date.content);
+  const hasEnd = value.type === "date" && date.hasEndDate && date.isNotEmpty2 && Number.isFinite(date.content2);
+  if (!hasStart && !hasEnd) {
+    return;
+  }
+  let start = hasStart ? date.content : date.content2;
+  const invalid = !!(hasStart && hasEnd && date.content2 < start);
+  let end = hasStart && hasEnd && !invalid ? date.content2 : start;
+  if (value.type === "date" && date.isNotTime) {
+    start = calendarDay(start);
+    end = addCalendarDays(calendarDay(end), 1);
+  }
+  return { start, end, invalid };
+};
+
+const calendarDayDistance = (from, to) => {
+  const dayUTC = (value) => {
+    const local = new Date(value);
+    const utc = new Date(0);
+    utc.setUTCFullYear(local.getFullYear(), local.getMonth(), local.getDate());
+    return utc.getTime();
+  };
+  return Math.round((dayUTC(to) - dayUTC(from)) / 86400000);
+};
+const packCalendarWeek = (events, start) => {
+  const end = addCalendarDays(start, 7);
+  const lanes = [];
+  const segments = [];
+  events.forEach(event => {
+    if (event.start >= end || (event.end > event.start ? event.end <= start : event.start < start)) {
+      return;
+    }
+    const first = calendarDayDistance(start, event.start);
+    const last = calendarDayDistance(start, Math.max(event.start, event.end - 1));
+    const column = Math.max(0, first);
+    const span = Math.min(6, last) - column + 1;
+    const mask = ((1 << span) - 1) << column;
+    let lane = lanes.findIndex(occupied => (occupied & mask) === 0);
+    if (lane < 0) {
+      lane = lanes.length;
+      lanes.push(0);
+    }
+    lanes[lane] |= mask;
+    segments.push({ event, column, span, lane, starts: first >= 0, ends: last <= 6 });
+  });
+  return segments;
+};
+const getEventHTML = (segment, view, editable) => {
+  const { event, starts, ends } = segment;
+  const primary = event.row.cells.find(cell => cell.value?.type === "block");
+  const colorValue = event.row.cells.find(cell => cell.value?.keyID === view.calendar.colorKeyID)?.value;
+  const colorField = view.columns.find(field => field.id === view.calendar.colorKeyID && field.type === "select");
+  const option = colorField?.options?.find(item => item.name === colorValue?.mSelect?.[0]?.content);
+  const dateValue = event.date.value;
+  const column = view.columns.find(field => field.id === dateValue.keyID);
+  const rawDate = dateValue.type === "date" ? dateValue.date : dateValue.type === "created" ? dateValue.created : dateValue.updated;
+  const showTime = dateValue.type === "date" ? !rawDate.isNotTime : !!column?.[dateValue.type]?.includeTime;
+  const formatTime = (value) => new Date(value).toLocaleTimeString(window.top.siyuan.config.lang, { hour: "2-digit", minute: "2-digit" });
+  const time = showTime ? formatTime(event.start) + (event.end > event.start && calendarDay(event.start) === calendarDay(event.end) ? ` - ${formatTime(event.end)}` : "") : "";
+  const drag = editable && dateValue.type === "date" && !event.invalid;
+  const title = `${primary?.value?.block?.content || window.top.siyuan.languages.untitled}\n${rawDate.formattedContent || ""}${event.invalid ? `\n${window.top.siyuan.languages.calendarInvalidRange}` : ""}`;
+  const fields = event.row.cells.map((cell, index) => {
+    const field = view.columns[index];
+    if (!field || field.hidden) {
+      return "";
+    }
+    return `<div class="av__calendar-field" data-field-id="${field.id}" data-col-id="${field.id}" data-dtype="${field.type}" data-align="${field.align || ""}" data-wrap="${field.wrap}" title="${escapeAttr(field.name)}">${renderCell(cell.value, event.rowIndex || 0, view.showIcon, "calendar", field.options, field.dateFormat, field.renderTemplate, false)}</div>`;
+  }).join("");
+  return `<div class="av__calendar-item${starts ? " av__calendar-item--start" : ""}${ends ? " av__calendar-item--end" : ""}" role="button" tabindex="0" data-calendar-item="${event.row.id}" data-id="${event.row.id}" title="${escapeAttr(title)}" style="grid-column:${segment.column + 1}/span ${segment.span};grid-row:${segment.lane + 1};${option ? getAVColorStyle(option) : ""}">
+        ${drag && starts ? `<span class="av__calendar-resize av__calendar-resize--start" data-calendar-resize="start" title="${window.top.siyuan.languages.calendarResizeStart}"></span>` : ""}
+        ${drag ? `<span class="av__calendar-move" data-calendar-move title="${window.top.siyuan.languages.move}"><svg><use xlink:href="#iconDrag"></use></svg></span>` : ""}
+        <div class="av__calendar-item-content">${time ? `<span class="av__calendar-time">${time}</span>` : ""}${event.invalid ? '<svg class="av__calendar-warning"><use xlink:href="#iconInfo"></use></svg>' : ""}${fields || escapeHtml(primary?.value?.block?.content || window.top.siyuan.languages.untitled)}</div>
+        ${drag && ends ? `<span class="av__calendar-resize av__calendar-resize--end" data-calendar-resize="end" title="${window.top.siyuan.languages.calendarResizeEnd}"></span>` : ""}
+    </div>`;
+};
+
+
 // 渲染单个数据表格
 async function renderSingleAV(e) {
   request("/api/av/renderAttributeView", {
