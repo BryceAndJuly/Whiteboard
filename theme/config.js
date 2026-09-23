@@ -1319,6 +1319,22 @@ const getSavedMode = (blockElement, viewID) => {
   return key && window.top.siyuan.storage?.["local-av-calendar-modes"]?.[key] === "week" ? "week" : "month";
 };
 
+const calendarDate = (year, month, day) => {
+  const date = new Date(0);
+  date.setFullYear(year, month, day);
+  date.setHours(0, 0, 0, 0);
+  return date.getTime();
+};
+const getISOWeek = (value) => {
+  const date = new Date(value);
+  const thursday = addCalendarDays(calendarDay(value), 4 - (date.getDay() || 7));
+  const year = new Date(thursday).getFullYear();
+  const januaryFourth = calendarDate(year, 0, 4);
+  const firstThursday = addCalendarDays(januaryFourth, 4 - (new Date(januaryFourth).getDay() || 7));
+  return { year, week: 1 + calendarDayDistance(firstThursday, thursday) / 7 };
+};
+const getISOWeekForCalendarRow = (start) =>
+  getISOWeek(addCalendarDays(start, (4 - new Date(start).getDay() + 7) % 7));
 // 渲染单个数据表格
 async function renderSingleAV(e, nextAnchor = null) {
   request("/api/av/renderAttributeView", {
@@ -1449,6 +1465,8 @@ async function renderSingleAV(e, nextAnchor = null) {
           return;
         }
         for (let start = range.start; start < range.end; start = addCalendarDays(start, 7)) {
+          const isoWeek = getISOWeekForCalendarRow(start);
+          const weekLabel = `${window.top.siyuan.languages.calendarISOWeek} ${isoWeek.year}-W${String(isoWeek.week).padStart(2, "0")}`;
           const segments = packCalendarWeek(events, start);
           if (data.target?.status === "visible" && segments.some(segment => segment.event.row.id === data.target.itemID)) {
             state.expandedWeeks.add(start);
@@ -1459,7 +1477,8 @@ async function renderSingleAV(e, nextAnchor = null) {
           const dayHeaders = Array.from({ length: 7 }, (_, day) => {
             const timestamp = addCalendarDays(start, day);
             const date = new Date(timestamp);
-            return `<div class="av__calendar-day${date.getMonth() === anchor.getMonth() || state.mode === "week" ? "" : " av__calendar-day--outside"}${calendarDay(Date.now()) === timestamp ? " av__calendar-day--today" : ""}" data-calendar-day="${timestamp}">
+            return `<div class="av__calendar-day ${day === 0 ? " av__calendar-day--first" : ""}${date.getMonth() === anchor.getMonth() || state.mode === "week" ? "" : " av__calendar-day--outside"}${calendarDay(Date.now()) === timestamp ? " av__calendar-day--today" : ""}" data-calendar-day="${timestamp}">
+                    ${day === 0 ? `<span class="av__calendar-week-number" title="${escapeAttr(weekLabel)}">W${String(isoWeek.week).padStart(2, "0")}</span>` : ""}
                     <span title="${escapeAttr(date.toLocaleDateString(locale))}">${date.getDate() === 1 ? date.toLocaleDateString(locale, { month: "short", day: "numeric" }) : date.getDate()}</span>       
                 </div>`;
           }).join("");
@@ -1874,6 +1893,8 @@ function handleAvUpdate(operation) {
             return;
           }
           for (let start = range.start; start < range.end; start = addCalendarDays(start, 7)) {
+          const isoWeek = getISOWeekForCalendarRow(start);
+          const weekLabel = `${window.top.siyuan.languages.calendarISOWeek} ${isoWeek.year}-W${String(isoWeek.week).padStart(2, "0")}`;            
             const segments = packCalendarWeek(events, start);
             if (data.target?.status === "visible" && segments.some(segment => segment.event.row.id === data.target.itemID)) {
               state.expandedWeeks.add(start);
@@ -1884,7 +1905,8 @@ function handleAvUpdate(operation) {
             const dayHeaders = Array.from({ length: 7 }, (_, day) => {
               const timestamp = addCalendarDays(start, day);
               const date = new Date(timestamp);
-              return `<div class="av__calendar-day${date.getMonth() === anchor.getMonth() || state.mode === "week" ? "" : " av__calendar-day--outside"}${calendarDay(Date.now()) === timestamp ? " av__calendar-day--today" : ""}" data-calendar-day="${timestamp}">
+              return `<div class="av__calendar-day ${day === 0 ? " av__calendar-day--first" : ""}${date.getMonth() === anchor.getMonth() || state.mode === "week" ? "" : " av__calendar-day--outside"}${calendarDay(Date.now()) === timestamp ? " av__calendar-day--today" : ""}" data-calendar-day="${timestamp}">
+                    ${day === 0 ? `<span class="av__calendar-week-number" title="${escapeAttr(weekLabel)}">W${String(isoWeek.week).padStart(2, "0")}</span>` : ""}
                     <span title="${escapeAttr(date.toLocaleDateString(locale))}">${date.getDate() === 1 ? date.toLocaleDateString(locale, { month: "short", day: "numeric" }) : date.getDate()}</span>           
                 </div>`;
             }).join("");

@@ -844,7 +844,7 @@ div[data-type="NodeList"][custom-sy-list-mindmap="1"]>div[data-type="NodeListIte
 .av[data-av-type=calendar] .av__calendar-day {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     height: 30px;
     padding: 3px 4px;
     box-sizing: border-box;
@@ -970,4 +970,15 @@ div[data-type="NodeList"][custom-sy-list-mindmap="1"]>div[data-type="NodeListIte
     margin-right: 12px;
 }
 
+.av[data-av-type=calendar] .av__calendar-day>span.av__calendar-week-number {
+    position: absolute;
+    left: -10px;
+    color: var(--b3-theme-on-surface);
+    opacity: 0.5;
+    font-size: 12px;
+}
+
+.av[data-av-type=calendar] .av__calendar-scroll {
+    margin-left: 25px;
+}
 /* ============================================================================ */
