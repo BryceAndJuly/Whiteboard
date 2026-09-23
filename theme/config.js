@@ -897,17 +897,6 @@ function getFieldsByData(data) {
 function genTabHeaderHTML(data, showSearch = false, editable = false) {
   let tabHTML = "";
   let viewData;
-  // let hasFilter = false;
-  // getFieldsByData(data).forEach((item) => {
-  //   if (!hasFilter) {
-  //     data.view.filters.find(filterItem => {
-  //       if (filterItem.value.type === item.type && item.id === filterItem.column) {
-  //         hasFilter = true;
-  //         return true;
-  //       }
-  //     });
-  //   }
-  // });
   data.views.forEach((item) => {
     tabHTML += `<div draggable="true" data-position="north" data-av-type="${item.type}" data-id="${item.id}" data-page="${item.pageSize}" data-desc="${escapeAriaLabel(item.desc || "")}" class="ariaLabel item${item.id === data.viewID ? " item--focus" : ""}">
   ${item.icon ? unicode2Emoji(item.icon, "item__graphic", true) : `<svg class="item__graphic"><use xlink:href="#${getViewIcon(item.type)}"></use></svg>`}
@@ -979,7 +968,6 @@ style="width: ${column.width || "200px"};">${column.icon ? unicode2Emoji(column.
       contentHTML += "</div>";
     }
     if (column.type === "lineNumber") {
-      // lineNumber type 不参与计算操作
       calcHTML += `<div data-col-id="${column.id}" data-dtype="${column.type}" class="av__calc" style="width: ${column.width || "200px"}">&nbsp;</div>`;
     } else {
       calcHTML += `<div class="av__calc${column.calc && column.calc.operator !== "" ? " av__calc--ashow" : ""}" data-col-id="${column.id}" data-dtype="${column.type}" data-operator="${column.calc?.operator || ""}" 
@@ -1472,8 +1460,7 @@ async function renderSingleAV(e, nextAnchor = null) {
             const timestamp = addCalendarDays(start, day);
             const date = new Date(timestamp);
             return `<div class="av__calendar-day${date.getMonth() === anchor.getMonth() || state.mode === "week" ? "" : " av__calendar-day--outside"}${calendarDay(Date.now()) === timestamp ? " av__calendar-day--today" : ""}" data-calendar-day="${timestamp}">
-                    <span title="${escapeAttr(date.toLocaleDateString(locale))}">${date.getDate() === 1 ? date.toLocaleDateString(locale, { month: "short", day: "numeric" }) : date.getDate()}</span>
-                    ${dateColumn.type === "date" && date.getFullYear() >= 1 && date.getFullYear() <= 9999 ? `<button type="button" class="block__icon" data-calendar-add="${timestamp}" aria-label="${window.top.siyuan.languages.newRow}"><svg><use xlink:href="#iconAdd"></use></svg></button>` : ""}
+                    <span title="${escapeAttr(date.toLocaleDateString(locale))}">${date.getDate() === 1 ? date.toLocaleDateString(locale, { month: "short", day: "numeric" }) : date.getDate()}</span>       
                 </div>`;
           }).join("");
           const overflow = Array.from({ length: 7 }, (_, day) => {
@@ -1898,8 +1885,7 @@ function handleAvUpdate(operation) {
               const timestamp = addCalendarDays(start, day);
               const date = new Date(timestamp);
               return `<div class="av__calendar-day${date.getMonth() === anchor.getMonth() || state.mode === "week" ? "" : " av__calendar-day--outside"}${calendarDay(Date.now()) === timestamp ? " av__calendar-day--today" : ""}" data-calendar-day="${timestamp}">
-                    <span title="${escapeAttr(date.toLocaleDateString(locale))}">${date.getDate() === 1 ? date.toLocaleDateString(locale, { month: "short", day: "numeric" }) : date.getDate()}</span>
-                    ${dateColumn.type === "date" && date.getFullYear() >= 1 && date.getFullYear() <= 9999 ? `<button type="button" class="block__icon" data-calendar-add="${timestamp}" aria-label="${window.top.siyuan.languages.newRow}"><svg><use xlink:href="#iconAdd"></use></svg></button>` : ""}
+                    <span title="${escapeAttr(date.toLocaleDateString(locale))}">${date.getDate() === 1 ? date.toLocaleDateString(locale, { month: "short", day: "numeric" }) : date.getDate()}</span>           
                 </div>`;
             }).join("");
             const overflow = Array.from({ length: 7 }, (_, day) => {

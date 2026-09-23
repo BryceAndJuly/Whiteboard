@@ -181,6 +181,10 @@
     mix-blend-mode: multiply;
 }
 
+.av[data-av-type=calendar] .av__calendar-day {
+    background-color: #f6f6f6ad;
+}
+
 /* ----------------------------------------------------------------------- */
 
 /* 文档 */

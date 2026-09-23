@@ -844,12 +844,15 @@ div[data-type="NodeList"][custom-sy-list-mindmap="1"]>div[data-type="NodeListIte
 .av[data-av-type=calendar] .av__calendar-day {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     height: 30px;
     padding: 3px 4px;
     box-sizing: border-box;
     font-size: 12px;
-    background-color: var(--b3-theme-surface);
+}
+
+.av[data-av-type=calendar] .av__calendar-events:not(:has(.av__calendar-item)) {
+    display: none !important;
 }
 
 .av[data-av-type=calendar] .av__calendar-day>span {
@@ -927,7 +930,8 @@ div[data-type="NodeList"][custom-sy-list-mindmap="1"]>div[data-type="NodeListIte
 }
 
 .av[data-av-type=calendar] .av__calendar-week:not(.av__calendar-item) {
-    min-height: 60px;
+    min-height: 30px;
+    padding: 0;
 }
 
 .av__calendar-week:not(:has(>.av__calendar-days> .av__calendar-day:not(.av__calendar-day--outside))) {
@@ -965,4 +969,5 @@ div[data-type="NodeList"][custom-sy-list-mindmap="1"]>div[data-type="NodeListIte
     margin-left: auto;
     margin-right: 12px;
 }
+
 /* ============================================================================ */
