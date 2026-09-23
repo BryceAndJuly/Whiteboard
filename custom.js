@@ -480,7 +480,11 @@ async function handleInput() {
               icon = `<svg class="icon"><use xlink:href="#iconSuper"></use></svg>`
               break;
             case "NodeList":
-              icon = `<svg class="icon"><use xlink:href="#iconList"></use></svg>`
+              if (item?.ial["custom-sy-list-mindmap"] === "1") {
+                icon = `<svg class="icon"><use xlink:href="#iconMindmap"></use></svg>`
+              } else {
+                icon = `<svg class="icon"><use xlink:href="#iconList"></use></svg>`
+              }
               break;
             case "NodeListItem":
               icon = `<svg class="icon"><use xlink:href="#iconListItem"></use></svg>`
