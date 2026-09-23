@@ -751,6 +751,8 @@ function getViewIcon(type) {
       return "iconBoard";
     case "list":
       return "iconList";
+    case "calendar":
+      return "iconCalendar";
   }
 }
 
@@ -851,6 +853,9 @@ function addAttributeViewIcon() {
   </symbol>
   <symbol id="iconList" viewBox="0 0 32 32">
     <path d="M7.777 3.929h24.223v3.403h-24.223v-3.403zM7.777 17.701v-3.403h24.223v3.403h-24.223zM7.777 28.071v-3.403h24.223v3.403h-24.223zM2.592 23.777q1.053 0 1.823 0.77t0.77 1.823-0.77 1.823-1.823 0.77-1.823-0.77-0.77-1.823 0.77-1.823 1.823-0.77zM2.592 3.038q1.053 0 1.823 0.729t0.77 1.863-0.77 1.863-1.823 0.729-1.823-0.729-0.77-1.863 0.77-1.863 1.823-0.729zM2.592 13.408q1.053 0 1.823 0.729t0.77 1.863-0.77 1.863-1.823 0.729-1.823-0.729-0.77-1.863 0.77-1.863 1.823-0.729z"></path>
+  </symbol>
+  <symbol id="iconCalendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M8 2v4"></path><path d="M16 2v4"></path><rect width="18" height="18" x="3" y="4" rx="2"></rect><path d="M3 10h18"></path>
   </symbol>
 </defs></svg>`
   const svg = document.getElementById("svg");
