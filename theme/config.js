@@ -65,6 +65,23 @@ const libs = {
 // 内嵌块中的超链接跳转
 function handleIframeInternalLink() {
   document.addEventListener('click', (e) => {
+    // 数据库日历视图，点击切换到上一周/下一周、上一月/下一月
+    if (e.target.tagName === 'BUTTON' && e.target.classList.contains("calendar__button")) {
+      let mode = e.target.getAttribute("data-mode");
+      let anchor = JSON.parse(e.target.getAttribute("data-anchor"));
+      let action = e.target.getAttribute("data-calendar-action");
+      if (action === "today") {
+        anchor = calendarDay(Date.now());
+      } else if (mode === "week") {
+        anchor = addCalendarDays(anchor, action === "previous" ? -7 : 7);
+      } else {
+        const date = new Date(anchor);
+        date.setDate(1);
+        date.setMonth(date.getMonth() + (action === "previous" ? -1 : 1));
+        anchor = date.getTime();
+      }
+      renderSingleAV(e.target.closest(".av"), anchor)
+    }
     // 数据库日历视图，点击打开某项的属性页面
     if (e.target.classList.contains("av__calendar-item")) {
       try {
@@ -1294,9 +1311,18 @@ const getEventHTML = (segment, view, editable) => {
     </div>`;
 };
 
+// 获取当前视图类型：月视图/周视图
+const getModeKey = (blockElement, viewID) => {
+  const avID = blockElement.getAttribute("data-av-id");
+  return avID && viewID ? `${avID}:${viewID}` : "";
+};
+const getSavedMode = (blockElement, viewID) => {
+  const key = getModeKey(blockElement, viewID);
+  return key && window.top.siyuan.storage?.["local-av-calendar-modes"]?.[key] === "week" ? "week" : "month";
+};
 
 // 渲染单个数据表格
-async function renderSingleAV(e) {
+async function renderSingleAV(e, nextAnchor = null) {
   request("/api/av/renderAttributeView", {
     "id": e.getAttribute("data-av-id"),
     "viewID": e.getAttribute("custom-sy-av-view"),
@@ -1403,7 +1429,7 @@ async function renderSingleAV(e) {
         let viewID = e.getAttribute("custom-sy-av-view");
         let data = response.data;
         const dateColumn = view.columns.find(field => field.id === view.calendar.dateKeyID && isCalendarDateColumn(field));
-        const state = { anchor: calendarDay(Date.now()), mode: "month", weekStart: 1, expandedWeeks: new Set() };
+        const state = { anchor: nextAnchor ? nextAnchor : calendarDay(Date.now()), mode: getSavedMode(e, viewID), weekStart: 1, expandedWeeks: new Set() };
         state.weekStart = view.calendar.weekStart;
         state.dateType = dateColumn?.type;
         const range = getCalendarRange(state.anchor, state.mode, state.weekStart);
@@ -1453,6 +1479,11 @@ async function renderSingleAV(e) {
         <div class="av__calendar" contenteditable="false">
             <div class="av__calendar-toolbar">
                 <span class="av__calendar-label">${escapeHtml(label)}</span>
+                <div class="av__calendar-controls">
+                  <button type="button" class="calendar__button block__icon block__icon--show ariaLabel" data-calendar-action="previous" data-mode="${state.mode}" data-anchor="${JSON.stringify(state.anchor)}" aria-label="${escapeAttr(window.top.siyuan.languages.previous)}"><svg style="pointer-events:none;"><use xlink:href="#iconLeft"></use></svg></button>
+                  <button type="button" class="calendar__button b3-button b3-button--cancel av__calendar-today ariaLabel" data-calendar-action="today" data-mode="${state.mode}" data-anchor="${JSON.stringify(state.anchor)}" aria-label="${escapeAttr(window.top.siyuan.languages.calendarToday)}">${window.top.siyuan.languages.calendarToday}</button>
+                  <button type="button" class="calendar__button block__icon block__icon--show ariaLabel" data-calendar-action="next" data-mode="${state.mode}" data-anchor="${JSON.stringify(state.anchor)}" aria-label="${escapeAttr(window.top.siyuan.languages.next)}"><svg style="pointer-events:none;"><use xlink:href="#iconRight"></use></svg></button>
+                </div>
             </div>
             ${dateColumn && dateColumn.type !== "date" ? `<div class="av__calendar-source ft__on-surface">${window.top.siyuan.languages.calendarReadOnlyDate}</div>` : ""}
             <div class="av__calendar-scroll" data-prevent-swipe="true">

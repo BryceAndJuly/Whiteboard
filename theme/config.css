@@ -958,4 +958,11 @@ div[data-type="NodeList"][custom-sy-list-mindmap="1"]>div[data-type="NodeListIte
     display: none;
 }
 
+.av[data-av-type=calendar] .av__calendar-controls {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: auto;
+    margin-right: 12px;
+}
 /* ============================================================================ */
