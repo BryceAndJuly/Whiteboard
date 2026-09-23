@@ -981,4 +981,12 @@ div[data-type="NodeList"][custom-sy-list-mindmap="1"]>div[data-type="NodeListIte
 .av[data-av-type=calendar] .av__calendar-scroll {
     margin-left: 25px;
 }
+
+.av[data-av-type=calendar] .av__calendar-source {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding-bottom: 8px;
+    font-size: 12px;
+}
 /* ============================================================================ */
