@@ -67,20 +67,24 @@ function handleIframeInternalLink() {
   document.addEventListener('click', (e) => {
     // 数据库日历视图，点击切换到上一周/下一周、上一月/下一月
     if (e.target.tagName === 'BUTTON' && e.target.classList.contains("calendar__button")) {
-      let mode = e.target.getAttribute("data-mode");
-      let anchor = JSON.parse(e.target.getAttribute("data-anchor"));
-      let action = e.target.getAttribute("data-calendar-action");
-      if (action === "today") {
-        anchor = calendarDay(Date.now());
-      } else if (mode === "week") {
-        anchor = addCalendarDays(anchor, action === "previous" ? -7 : 7);
-      } else {
-        const date = new Date(anchor);
-        date.setDate(1);
-        date.setMonth(date.getMonth() + (action === "previous" ? -1 : 1));
-        anchor = date.getTime();
+      try {
+        let mode = e.target.getAttribute("data-mode");
+        let anchor = JSON.parse(e.target.getAttribute("data-anchor"));
+        let action = e.target.getAttribute("data-calendar-action");
+        if (action === "today") {
+          anchor = calendarDay(Date.now());
+        } else if (mode === "week") {
+          anchor = addCalendarDays(anchor, action === "previous" ? -7 : 7);
+        } else {
+          const date = new Date(anchor);
+          date.setDate(1);
+          date.setMonth(date.getMonth() + (action === "previous" ? -1 : 1));
+          anchor = date.getTime();
+        }
+        renderSingleAV(e.target.closest(".av"), anchor);
+      } catch (err) {
+        console.error(err)
       }
-      renderSingleAV(e.target.closest(".av"), anchor)
     }
     // 数据库日历视图，点击打开某项的属性页面
     if (e.target.classList.contains("av__calendar-item")) {
