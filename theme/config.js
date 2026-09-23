@@ -878,6 +878,12 @@ function addAttributeViewIcon() {
   <symbol id="iconCalendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
     <path d="M8 2v4"></path><path d="M16 2v4"></path><rect width="18" height="18" x="3" y="4" rx="2"></rect><path d="M3 10h18"></path>
   </symbol>
+  <symbol id="iconLeft" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <path d="m15 18-6-6 6-6"></path>
+  </symbol>
+  <symbol id="iconRight" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <path d="m9 18 6-6-6-6"></path>
+  </symbol>
 </defs></svg>`
   const svg = document.getElementById("svg");
   svg.insertAdjacentHTML("afterend", icon)
