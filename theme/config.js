@@ -2198,6 +2198,7 @@ async function renderNodeTab() {
         list.appendChild(button);
       })
       header.replaceChildren(list);
+      tab.classList.remove('protyle-wysiwyg--select');
       tab.setAttribute('render', true);
     })
 
