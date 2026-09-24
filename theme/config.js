@@ -1893,8 +1893,8 @@ function handleAvUpdate(operation) {
             return;
           }
           for (let start = range.start; start < range.end; start = addCalendarDays(start, 7)) {
-          const isoWeek = getISOWeekForCalendarRow(start);
-          const weekLabel = `${window.top.siyuan.languages.calendarISOWeek} ${isoWeek.year}-W${String(isoWeek.week).padStart(2, "0")}`;            
+            const isoWeek = getISOWeekForCalendarRow(start);
+            const weekLabel = `${window.top.siyuan.languages.calendarISOWeek} ${isoWeek.year}-W${String(isoWeek.week).padStart(2, "0")}`;
             const segments = packCalendarWeek(events, start);
             if (data.target?.status === "visible" && segments.some(segment => segment.event.row.id === data.target.itemID)) {
               state.expandedWeeks.add(start);
@@ -2299,10 +2299,13 @@ async function renderCustomBlock() {
 
 const isRecord = (value) =>
   !!value && typeof value === "object" && !Array.isArray(value);
+const branchType = (list) => list.getAttribute("data-type") === "NodeMindmap" ? "NodeMindmap" : "NodeList";
+const itemType = (list) => branchType(list) === "NodeMindmap" ? "NodeMindmapItem" : "NodeListItem";
 const directBlocks = (element) => Array.from(element.children).filter(child =>
   child.hasAttribute("data-node-id"));
 const directItems = (list) => directBlocks(list).filter(child =>
-  child.getAttribute("data-type") === "NodeListItem");
+  child.getAttribute("data-type") === itemType(list));
+
 function parseListMindmapMetadata(value) {
   if (value === null) {
     return { version: 1, nodes: Object.create(null), relations: [] };
@@ -2344,8 +2347,8 @@ function parseListMindmapMetadata(value) {
   return data;
 };
 function readListMindmap(list) {
-  if (list.getAttribute("data-type") !== "NodeList" || !list.getAttribute("data-node-id")) {
-    throw new Error("A list mindmap requires a list block");
+  if (!["NodeList", "NodeMindmap"].includes(list.getAttribute("data-type")) || !list.getAttribute("data-node-id")) {
+    throw new Error("A mindmap requires a container block");
   }
   const metadata = parseListMindmapMetadata(list.getAttribute("custom-sy-list-mindmap-data"));
   const nodes = new Map();
@@ -2369,14 +2372,14 @@ function readListMindmap(list) {
         id,
         parentId: current.parent.id,
         element: item,
-        contentBlocks: blocks.filter(block => block.getAttribute("data-type") !== "NodeList"),
+        contentBlocks: blocks.filter(block => block.getAttribute("data-type") !== branchType(list)),
         children: [],
         collapsed: item.getAttribute("fold") === "1",
         virtual: false,
       };
       current.parent.children.push(node);
       nodes.set(id, node);
-      blocks.filter(block => block.getAttribute("data-type") === "NodeList").reverse().forEach(child => {
+      blocks.filter(block => block.getAttribute("data-type") === branchType(list)).reverse().forEach(child => {
         pending.push({ list: child, parent: node });
       });
     }
@@ -3249,10 +3252,16 @@ function isSingleElement(element) {
   return element.previousElementSibling?.getAttribute('id') === "refreshDoc" && element.nextElementSibling?.getAttribute('id') === "svg"
 }
 
+const getListMindmapElements = () => {
+  const selector = `[data-type="NodeMindmap"]:not([render]),[data-type="NodeList"][custom-sy-list-mindmap="1"]:not([render])`;
+  const lists = Array.from(document.querySelectorAll(selector));
+  return lists.filter(list => !list.closest(".mindmap-view") &&
+    !list.parentElement?.closest(selector));
+};
+
 // 导图
 async function renderMindMap() {
-  const selector = `[data-type="NodeList"][custom-sy-list-mindmap="1"]:not([render])`;
-  const lists = Array.from(document.querySelectorAll(selector));
+  const lists = getListMindmapElements();
   if (lists.length > 0) {
     if (lists.length === 1 && isSingleElement(lists[0])) {
       lists[0].classList.add('fullScreen');
@@ -3261,6 +3270,7 @@ async function renderMindMap() {
       try {
         const model = readListMindmap(list);
         list.querySelector(":scope > .list-mindmap")?.remove();
+        list.querySelector(":scope > .mindmap-view")?.remove();
         const host = document.createElement("div");
         host.className = "list-mindmap";
         host.contentEditable = "false";

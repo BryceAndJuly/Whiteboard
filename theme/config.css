@@ -593,15 +593,19 @@ h1:has(+ .iframe[custom-data-assets*="/assets/ExcalidrawFiles/"]) {
 
 }
 
-.list.fullScreen>.list-mindmap {
+.list.fullScreen>.list-mindmap,
+.mindmap.fullScreen>.list-mindmap {
     height: 100%;
 }
 
-.list.fullScreen {
+
+.list.fullScreen,
+.mindmap.fullScreen {
     height: 100%;
 }
 
-.list:not(.fullScreen)>.list-mindmap {
+.list:not(.fullScreen)>.list-mindmap,
+.mindmap:not(.fullScreen)>.list-mindmap {
     height: 520px;
 }
 
@@ -743,6 +747,10 @@ button.block__icon.block__icon--show.list-mindmap__add-child {
 
 /* 导图模式时，隐藏列表 */
 div[data-type="NodeList"][custom-sy-list-mindmap="1"]>div[data-type="NodeListItem"] {
+    display: none;
+}
+/* 导图模式时，隐藏列表 */
+.mindmap[data-type="NodeMindmap"] .mindmap-item {
     display: none;
 }
 
@@ -1021,4 +1029,5 @@ div[data-type="NodeList"][custom-sy-list-mindmap="1"]>div[data-type="NodeListIte
     padding-bottom: 8px;
     font-size: 12px;
 }
+
 /* ============================================================================ */
