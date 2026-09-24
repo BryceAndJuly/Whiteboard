@@ -293,7 +293,7 @@ h1:has(+ .iframe[custom-data-assets*="/assets/ExcalidrawFiles/"]) {
     margin: 2px 0;
     position: relative;
     border: 1px solid var(--b3-border-color);
-    border-radius: var(--b3-border-radius-b);
+    border-radius: 6px;
 }
 
 .tabs .tabs-list {
