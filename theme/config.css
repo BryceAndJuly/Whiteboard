@@ -759,6 +759,11 @@ div[data-type="NodeList"][custom-sy-list-mindmap="1"]>div[data-type="NodeListIte
     top: calc(100% - 10px);
 }
 
+/* 导图模式下，单个列表项不显示标记 */
+.mindmap-item[data-type="NodeMindmapItem"] .protyle-action {
+    display: none;
+}
+
 /* 导图======================================================================================== */
 
 
