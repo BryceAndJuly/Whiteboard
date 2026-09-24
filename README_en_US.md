@@ -5,12 +5,25 @@
 - After updating the widget, it may still load outdated files due to browser caching.Please follow the guide at [Refresh with Caching Disabled](https://github.com/BryceAndJuly/Whiteboard/issues/100) to perform a refresh.
 - When `Auto‑Save` is triggered, the mouse right‑click popup menu will close. If you find this interference too obtrusive, refer to the methods below to disable `Auto‑Save`  by default . (The shortcut to temporarily disable auto‑save is `Alt`+`F`.)
 
-> As a personal tool, the features I need are basically all updated. If you find any bugs while using the widget, you can report them on GitHub, and I’ll try to fix them.
->
-> I hope this little tool can help people with the same needs.
+> Updates are suspended here for now. I will complete the adaptation once the new software features stabilize after this rapid iteration period.
 
 ## 1. Current Version
 
+### V2.1.13
+
+Refer to the preview screenshot at the top. This release mainly fixes bugs and improves compatibility. Test environment: `SiYuan V3.8.5`, `V3.8.6-alpha.4`, `Windows 11`
+
+- Database Calendar Mode:
+
+  - Support week number display. (Ref: [#19754](https://github.com/siyuan-note/siyuan/issues/19754))
+  - Add missing calendar icons.
+  - Remember last opened view (Week View / Month View). (Ref: [#19767](https://github.com/siyuan-note/siyuan/issues/19767))
+  - Add three buttons at the top-right corner: `Previous (Month/Week)`, `Today`, `Next (Month/Week)` for month/week navigation.
+- Bug fix: Abnormal rendering when blank lines exist in database rich text. (Occurs on note app version `V3.8.5` and above)
+- Bug fix: Tab block set to **Left Tabs** still renders as **Top Tabs** on the whiteboard.
+- Compatibility support for mind maps in `SiYuan V3.8.6`. (Ref: [#19750](https://github.com/siyuan-note/siyuan/issues/19750))
+
+---
 ### V2.1.12
 
 See the preview image at the top. Test environment: `SiYuan V3.8.5-beta.5`, `Windows 11`
