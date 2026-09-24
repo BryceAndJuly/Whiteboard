@@ -1923,6 +1923,11 @@ function handleAvUpdate(operation) {
         <div class="av__calendar" contenteditable="false">
             <div class="av__calendar-toolbar">
                 <span class="av__calendar-label">${escapeHtml(label)}</span>
+                <div class="av__calendar-controls">
+                  <button type="button" class="calendar__button block__icon block__icon--show ariaLabel" data-calendar-action="previous" data-mode="${state.mode}" data-anchor="${JSON.stringify(state.anchor)}" aria-label="${escapeAttr(window.top.siyuan.languages.previous)}"><svg style="pointer-events:none;"><use xlink:href="#iconLeft"></use></svg></button>
+                  <button type="button" class="calendar__button b3-button b3-button--cancel av__calendar-today ariaLabel" data-calendar-action="today" data-mode="${state.mode}" data-anchor="${JSON.stringify(state.anchor)}" aria-label="${escapeAttr(window.top.siyuan.languages.calendarToday)}">${window.top.siyuan.languages.calendarToday}</button>
+                  <button type="button" class="calendar__button block__icon block__icon--show ariaLabel" data-calendar-action="next" data-mode="${state.mode}" data-anchor="${JSON.stringify(state.anchor)}" aria-label="${escapeAttr(window.top.siyuan.languages.next)}"><svg style="pointer-events:none;"><use xlink:href="#iconRight"></use></svg></button>
+                </div>
             </div>
             ${dateColumn && dateColumn.type !== "date" ? `<div class="av__calendar-source ft__on-surface">${window.top.siyuan.languages.calendarReadOnlyDate}</div>` : ""}
             <div class="av__calendar-scroll" data-prevent-swipe="true">
