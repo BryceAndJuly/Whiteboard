@@ -751,7 +751,7 @@ div[data-type="NodeList"][custom-sy-list-mindmap="1"]>div[data-type="NodeListIte
 }
 /* 导图模式时，隐藏列表 */
 .mindmap[data-type="NodeMindmap"] .mindmap-item {
-    display: none;
+    display: none !important;
 }
 
 /* 被折叠的子节点的数量 */
