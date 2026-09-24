@@ -2055,6 +2055,23 @@ function handleSetAttrs(operation) {
     }
   });
 }
+
+// 页签块：切换页签项
+function handleUpdateAttrs(operation) {
+  let dom = document.querySelector(`[data-node-id="${operation.id}"]`);
+  if (dom?.getAttribute('data-type') === "NodeTabs") {
+    try {
+      let tabsActiveID = operation?.data?.new['tabs-active-id'];
+      if (tabsActiveID) {
+        dom.removeAttribute('render');
+        dom.setAttribute('tabs-active-id', tabsActiveID);
+        renderNodeTab();
+      }
+    } catch (err) {
+      console.error(err)
+    }
+  }
+}
 // transactions
 function handleEventBus(e) {
   if (e.detail.cmd !== "transactions") {
@@ -2062,6 +2079,9 @@ function handleEventBus(e) {
   }
   let operations = Array.from(e.detail.data[0].doOperations);
   operations.forEach(operation => {
+    if (operation.action === "updateAttrs") {
+      handleUpdateAttrs(operation);
+    }
     if (operation.action === "foldHeading") {
       handleFoldHeading(operation);
     }
@@ -2158,7 +2178,8 @@ async function renderNodeTab() {
         if (item_id === activeID) {
           button.setAttribute("aria-selected", true);
           const itemTitle = item.querySelector(".tab-item-info");
-          itemTitle.classList.add("hidden")
+          itemTitle.classList.add("hidden");
+          item.classList.remove('hidden');
         } else {
           item.classList.add("hidden")
         }
@@ -2168,9 +2189,10 @@ async function renderNodeTab() {
         if (title?.textContent) {
           const clone = title.cloneNode(true);
           clone.className = "tabs-tab-label";
+          clone.setAttribute('title', title.textContent);
           button.appendChild(clone);
         } else {
-          button.innerHTML = '<span class="tabs-tab-label"></span>';
+          button.innerHTML = `<span class="tabs-tab-label" title="${window.parent._languages["tabLabel"]}"></span>`;
           button.firstElementChild.textContent = window.parent._languages["tabLabel"];
         }
         list.appendChild(button);
