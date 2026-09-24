@@ -329,7 +329,7 @@ h1:has(+ .iframe[custom-data-assets*="/assets/ExcalidrawFiles/"]) {
 .tabs .tabs-tab {
     color: var(--b3-theme-on-background);
     border: 1px solid var(--b3-border-color);
-    border-radius: var(--b3-border-radius-b);
+    border-radius: 6px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -347,6 +347,38 @@ h1:has(+ .iframe[custom-data-assets*="/assets/ExcalidrawFiles/"]) {
 .tabs .tabs-header {
     border-bottom: 1px solid var(--b3-theme-background-light);
 }
+
+/* 页签块：左侧页签============================== */
+.tabs[data-tabs-orientation="vertical"] {
+    display: flex;
+}
+
+.tabs[data-tabs-orientation="vertical"] .tabs-list {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+.tabs[data-tabs-orientation="vertical"] .tabs-tab {
+    margin: 0;
+}
+
+.tabs[data-tabs-orientation="vertical"] .tabs-header {
+    border-bottom: none;
+    border-right: 1px solid var(--b3-theme-background-light);
+    padding: 2px;
+}
+
+.tabs .tabs-tab-label {
+    display: block;
+    max-height: 29px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: pre !important;
+}
+
+/* ============================================== */
 
 /* 数据库——文本字段——富文本 ======================================================*/
 .av__celltext.av__celltext--rich {
