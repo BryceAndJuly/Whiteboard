@@ -1077,7 +1077,7 @@ function getGalleryHTML(data) {
   let galleryHTML = "";
   // body
   data.cards.forEach((item, rowIndex) => {
-    galleryHTML += `<div data-id="${item.id}" draggable="true" class="av__gallery-item">`;
+    galleryHTML += `<div data-id="${item.id}" draggable="true" class="av__gallery-item" style="${getConditionalItemStyle(item)}">`;
     if (data.coverFrom !== 0) {
       const coverClass = "av__gallery-cover av__gallery-cover--" + data.cardAspectRatio;
       if (item.coverURL) {
@@ -1173,7 +1173,7 @@ function getKanbanHTML(data) {
   let galleryHTML = "";
   // body
   data.cards.forEach((item, rowIndex) => {
-    galleryHTML += `<div data-id="${item.id}" draggable="true" class="av__gallery-item">`;
+    galleryHTML += `<div data-id="${item.id}" draggable="true" class="av__gallery-item" style="${getConditionalItemStyle(item)}">`;
     if (data.coverFrom !== 0) {
       const coverClass = "av__gallery-cover av__gallery-cover--" + data.cardAspectRatio;
       if (item.coverURL) {
