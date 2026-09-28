@@ -2610,7 +2610,44 @@ function routeMindmapRelation(from, to, nodes, clearance = 12) {
   return [];
 };
 
-
+const layoutListMindmapSummaries = (model, positions, sizes) => {
+  const result = new Map();
+  (model.metadata.summaries || []).forEach(summary => {
+    const size = sizes.get(summary.id);
+    if (!size || !summary.nodeIds.length || summary.nodeIds.some(id => !positions.has(id))) {
+      return;
+    }
+    const siblings = model.nodes.get(summary.parentId)?.children.map(node => node.id) ||
+      (model.list?.dataset.nodeId === summary.parentId ? [model.root.id] : []);
+    const start = siblings.indexOf(summary.nodeIds[0]);
+    if (start < 0 || !summary.nodeIds.every((id, index) => siblings[start + index] === id)) {
+      return;
+    }
+    let right = 0;
+    const pending = [...summary.nodeIds];
+    while (pending.length) {
+      const id = pending.pop();
+      const position = positions.get(id);
+      if (!position) {
+        continue;
+      }
+      right = Math.max(right, position.x + position.width);
+      pending.push(...(model.nodes.get(id)?.children.map(node => node.id) || []));
+    }
+    const nodeCenter = (id) => {
+      const position = positions.get(id);
+      return position.y - (id === model.root.id ? 1 : 3) + position.height / 2;
+    };
+    const top = nodeCenter(summary.nodeIds[0]);
+    const bottom = nodeCenter(summary.nodeIds[summary.nodeIds.length - 1]);
+    const center = (top + bottom) / 2;
+    result.set(summary.id, {
+      id: summary.id, x: right + 36, top, bottom,
+      labelX: right + 60, labelY: center - size.height / 2, ...size
+    });
+  });
+  return result;
+};
 class ListMindmapView {
   #options;
   #model;
@@ -3009,6 +3046,46 @@ class ListMindmapView {
     this.#offsetY = y - (y - this.#offsetY) * next / this.#scale;
     this.#scale = next;
     this.draw();
+  }
+  drawSummaries(context, resolveStyle) {
+    (this.#model.metadata.summaries || []).forEach(summary => {
+      const position = this.#summaryPositions.get(summary.id);
+      const element = this.#summaryElements.get(summary.id);
+      if (!element) {
+        return;
+      }
+      element.hidden = !position;
+      if (!position) {
+        return;
+      }
+      const { x, top, bottom, labelX, labelY } = position;
+      const radius = Math.min(6, (bottom - top) / 2);
+      const path = new Path2D();
+      path.moveTo(x - 10, top);
+      if (bottom > top) {
+        path.lineTo(x - radius, top);
+        path.quadraticCurveTo(x, top, x, top + radius);
+        path.lineTo(x, bottom - radius);
+        path.quadraticCurveTo(x, bottom, x - radius, bottom);
+        path.lineTo(x - 10, bottom);
+        path.moveTo(x, (top + bottom) / 2);
+      }
+      path.lineTo(labelX - 6, (top + bottom) / 2);
+      const selected = this.#selectedSummary === summary.id && !this.#printTransform && !this.#options.printLayout;
+      const hovered = this.#hoveredLine === `summary:${summary.id}` && !this.#printTransform && !this.#options.printLayout;
+      const style = resolveStyle(summary.color, selected, hovered);
+      context.strokeStyle = style.color;
+      context.lineWidth = style.width;
+      context.setLineDash([]);
+      context.stroke(path);
+      this.#linePaths.push({ id: summary.id, relation: false, summary: true, path });
+      element.style.left = `${labelX}px`;
+      element.style.top = `${labelY}px`;
+      element.style.visibility = this.#editingSummary === summary.id ? "hidden" : "";
+      element.classList.toggle("mindmap-view__summary--selected", selected);
+      element.classList.toggle("mindmap-view__node--selected", selected);
+      element.setAttribute("aria-pressed", String(selected));
+    });
   }
   draw() {
     this.#world.style.transform = `translate(${this.#offsetX}px, ${this.#offsetY}px) scale(${this.#scale})`;
