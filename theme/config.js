@@ -890,6 +890,42 @@ function addAttributeViewIcon() {
 
 }
 
+const AV_BUILTIN_COLOR_COUNT = 14;
+const AV_CUSTOM_COLOR_MAX = 78;
+const normalizeAVColorIndex = (color) => {
+  const value = typeof color === "number" ? color.toString() : color;
+  if (!/^\d+$/.test(value)) {
+    return AV_BUILTIN_COLOR_COUNT;
+  }
+  const index = Number(value);
+  return Number.isInteger(index) && index >= 1 && index <= AV_CUSTOM_COLOR_MAX ?
+    index : AV_BUILTIN_COLOR_COUNT;
+};
+const getModeColor = (light, dark) => `light-dark(${light}, ${dark})`;
+const isResolvedColor = (color) => !!color &&
+  /^#[0-9a-f]{6}$/i.test(color.light?.color) && /^#[0-9a-f]{6}$/i.test(color.light?.backgroundColor) &&
+  /^#[0-9a-f]{6}$/i.test(color.dark?.color) && /^#[0-9a-f]{6}$/i.test(color.dark?.backgroundColor);
+const getColorReference = (value) => typeof value === "string" ? {
+  color: value,
+  resolvedColor: undefined,
+} : value;
+const getAVBackgroundColor = (value) => {
+  const reference = getColorReference(value);
+  if (isResolvedColor(reference.resolvedColor)) {
+    return getModeColor(reference.resolvedColor.light.backgroundColor,
+      reference.resolvedColor.dark.backgroundColor);
+  }
+  const index = normalizeAVColorIndex(reference.color || AV_BUILTIN_COLOR_COUNT);
+  return `var(--b3-font-background${index})`;
+};
+const getConditionalBackground = (background) => {
+  return background ? (background.color ? getAVBackgroundColor(background) : "") : "";
+}
+const getConditionalItemStyle = (row) => {
+  const background = getConditionalBackground(row.conditionalColors?.background);
+  return background ? `background:${background};opacity:1;` : "";
+};
+
 function getFieldsByData(data) {
   return data.viewType === "table" ? (data.view).columns : (data.view).fields;
 };
@@ -984,7 +1020,7 @@ style="width: ${column.width || "200px"}">${getCalcValue(column) || `<svg><use x
   contentHTML += `</div>`;
   // body
   data.rows.forEach((row, rowIndex) => {
-    contentHTML += `<div class="av__row" data-id="${row.id}">`;
+    contentHTML += `<div class="av__row${row.conditionalColors ? " av__row--conditional" : ""}" data-id="${row.id}" style="${getConditionalItemStyle(row)}">`;
     if (pinIndex > -1) {
       contentHTML += '<div class="av__colsticky"><div class="av__firstcol"><svg><use xlink:href="#iconUncheck"></use></svg></div>';
     } else {
