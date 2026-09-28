@@ -1035,4 +1035,8 @@ div[data-type="NodeList"][custom-sy-list-mindmap="1"]>div[data-type="NodeListIte
     font-size: 12px;
 }
 
+/* 周数 */
+.av[data-av-type=calendar] span.av__calendar-week-number {
+    background-color: transparent !important;
+}
 /* ============================================================================ */
