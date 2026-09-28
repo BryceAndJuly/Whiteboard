@@ -1042,8 +1042,7 @@ div[data-type="NodeList"][custom-sy-list-mindmap="1"]>div[data-type="NodeListIte
 /* ============================================================================ */
 
 /* 思维导图：概要 */
-.mindmap .mindmap-view__node--summary {
-    position: relative;
+.mindmap .mindmap-view__summary {
     max-width: 240px;
     white-space: normal;
     overflow-wrap: anywhere;
