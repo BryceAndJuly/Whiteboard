@@ -5,9 +5,21 @@
 - After updating the widget, it may still load outdated files due to browser caching.Please follow the guide at [Refresh with Caching Disabled](https://github.com/BryceAndJuly/Whiteboard/issues/100) to perform a refresh.
 - When `Auto‑Save` is triggered, the mouse right‑click popup menu will close. If you find this interference too obtrusive, refer to the methods below to disable `Auto‑Save`  by default . (The shortcut to temporarily disable auto‑save is `Alt`+`F`.)
 
-> Updates are suspended here for now. I will complete the adaptation once the new software features stabilize after this rapid iteration period.
+> As a personal tool, the features I need are basically all updated. If you find any bugs while using the widget, you can report them on GitHub, and I’ll try to fix them.
+>
+> I hope this little tool can help people with the same needs.
 
 ## 1. Current Version
+### V2.1.14
+
+See the preview screenshot at the top. This release mainly addresses compatibility issues.
+Test environment: `SiYuan V3.8.6-beta.2`, `Windows 11`
+
+- Mind map: support for summaries. Ref: [#19871](https://github.com/siyuan-note/siyuan/issues/19871)
+- Mobile mind map: support two-finger pinch-to-zoom. Ref: [#19865](https://github.com/siyuan-note/siyuan/issues/19865)
+- Database views: support conditional background colors. Ref: [#19889](https://github.com/siyuan-note/siyuan/issues/19889)
+
+---
 
 ### V2.1.13
 
@@ -48,14 +60,6 @@ Notes on the list mind map mode:
 
 ---
 
-### V2.1.11
-
-See the preview image at the top. Test environment: `SiYuan V3.8.4-beta.1`, `Windows 11`
-
-- Support rendering custom blocks
-- Fixed text styles and task list styles in the database
-
----
 
 For the current version: 
 

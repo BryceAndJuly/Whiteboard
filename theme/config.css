@@ -364,10 +364,15 @@ h1:has(+ .iframe[custom-data-assets*="/assets/ExcalidrawFiles/"]) {
     margin: 0;
 }
 
-.tabs[data-tabs-orientation="vertical"] .tabs-header {
+.tabs[data-tabs-orientation="vertical"]>.tabs-header {
     border-bottom: none;
     border-right: 1px solid var(--b3-theme-background-light);
     padding: 2px;
+}
+
+.tabs[data-tabs-orientation="horizontal"]>.tabs-header {
+    border-right: none;
+    border-bottom: 1px solid var(--b3-theme-background-light);
 }
 
 .tabs .tabs-tab-label {
