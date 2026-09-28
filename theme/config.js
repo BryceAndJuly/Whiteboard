@@ -2682,6 +2682,10 @@ class ListMindmapView {
   #relationPreview = { x: null, y: null, targetId: "" };
   #editingId;
   #pointer;
+  #pinching = false;
+  #pinch;
+  #routeDragFrame = 0;
+  #endInteraction;
   #pointerCapture;
   #pendingPointerId;
   #linkTimer = 0;
@@ -2729,8 +2733,94 @@ class ListMindmapView {
     this.listen(this.#viewport, "pointerleave", this.pointerUp);
     // 缩放重置为：100%
     this.listen(this.#zoomLabel, "click", () => { this.zoomAt(1) });
+    // 移动端思维导图支持双指缩放
+    this.listen(this.#viewport, "touchstart", this.pinchStart, { passive: false });
+    this.listen(this.#viewport, "touchmove", this.pinchMove, { passive: false });
+    this.listen(this.#viewport, "touchend", this.pinchEnd, { passive: false });
+    this.listen(this.#viewport, "touchcancel", this.pinchEnd, { passive: false });
+    this.listen(window, "blur", () => {
+      this.#pinching = false;
+      this.#pinch = undefined;
+    });
     this.update(this.#model);
   }
+  clearDrop() {
+    if (this.#pointer) {
+      this.#pointer.targetId = undefined;
+      this.#pointer.placement = undefined;
+    }
+    this.#world.querySelectorAll("[data-mindmap-drop]").forEach(element => element.removeAttribute("data-mindmap-drop"));
+  }
+  cancelPointer = () => {
+    cancelAnimationFrame(this.#routeDragFrame);
+    this.#routeDragFrame = 0;
+    this.#pendingPointerId = undefined;
+    this.clearDrop();
+    const pointer = this.#pointer;
+    this.#pointer = undefined;
+    if (pointer && this.#pointerCapture?.hasPointerCapture(pointer.pointerId)) {
+      this.#pointerCapture.releasePointerCapture(pointer.pointerId);
+    }
+    this.#pointerCapture = undefined;
+    this.#endInteraction?.();
+    this.#endInteraction = undefined;
+    this.#ghost?.remove();
+    this.#ghost = undefined;
+    this.#viewport.classList.remove("mindmap-view__viewport--dragging");
+    this.#nodeElements.forEach(element => element.classList.remove("mindmap-view__node--dragging"));
+    if (pointer?.relation) {
+      if (pointer.relation.endpoint) {
+        this.#nodeElements.forEach(element => element.classList.remove("mindmap-view__node--relation"));
+      }
+      this.#relationRoutes.set(pointer.relation.id, pointer.relation.points);
+      this.draw();
+      this.refreshLayout();
+    }
+  };
+
+  pinchStart = (event) => {
+    if (event.touches.length !== 2 || Array.from(event.touches).some(touch =>
+      !this.#viewport.contains(touch.target) ||
+      (touch.target).closest("button, input, select, textarea, audio, video, iframe, .mindmap-view__node--editing"))) {
+      this.#pinch = undefined;
+      return;
+    }
+    event.preventDefault();
+    this.cancelPointer();
+    clearTimeout(this.#linkTimer);
+    this.#suppressLinkClick = true;
+    this.#pinching = true;
+    const [first, second] = Array.from(event.touches);
+    this.#pinch = { distance: Math.hypot(first.clientX - second.clientX, first.clientY - second.clientY), scale: this.#scale };
+  };
+
+  pinchMove = (event) => {
+    if (!this.#pinching) {
+      return;
+    }
+    event.preventDefault();
+    if (!this.#pinch || event.touches.length !== 2 || this.#pinch?.distance === 0) {
+      return;
+    }
+    const [first, second] = Array.from(event.touches);
+    const bounds = this.#viewport.getBoundingClientRect();
+    this.zoomAt(this.#pinch.scale * Math.hypot(first.clientX - second.clientX, first.clientY - second.clientY) /
+      this.#pinch.distance, (first.clientX + second.clientX) / 2 - bounds.left,
+      (first.clientY + second.clientY) / 2 - bounds.top);
+  };
+
+  pinchEnd = (event) => {
+    if (!this.#pinching) {
+      return;
+    }
+    event.preventDefault();
+    this.#pinch = undefined;
+    if (event.touches.length === 0) {
+      this.#pinching = false;
+    } else if (event.touches.length === 2) {
+      this.pinchStart(event);
+    }
+  };
   pointerDown = (event) => {
     event.preventDefault();
     this.#pointer = {
