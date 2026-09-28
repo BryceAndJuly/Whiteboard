@@ -1040,3 +1040,11 @@ div[data-type="NodeList"][custom-sy-list-mindmap="1"]>div[data-type="NodeListIte
     background-color: transparent !important;
 }
 /* ============================================================================ */
+
+/* 思维导图：概要 */
+.mindmap .mindmap-view__node--summary {
+    position: relative;
+    max-width: 240px;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}

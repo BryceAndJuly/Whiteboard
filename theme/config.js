@@ -2403,6 +2403,10 @@ function layoutListMindmap(root, options = {}) {
   const horizontalGap = options.horizontalGap ?? 40;
   const verticalGap = options.verticalGap ?? 24;
   const padding = options.padding ?? 32;
+  const gapBefore = (id) => Math.max(verticalGap, options.verticalGaps?.get(id) || 0);
+  if ([horizontalGap, verticalGap, padding].some(value => !Number.isFinite(value) || value < 0)) {
+    throw new Error("Invalid list mindmap layout spacing");
+  }
   if ([horizontalGap, verticalGap, padding].some(value => !Number.isFinite(value) || value < 0)) {
     throw new Error("Invalid list mindmap layout spacing");
   }
@@ -2427,6 +2431,20 @@ function layoutListMindmap(root, options = {}) {
   const heights = new Map();
   [...ordered].reverse().forEach(({ node }) => {
     const children = node.collapsed ? [] : node.children;
+    (options.summaries || []).forEach(summary => {
+      const start = children.findIndex(child => child.id === summary.nodeIds[0]);
+      if (start < 0 || !summary.nodeIds.every((id, index) => children[start + index]?.id === id)) {
+        return;
+      }
+      const total = summary.nodeIds.reduce((sum, id, index) => sum + heights.get(id) + (index ? gapBefore(id) : 0), 0);
+      if (summary.height + 16 > total) {
+        const extra = (summary.height + 16 - total) / 2;
+        const first = summary.nodeIds[0];
+        const last = summary.nodeIds[summary.nodeIds.length - 1];
+        heights.set(first, heights.get(first) + extra);
+        heights.set(last, heights.get(last) + extra);
+      }
+    });
     const childHeight = children.reduce((sum, child) => sum + heights.get(child.id), 0) +
       Math.max(0, children.length - 1) * verticalGap;
     heights.set(node.id, Math.max(node.height, childHeight));
@@ -2618,6 +2636,11 @@ class ListMindmapView {
   #finishRelationEdit;
   #linePaths = [];
   #relationRoutes = new Map();
+  #summaryElements = new Map();
+  #summaryPositions = new Map();
+  #summaryFrom;
+  #selectedSummary;
+  #editingSummary;
   #relationFrom;
   #relationPreview = { x: null, y: null, targetId: "" };
   #editingId;
@@ -2794,6 +2817,7 @@ class ListMindmapView {
       this.#inspector.hidden = true;
     }
     this.updateRelations();
+    this.updateSummaries();
     this.updateSelection();
     this.renderInspector();
     this.refreshLayout();
@@ -2920,6 +2944,28 @@ class ListMindmapView {
       element.style.color = relation.color || "";
     });
   }
+  updateSummaries() {
+    this.#summaryElements.forEach((element, id) => {
+      if (!this.#model.metadata.summaries?.some(summary => summary.id === id)) {
+        element.remove();
+        this.#summaryElements.delete(id);
+      }
+    });
+    (this.#model.metadata.summaries || []).forEach(summary => {
+      let element = this.#summaryElements.get(summary.id);
+      if (!element) {
+        element = createElement("div", "mindmap-view__node list-mindmap__node mindmap-view__summary");
+        element.setAttribute("role", "button");
+        element.tabIndex = 0;
+        element.dataset.summaryId = summary.id;
+        this.#summaryElements.set(summary.id, element);
+        this.#world.append(element);
+      }
+      element.textContent = summary.label || "Summary";
+      element.setAttribute("aria-label", element.textContent);
+      element.style.color = summary.color || "";
+    });
+  }
   routingObstacles() {
     return [...this.#positions.values()].map(node => ({
       ...node,
@@ -2988,6 +3034,15 @@ class ListMindmapView {
     const defaultLine = theme.getPropertyValue("--b3-border-color").trim() || "#a8adb5";
     const primary = theme.getPropertyValue("--b3-theme-primary").trim() || "#3574f0";
     const colors = new Map();
+    const readLineStyles = (type) => ["", "hover-", "selected-"].map(state => {
+      const prefix = `--b3-mindmap-${type}-${state}`;
+      const width = Number(theme.getPropertyValue(`${prefix}width`).trim().replace(/px$/, ""));
+      return {
+        color: theme.getPropertyValue(`${prefix}color`).trim(),
+        width: Number.isFinite(width) && width > 0 ? width : undefined,
+      };
+    });
+    const summaryStyles = readLineStyles("summary");
     const resolveColor = (value, fallback) => {
       const key = value || fallback;
       if (!colors.has(key)) {
@@ -2998,6 +3053,17 @@ class ListMindmapView {
         colors.set(key, getComputedStyle(this.#colorProbe).color);
       }
       return colors.get(key);
+    };
+    const resolveLineStyle = (styles, color, width, fallback,
+      selected, hovered) => {
+      const baseColor = resolveColor(styles[0].color, fallback);
+      const baseWidth = width || styles[0].width || 1.5;
+      const stateStyle = selected ? styles[2] : hovered ? styles[1] : undefined;
+      return {
+        color: resolveColor(color, resolveColor(stateStyle?.color, baseColor)),
+        width: stateStyle?.width ?? baseWidth + (selected ? 1 : 0) + (hovered ? 1.5 / this.scale : 0),
+        baseWidth,
+      };
     };
     this.#edges.forEach((edge) => {
       const from = this.#positions.get(edge.from);
@@ -3061,6 +3127,8 @@ class ListMindmapView {
       }
     });
     this.drawRelationPreview(context, primary);
+    this.drawSummaries(context, (color, selected, hovered) =>
+      resolveLineStyle(summaryStyles, color, undefined, defaultLine, selected, hovered));
   }
   refreshLayout() {
     if (this.#destroyed || this.#frame) {
@@ -3084,13 +3152,27 @@ class ListMindmapView {
       };
       const anchorId = this.#editingId || this.#foldAnchor;
       const previous = anchorId ? this.#positions.get(anchorId) : undefined;
-      const result = layoutListMindmap(makeLayoutNode(this.#model.root.id));
+      const summarySizes = new Map();
+      this.#summaryElements.forEach((element, id) => {
+        element.hidden = false;
+        summarySizes.set(id, { width: Math.max(1, element.offsetWidth), height: Math.max(1, element.offsetHeight) });
+      });
+      const summaries = (this.#model.metadata.summaries || []).map(summary => ({
+        nodeIds: summary.nodeIds, height: summarySizes.get(summary.id)?.height || 0,
+      }));
+      const result = layoutListMindmap(makeLayoutNode(this.#model.root.id), { summaries });
       this.#positions = result.nodes;
+      this.#summaryPositions = layoutListMindmapSummaries(this.#model, this.#positions, summarySizes);
       this.#relationRoutes.clear();
       this.#edges = result.edges;
       this.#bounds = result;
       let top = 0;
       let left = 0;
+      this.#summaryPositions.forEach(position => {
+        top = Math.min(top, position.top - 32, position.labelY - 32);
+        this.#bounds.width = Math.max(this.#bounds.width, position.labelX + position.width + 32);
+        this.#bounds.height = Math.max(this.#bounds.height, position.bottom + 32, position.labelY + position.height + 32);
+      });
       this.#model.metadata.relations.forEach((relation) => {
         const from = this.#positions.get(relation.from);
         const to = this.#positions.get(relation.to);
@@ -3114,6 +3196,13 @@ class ListMindmapView {
           point.x -= left;
           point.y -= top;
         }));
+        this.#summaryPositions.forEach(position => {
+          position.x -= left;
+          position.labelX -= left;
+          position.top -= top;
+          position.bottom -= top;
+          position.labelY -= top;
+        });
         this.#bounds.height -= top;
         this.#bounds.width -= left;
       }
