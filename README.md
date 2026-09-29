@@ -13,7 +13,7 @@
 ## 一、当前版本
 ### V2.1.14
 
-见顶部预览图，主要处理兼容性。测试环境：`SiYuan V3.8.6-beta.2` 、`Windows 11`
+见顶部预览图，主要处理兼容性。测试环境：`SiYuan V3.8.6` 、`Windows 11`
 
 - 思维导图支持概要。参考：[#19871](https://github.com/siyuan-note/siyuan/issues/19871)
 - 移动端思维导图支持双指缩放。参考：[#19865](https://github.com/siyuan-note/siyuan/issues/19865)

@@ -489,6 +489,12 @@ async function handleInput() {
             case "NodeListItem":
               icon = `<svg class="icon"><use xlink:href="#iconListItem"></use></svg>`
               break;
+            case "NodeMindmap":
+              icon = `<svg class="icon"><use xlink:href="#iconMindmap"></use></svg>`
+              break;
+            case "NodeMindmapItem":
+              icon = `<svg class="icon"><use xlink:href="#iconListItem"></use></svg>`
+              break;
             case "NodeTabs":
               icon = `<svg class="icon"><use xlink:href="#iconTabs"></use></svg>`
               break;

@@ -13,7 +13,7 @@
 ### V2.1.14
 
 See the preview screenshot at the top. This release mainly addresses compatibility issues.
-Test environment: `SiYuan V3.8.6-beta.2`, `Windows 11`
+Test environment: `SiYuan V3.8.6`, `Windows 11`
 
 - Mind map: support for summaries. Ref: [#19871](https://github.com/siyuan-note/siyuan/issues/19871)
 - Mobile mind map: support two-finger pinch-to-zoom. Ref: [#19865](https://github.com/siyuan-note/siyuan/issues/19865)
