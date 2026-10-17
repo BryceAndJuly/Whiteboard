@@ -2353,7 +2353,7 @@ function parseListMindmapMetadata(value) {
   } catch {
     throw new Error("Invalid list mindmap metadata");
   }
-  if (!isRecord(data) || data.version !== 1 || !isRecord(data.nodes) || !Array.isArray(data.relations)) {
+  if (!isRecord(data) || (data.version !== 1 && data.version !== 2) || !isRecord(data.nodes) || !Array.isArray(data.relations)) {
     throw new Error("Invalid list mindmap metadata");
   }
   const stringKeys = ["textColor", "backgroundColor", "borderColor", "lineColor"];
@@ -2646,10 +2646,27 @@ function routeMindmapRelation(from, to, nodes, clearance = 12) {
   }
   return [];
 };
-
+const getListMindmapSummaryCoverage = (model, nodeIds) => {
+  const covered = new Set();
+  const pending = [...nodeIds];
+  while (pending.length) {
+    const id = pending.pop();
+    if (covered.has(id)) {
+      continue;
+    }
+    covered.add(id);
+    pending.push(...(model.nodes.get(id)?.children.map(node => node.id) || []));
+  }
+  return covered;
+};
 const layoutListMindmapSummaries = (model, positions, sizes) => {
   const result = new Map();
-  (model.metadata.summaries || []).forEach(summary => {
+  const coverage = new Map((model.metadata.summaries || []).map(summary =>
+    [summary.id, getListMindmapSummaryCoverage(model, summary.nodeIds)]));
+  const ordered = [...(model.metadata.summaries || [])].sort((a, b) =>
+    coverage.get(a.id).size - coverage.get(b.id).size || a.id.localeCompare(b.id));
+
+  ordered.forEach(summary => {
     const size = sizes.get(summary.id);
     if (!size || !summary.nodeIds.length || summary.nodeIds.some(id => !positions.has(id))) {
       return;
@@ -2661,25 +2678,28 @@ const layoutListMindmapSummaries = (model, positions, sizes) => {
       return;
     }
     let right = 0;
-    const pending = [...summary.nodeIds];
-    while (pending.length) {
-      const id = pending.pop();
+    let top = Infinity;
+    let bottom = -Infinity;
+    const members = coverage.get(summary.id);
+    members.forEach(id => {
       const position = positions.get(id);
       if (!position) {
-        continue;
+        return;
       }
       right = Math.max(right, position.x + position.width);
-      pending.push(...(model.nodes.get(id)?.children.map(node => node.id) || []));
-    }
-   const nodeCenter = (id, isBottom = false) => {
-      const position = positions.get(id);
-      if (isBottom) {
-        return position.y - (id === model.root.id ? 1 : 3) + position.height;
+      const y = position.y - (id === model.root.id ? 1 : 3);
+      top = Math.min(top, y);
+      bottom = Math.max(bottom, y + position.height);
+    });
+    result.forEach(inner => {
+      if ([...coverage.get(inner.id)].every(id => members.has(id))) {
+        right = Math.max(right, inner.labelX + inner.width);
+        top = Math.min(top, inner.top, inner.labelY);
+        bottom = Math.max(bottom, inner.bottom, inner.labelY + inner.height);
       }
-      return position.y - (id === model.root.id ? 1 : 3);
-    };
-    const top = nodeCenter(summary.nodeIds[0]);
-    const bottom = nodeCenter(summary.nodeIds[summary.nodeIds.length - 1], true);
+    });
+    top -= 8;
+    bottom += 8;
     const center = (top + bottom) / 2;
     result.set(summary.id, {
       id: summary.id, x: right + 36, top, bottom,
