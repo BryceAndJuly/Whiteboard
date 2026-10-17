@@ -2671,12 +2671,15 @@ const layoutListMindmapSummaries = (model, positions, sizes) => {
       right = Math.max(right, position.x + position.width);
       pending.push(...(model.nodes.get(id)?.children.map(node => node.id) || []));
     }
-    const nodeCenter = (id) => {
+   const nodeCenter = (id, isBottom = false) => {
       const position = positions.get(id);
-      return position.y - (id === model.root.id ? 1 : 3) + position.height / 2;
+      if (isBottom) {
+        return position.y - (id === model.root.id ? 1 : 3) + position.height;
+      }
+      return position.y - (id === model.root.id ? 1 : 3);
     };
     const top = nodeCenter(summary.nodeIds[0]);
-    const bottom = nodeCenter(summary.nodeIds[summary.nodeIds.length - 1]);
+    const bottom = nodeCenter(summary.nodeIds[summary.nodeIds.length - 1], true);
     const center = (top + bottom) / 2;
     result.set(summary.id, {
       id: summary.id, x: right + 36, top, bottom,
