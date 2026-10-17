@@ -1064,3 +1064,8 @@ div[data-type="NodeList"][custom-sy-list-mindmap="1"]>div[data-type="NodeListIte
     width: 100% !important;
     height: 520px !important;
 }
+
+/* 日历视图，空字段需要隐藏，比如【位置】字段 */
+.av__calendar-field:has(>span.av__celltext:empty) {
+    display: none;
+}
