@@ -11,6 +11,17 @@
 > 希望这个小工具能帮助到有同样需求的人。
 
 ## 一、当前版本
+### V2.1.15
+
+见顶部预览图，主要处理兼容性。测试环境：`SiYuan V3.8.7` 、`SiYuan V3.8.8-alpha.3`、`Windows 11`
+
+- 思维导图`概要`功能优化，参考：[#20065](https://github.com/siyuan-note/siyuan/issues/20065)
+
+  - 概要括号覆盖完整可见子树。
+  - 支持单节点概要和嵌套概要
+- 兼容数据库`位置`字段，参考：[#20325](https://github.com/siyuan-note/siyuan/issues/20325)
+
+---
 ### V2.1.14
 
 见顶部预览图，主要处理兼容性。测试环境：`SiYuan V3.8.6` 、`Windows 11`

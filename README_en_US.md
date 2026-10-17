@@ -10,6 +10,17 @@
 > I hope this little tool can help people with the same needs.
 
 ## 1. Current Version
+### V2.1.15
+
+See the preview image at the top. This update mainly addresses compatibility issues. Test environments: `SiYuan V3.8.7`, `SiYuan V3.8.8-alpha.3`, `Windows 11`
+
+- Optimized the mind map `Summary` feature, reference: [#20065](https://github.com/siyuan-note/siyuan/issues/20065)
+
+  - Summary brackets fully cover the visible subtree.
+  - Support for single-node summaries and nested summaries.
+- Compatibility support for the database `Location` field, reference: [#20325](https://github.com/siyuan-note/siyuan/issues/20325)
+
+---
 ### V2.1.14
 
 See the preview screenshot at the top. This release mainly addresses compatibility issues.
