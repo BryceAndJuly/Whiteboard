@@ -606,7 +606,7 @@ h1:has(+ .iframe[custom-data-assets*="/assets/ExcalidrawFiles/"]) {
 
 .list.fullScreen,
 .mindmap.fullScreen {
-    height: 100%;
+    height: 100% !important;
     width: 100% !important;
 }
 
