@@ -607,6 +607,11 @@ h1:has(+ .iframe[custom-data-assets*="/assets/ExcalidrawFiles/"]) {
 .list.fullScreen,
 .mindmap.fullScreen {
     height: 100%;
+    width: 100% !important;
+}
+
+.protyle-wysiwyg:has(.mindmap.fullScreen) {
+    overflow: hidden;
 }
 
 .list:not(.fullScreen)>.list-mindmap,
