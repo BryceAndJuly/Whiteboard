@@ -759,6 +759,7 @@ button.block__icon.block__icon--show.list-mindmap__add-child {
 div[data-type="NodeList"][custom-sy-list-mindmap="1"]>div[data-type="NodeListItem"] {
     display: none;
 }
+
 /* 导图模式时，隐藏列表 */
 .mindmap[data-type="NodeMindmap"] .mindmap-item {
     display: none !important;
@@ -1049,6 +1050,7 @@ div[data-type="NodeList"][custom-sy-list-mindmap="1"]>div[data-type="NodeListIte
 .av[data-av-type=calendar] span.av__calendar-week-number {
     background-color: transparent !important;
 }
+
 /* ============================================================================ */
 
 /* 思维导图：概要 */
@@ -1056,4 +1058,9 @@ div[data-type="NodeList"][custom-sy-list-mindmap="1"]>div[data-type="NodeListIte
     max-width: 240px;
     white-space: normal;
     overflow-wrap: anywhere;
+}
+
+.mindmap:not(.fullScreen) {
+    width: 100% !important;
+    height: 520px !important;
 }
