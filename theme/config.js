@@ -355,6 +355,8 @@ function getColIconByType(type) {
       return "iconEmail";
     case "phone":
       return "iconPhone";
+    case "location":
+      return "iconMapPin";
     case "template":
       return "iconMath";
     case "checkbox":
@@ -551,6 +553,21 @@ function getAVTextSource(value) {
   };
 }
 
+const hasAVLocationCoordinates = (location) => {
+  return typeof location.latitude === "number" && Number.isFinite(location.latitude) &&
+    location.latitude >= -90 && location.latitude <= 90 &&
+    typeof location.longitude === "number" && Number.isFinite(location.longitude) &&
+    location.longitude >= -180 && location.longitude <= 180;
+};
+
+const formatLocationText = (location) => {
+  const name = location?.name?.trim() || "";
+  if (!hasAVLocationCoordinates(location)) {
+    return name;
+  }
+  return `${name} ${location.longitude}, ${location.latitude}`;
+};
+
 
 function renderCell(cellValue, rowIndex = 0, showIcon = true, type = "table") {
   let text = "";
@@ -628,7 +645,11 @@ function renderCell(cellValue, rowIndex = 0, showIcon = true, type = "table") {
     } else {
       text = `<span class="av__celltext">${cellValue ? window.top.Lute.EscapeHTMLStr(cellValue.text.content || "") : ""}</span>`;
     }
-  } else if (["email", "phone"].includes(cellValue.type)) {
+  }
+  else if (cellValue.type === "location") {
+    text = `<span class="av__celltext">${cellValue ? window.top.Lute.EscapeHTMLStr(formatLocationText(cellValue.location) || "") : ""}</span>`;
+  }
+  else if (["email", "phone"].includes(cellValue.type)) {
     text = `<span class="av__celltext av__celltext--url" data-type="${cellValue.type}">${cellValue ? window.top.Lute.EscapeHTMLStr(cellValue[cellValue.type].content || "") : ""}</span>`;
   } else if ("url" === cellValue.type) {
     text = renderCellURL(cellValue?.url?.content || "");
@@ -722,6 +743,9 @@ function cellValueIsEmpty(value) {
   if (value.type === "checkbox") {
     return false;
   }
+  if (value.type === "location") {
+    return !value.location?.name?.trim() && !hasAVLocationCoordinates(value.location);
+  }
   if (["text", "block", "url", "phone", "email", "template"].includes(value.type)) {
     return !value[value.type]?.content;
   }
@@ -785,6 +809,7 @@ function getColNameByType(type) {
     case "date":
     case "phone":
     case "email":
+    case "location":
     case "template":
       return window.top.siyuan.languages[type];
     case "mSelect":
@@ -814,6 +839,10 @@ function getColNameByType(type) {
 function addAttributeViewIcon() {
   const icon = `<svg style="position: absolute; width: 0; height: 0; overflow: hidden;" xmlns="http://www.w3.org/2000/svg">
 <defs>
+<symbol id="iconMapPin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path>
+    <circle cx="12" cy="10" r="3"></circle>
+</symbol>
 <symbol id="iconTable" viewBox="0 0 32 32">
   <path d="M22.801 2.286h-22.801v27.429h32v-27.429h-9.199zM19.372 5.714v4.571h-6.801v-4.571h6.801zM19.372 13.714v4.571h-6.801v-4.571h6.801zM3.429 5.714h5.714v4.571h-5.714v-4.571zM3.429 13.714h5.714v4.571h-5.714v-4.571zM3.429 26.286v-4.571h5.714v4.571h-5.714zM12.571 26.286v-4.571h6.801v4.571h-6.801zM28.571 26.286h-5.77v-4.571h5.77v4.571zM28.571 18.286h-5.77v-4.571h5.77v4.571zM22.801 10.286v-4.571h5.77v4.571h-5.77z"></path>
 </symbol>
