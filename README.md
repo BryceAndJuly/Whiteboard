@@ -11,6 +11,11 @@
 > 希望这个小工具能帮助到有同样需求的人。
 
 ## 一、当前版本
+### **V2.1.16**
+
+- 删除`Whiteboard/icons`文件夹中的三个图标（文件名为中文），以避免可能出现的安装错误。参考：[#102](https://github.com/BryceAndJuly/Whiteboard/issues/102)
+
+---
 ### V2.1.15
 
 见顶部预览图，主要处理兼容性。测试环境：`SiYuan V3.8.7` 、`SiYuan V3.8.8-alpha.3`、`Windows 11`
