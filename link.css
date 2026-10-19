@@ -627,19 +627,6 @@
   background-image: url("icons/qqdocs.svg");
 }
 
-/* 茶杯狐 */
-.protyle-wysiwyg [data-node-id] span[data-type="a"][data-href*="cupfox.app"]:not(:empty)::before,
-.b3-typography a[href*="cupfox.app"]::before {
-  content: "";
-  background-image: url("icons/茶杯狐.png");
-}
-
-/* 蓝光影院 */
-.protyle-wysiwyg [data-node-id] span[data-type="a"][data-href*="www.lgyy.cc"]:not(:empty)::before,
-.b3-typography a[href*="www.lgyy.cc"]::before {
-  content: "";
-  background-image: url("icons/蓝光影院.ico");
-}
 
 /* logseq */
 .protyle-wysiwyg [data-node-id] span[data-type="a"][data-href*="logseq.com"]:not(:empty)::before,
@@ -658,13 +645,6 @@
 .b3-typography a[href*="freeok.vip"]::before {
   content: "";
   background-image: url("icons/freeok.png");
-}
-
-/* https://www.zjtu.tv/——追剧兔——电影网站 */
-.protyle-wysiwyg [data-node-id] span[data-type="a"][data-href*="zjtu.tv"]:not(:empty)::before,
-.b3-typography a[href*="zjtu.tv"]::before {
-  content: "";
-  background-image: url("icons/追剧兔.png");
 }
 
 
