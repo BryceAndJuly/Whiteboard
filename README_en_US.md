@@ -10,7 +10,7 @@
 > I hope this little tool can help people with the same needs.
 
 ## 1. Current Version
-### **V2.1.16**
+### V2.1.16
 
 - Delete the three Chinese‑named icons in the `Whiteboard/icons` folder to avoid potential installation errors. Reference: [#102](https://github.com/BryceAndJuly/Whiteboard/issues/102)
 
