@@ -1069,3 +1069,11 @@ div[data-type="NodeList"][custom-sy-list-mindmap="1"]>div[data-type="NodeListIte
 .av__calendar-field:has(>span.av__celltext:empty) {
     display: none;
 }
+
+/* 导图根节点 */
+.mindmap-view__node--virtual,
+.list-mindmap__node--virtual {
+    font-weight: 600;
+    background: var(--b3-theme-surface);
+    box-shadow: inset 0 0 0 1px var(--b3-border-color);
+}
