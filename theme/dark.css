@@ -63,13 +63,13 @@
 
     /* 卡片背景 */
     --b3-card-error-color: rgb(243, 153, 147);
-    --b3-card-error-background: #cc352d3d;
+    --b3-card-error-background: #442724;
     --b3-card-warning-color: rgb(255, 213, 153);
-    --b3-card-warning-background: #be8b585d;
+    --b3-card-warning-background: #554636;
     --b3-card-info-color: rgb(166, 213, 250);
-    --b3-card-info-background: rgba(0, 153, 255, 0.288);
+    --b3-card-info-background: #28405c;
     --b3-card-success-color: rgb(183, 223, 185);
-    --b3-card-success-background: #85d0a34d;
+    --b3-card-success-background: #425347;
 
     /* 自定义文字 */
     --b3-font-color1: var(--b3-card-error-color);
@@ -89,8 +89,8 @@
     --b3-font-background2: var(--b3-card-warning-background);
     --b3-font-background3: var(--b3-card-info-background);
     --b3-font-background4: var(--b3-card-success-background);
-    --b3-font-background5: #4c5257;
-    --b3-font-background6: #0c3d88;
+    --b3-font-background5: #3a3f42;
+    --b3-font-background6: #031840;
     --b3-font-background7: #593905;
     --b3-font-background8: #541812;
     --b3-font-background9: #6a0634;
