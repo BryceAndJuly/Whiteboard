@@ -2997,7 +2997,7 @@ class ListMindmapView {
         const content = this.getContentHost(id);
         content.replaceChildren();
         if (node.virtual) {
-          content.textContent = "Mindmap";
+          content.textContent = this.#model.metadata.rootTitle;
         } else {
           node.contentBlocks.forEach((block) => {
             const clone = block.cloneNode(true);

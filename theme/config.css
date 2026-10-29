@@ -621,7 +621,7 @@ h1:has(+ .iframe[custom-data-assets*="/assets/ExcalidrawFiles/"]) {
 
 .list-mindmap__node {
     position: absolute;
-    min-width: 64px;
+    min-width: 32px;
     max-width: 300px;
     width: max-content;
     max-width: 420px;
