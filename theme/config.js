@@ -3101,8 +3101,12 @@ class ListMindmapView {
       const adaptForeground = !!themed || !!canvasForeground;
       element.classList.toggle("mindmap-view__node--colored", adaptForeground);
       element.style.backgroundColor = background;
-      element.style.color = style?.textColor || (adaptForeground && style?.backgroundColor && this.isMindmapColor(background) ?
+      let textColor = style?.textColor || (adaptForeground && style?.backgroundColor && this.isMindmapColor(background) ?
         this.getMindmapTextColor(background) : themed?.textColor || canvasForeground) || "";
+      if (window.top.siyuan.config.appearance.mode === 1 && textColor === "#000000" && background === "transparent" && canvasForeground === undefined) {
+        textColor = "#fff";
+      }
+      element.style.color = textColor;
       element.style.fontSize = themed?.fontSize ? `${style?.fontSize ?? themed.fontSize}px` : "";
       element.style.fontWeight = themed?.fontSize ? (style?.bold === undefined ? (themed.bold ? "600" : "400") :
         style.bold ? "700" : "400") : "";
