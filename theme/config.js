@@ -2466,8 +2466,8 @@ const createElement = (tag, className) => {
 };
 
 function layoutListMindmap(root, options = {}) {
-  const horizontalGap = options.horizontalGap ?? 40;
-  const verticalGap = options.verticalGap ?? 24;
+  const horizontalGap = options.horizontalGap ?? 30;
+  const verticalGap = options.verticalGap ?? 16;
   const padding = options.padding ?? 32;
   const gapBefore = (id) => Math.max(verticalGap, options.verticalGaps?.get(id) || 0);
   if ([horizontalGap, verticalGap, padding].some(value => !Number.isFinite(value) || value < 0)) {
