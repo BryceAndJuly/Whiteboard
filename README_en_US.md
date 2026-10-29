@@ -10,6 +10,17 @@
 > I hope this little tool can help people with the same needs.
 
 ## 1. Current Version
+### V2.1.17
+
+See the preview image at the top. This release mainly focuses on compatibility improvements. Test environment: `SiYuan V3.8.9`, `Windows 11`
+
+- Fix: Incorrect text display for the mind map root node.
+- Compatibility with currently supported mind map settings:
+  - Theme, see: [#20800](https://github.com/siyuan-note/siyuan/issues/20800)
+  - Canvas background
+  - Connector style, see: [#20631](https://github.com/siyuan-note/siyuan/issues/20631)
+
+---
 ### V2.1.16
 
 - Delete the three Chinese‑named icons in the `Whiteboard/icons` folder to avoid potential installation errors. Reference: [#102](https://github.com/BryceAndJuly/Whiteboard/issues/102)

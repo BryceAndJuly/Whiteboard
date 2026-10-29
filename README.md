@@ -11,6 +11,17 @@
 > 希望这个小工具能帮助到有同样需求的人。
 
 ## 一、当前版本
+### V2.1.17
+
+见顶部预览图，主要处理兼容性。测试环境：`SiYuan V3.8.9` 、`Windows 11`
+
+- 修复：导图根节点的文本显示错误。
+- 兼容导图当前支持的设置项：
+  - 主题，参考：[#20800](https://github.com/siyuan-note/siyuan/issues/20800)
+  - 画布背景
+  - 连线样式，参考：[#20631](https://github.com/siyuan-note/siyuan/issues/20631)
+
+---
 ### V2.1.16
 
 - 删除`Whiteboard/icons`文件夹中的三个图标（文件名为中文），以避免可能出现的安装错误。参考：[#102](https://github.com/BryceAndJuly/Whiteboard/issues/102)

@@ -2759,6 +2759,8 @@ class ListMindmapView {
   #selectedRelation;
   #selectedEdge;
   #hoveredLine;
+  #foldOpacities = new Map();
+  #themeColors = new Map();
   #finishRelationEdit;
   #linePaths = [];
   #relationRoutes = new Map();
@@ -3032,11 +3034,85 @@ class ListMindmapView {
       this.#selectedEdge = undefined;
       this.#inspector.hidden = true;
     }
+    this.updateColors();
     this.updateRelations();
     this.updateSummaries();
     this.updateSelection();
     this.renderInspector();
     this.refreshLayout();
+  }
+  getMindmapTextColor = (color) =>
+    this.getMindmapLuminance(color) > .179 ? "#000000" : "#ffffff";
+  mixMindmapColor = (color, background, ratio) => "#" + [1, 3, 5].map(index =>
+    Math.round(parseInt(color.slice(index, index + 2), 16) * ratio +
+      parseInt(background.slice(index, index + 2), 16) * (1 - ratio)).toString(16).padStart(2, "0")).join("");
+
+  isMindmapColor = (value) =>
+    typeof value === "string" && /^#[0-9a-f]{6}$/i.test(value);
+
+  resolveListMindmapColors = (model, canvasColor) => {
+    const result = new Map();
+    const palette = model.metadata.appearance?.palette;
+    if (!palette?.length) {
+      return result;
+    }
+    const appearance = model.metadata.appearance;
+    const background = this.getMindmapHexColor(appearance.backgroundColor || canvasColor || "#ffffff") || "#ffffff";
+    const foreground = this.getMindmapContrastColor(this.getMindmapLuminance(background) > .179 ? "#334155" : "#e2e8f0", background, 4.5);
+    const pending = [{ node: model.root, color: appearance.rootColor || palette[0], level: 0 }];
+    while (pending.length) {
+      const { node, color, level } = pending.pop();
+      if (appearance.nodeStyle === "branch") {
+        result.set(node.id, {
+          backgroundColor: level < 2 ? color : "transparent",
+          textColor: this.getMindmapTextColor(level < 2 ? color : background), lineColor: color,
+          fontSize: level === 0 ? 20 : level === 1 ? 16 : 14, bold: level < 2, lineWidth: 1.5
+        });
+      } else if (appearance.nodeStyle === "layered") {
+        result.set(node.id, {
+          backgroundColor: "transparent",
+          textColor: foreground, fontSize: level === 0 ? 20 : level === 1 ? 16 : 14, bold: level < 2,
+          lineColor: node === model.root ? color : this.mixMindmapColor(color, background, .65),
+          lineWidth: level === 0 ? 2.25 : level === 1 ? 1.75 : 1.25
+        });
+      } else {
+        result.set(node.id, { backgroundColor: color, textColor: this.getMindmapTextColor(color), lineColor: color });
+      }
+      node.children.forEach((child, index) => pending.push({
+        node: child, color: node === model.root ?
+          palette[(model.metadata.nodes[child.id]?.branchColor ?? index) % palette.length] : color, level: level + 1
+      }));
+    }
+    return result;
+  };
+
+  updateColors() {
+    if (this.#destroyed) {
+      return;
+    }
+    this.#viewport.style.backgroundColor = this.#model.metadata.appearance?.backgroundColor || "";
+    const canvasForeground = this.#model.metadata.appearance?.backgroundColor ?
+      this.getMindmapTextColor(this.#model.metadata.appearance.backgroundColor) : undefined;
+    this.#themeColors = this.resolveListMindmapColors(this.#model, getComputedStyle(this.#options.host).backgroundColor);
+    this.#nodeElements.forEach((element, id) => {
+      const style = this.#model.metadata.nodes[id];
+      const themed = this.#themeColors.get(id);
+      const background = style?.backgroundColor || themed?.backgroundColor || "";
+      const adaptForeground = !!themed || !!canvasForeground;
+      element.classList.toggle("mindmap-view__node--colored", adaptForeground);
+      element.style.backgroundColor = background;
+      element.style.color = style?.textColor || (adaptForeground && style?.backgroundColor && this.isMindmapColor(background) ?
+        this.getMindmapTextColor(background) : themed?.textColor || canvasForeground) || "";
+      element.style.fontSize = themed?.fontSize ? `${style?.fontSize ?? themed.fontSize}px` : "";
+      element.style.fontWeight = themed?.fontSize ? (style?.bold === undefined ? (themed.bold ? "600" : "400") :
+        style.bold ? "700" : "400") : "";
+      element.style.fontStyle = themed?.fontSize && style?.italic !== undefined ? (style.italic ? "italic" : "normal") : "";
+      if (adaptForeground) {
+        element.style.setProperty("--mindmap-node-text-color", element.style.color);
+      } else {
+        element.style.removeProperty("--mindmap-node-text-color");
+      }
+    });
   }
   updateSelection() {
     if (!this.#relationFrom) {
@@ -3266,6 +3342,130 @@ class ListMindmapView {
       element.setAttribute("aria-pressed", String(selected));
     });
   }
+  buildListMindmapConnectors(
+    rootID, positions, edges,
+    style, makePath, branchTheme = false,
+  ) {
+    const trunks = [];
+    const trunkParents = [];
+    const branches = [];
+    const groups = new Map();
+    const firstLevel = new Set(branchTheme ? edges.filter(edge => edge.from === rootID).map(edge => edge.to) : []);
+    const anchorY = (node) => node.y +
+      (node.id === rootID || firstLevel.has(node.id) ? node.height / 2 : node.height);
+    edges.forEach(edge => {
+      const from = positions.get(edge.from);
+      const to = positions.get(edge.to);
+      if (!from || !to) {
+        return;
+      }
+      if (style === "orthogonal" || style === "rounded") {
+        if (!groups.has(edge.from)) {
+          groups.set(edge.from, []);
+        }
+        groups.get(edge.from).push(to);
+        return;
+      }
+      const startX = from.x + from.width;
+      const startY = anchorY(from);
+      const endY = anchorY(to);
+      const center = (startX + to.x) / 2;
+      const path = makePath();
+      path.moveTo(startX, startY);
+      path.bezierCurveTo(style === "spline" ? startX : center, startY, center, endY, to.x, endY);
+      path.lineTo(to.x + to.width, endY);
+      branches.push({ id: edge.to, path });
+    });
+    groups.forEach((children, parentID) => {
+      const from = positions.get(parentID);
+      const startX = from.x + from.width;
+      const startY = anchorY(from);
+      const endX = children.reduce((left, node) => Math.min(left, node.x), Infinity);
+      const trunkX = (startX + endX) / 2;
+      const radius = style === "rounded" ? Math.min(8, Math.max(0, endX - startX) / 4) : 0;
+      let top = startY;
+      let bottom = startY;
+      children.forEach(to => {
+        const endY = anchorY(to);
+        const corner = Math.min(radius, Math.abs(endY - startY) / 2);
+        const branchY = endY - Math.sign(endY - startY) * corner;
+        top = Math.min(top, branchY);
+        bottom = Math.max(bottom, branchY);
+        const path = makePath();
+        path.moveTo(trunkX, branchY);
+        if (corner) {
+          path.quadraticCurveTo(trunkX, endY, trunkX + corner, endY);
+        }
+        path.lineTo(to.x + to.width, endY);
+        if (branchTheme && parentID === rootID) {
+          const trunk = makePath();
+          trunk.moveTo(startX, startY);
+          trunk.lineTo(trunkX, startY);
+          trunk.lineTo(trunkX, branchY);
+          branches.push({ id: to.id, path, trunk });
+        } else {
+          branches.push({ id: to.id, path });
+        }
+      });
+      if (branchTheme && parentID === rootID) {
+        return;
+      }
+      const trunk = makePath();
+      trunk.moveTo(startX, startY);
+      trunk.lineTo(trunkX, startY);
+      if (bottom > top) {
+        trunk.moveTo(trunkX, top);
+        trunk.lineTo(trunkX, bottom);
+      }
+      trunks.push(trunk);
+      trunkParents.push(parentID);
+    });
+    return { trunks, trunkParents, branches };
+  };
+
+  getMindmapHexColor(color) {
+    if (/^#[0-9a-f]{6}$/i.test(color)) {
+      return color;
+    }
+    const rgb = color.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*1)?\)$/);
+    return rgb ? "#" + rgb.slice(1).map(value => Number(value).toString(16).padStart(2, "0")).join("") : undefined;
+  };
+
+  getMindmapLuminance(color) {
+    const values = [1, 3, 5].map(index => {
+      const value = parseInt(color.slice(index, index + 2), 16) / 255;
+      return value <= .04045 ? value / 12.92 : Math.pow((value + .055) / 1.055, 2.4);
+    });
+    return values[0] * .2126 + values[1] * .7152 + values[2] * .0722;
+  };
+
+  getMindmapContrastColor(color, background, minimum) {
+    background = this.getMindmapHexColor(background);
+    if (!background) {
+      return color;
+    }
+    const luminance = this.getMindmapLuminance(background);
+    const contrast = (value) => {
+      const line = this.getMindmapLuminance(value);
+      return (Math.max(line, luminance) + .05) / (Math.min(line, luminance) + .05);
+    };
+    if (contrast(color) >= minimum) {
+      return color;
+    }
+    const target = luminance > .179 ? 0 : 255;
+    const channels = [1, 3, 5].map(index => parseInt(color.slice(index, index + 2), 16));
+    for (let step = 1; step <= 100; step++) {
+      const adjusted = "#" + channels.map(value => Math.round(value + (target - value) * step / 100)
+        .toString(16).padStart(2, "0")).join("");
+      if (contrast(adjusted) >= minimum) {
+        return adjusted;
+      }
+    }
+    return color;
+  };
+
+  getMindmapLineColor = (color, background) => getMindmapContrastColor(color, background, 3);
+
   draw() {
     this.#world.style.transform = `translate(${this.#offsetX}px, ${this.#offsetY}px) scale(${this.#scale})`;
     this.#zoomLabel.textContent = `${Math.round(this.#scale * 100)}%`;
@@ -3298,6 +3498,8 @@ class ListMindmapView {
         width: Number.isFinite(width) && width > 0 ? width : undefined,
       };
     });
+    const lineStyles = readLineStyles("line");
+    const relationStyles = readLineStyles("relation");
     const summaryStyles = readLineStyles("summary");
     const resolveColor = (value, fallback) => {
       const key = value || fallback;
@@ -3321,30 +3523,60 @@ class ListMindmapView {
         baseWidth,
       };
     };
-    this.#edges.forEach((edge) => {
-      const from = this.#positions.get(edge.from);
-      const to = this.#positions.get(edge.to);
-      if (!from || !to) {
-        return;
+
+    const canvasColor = this.#model.metadata.appearance?.backgroundColor ? this.#model.metadata.appearance?.backgroundColor : "transparent";
+
+    const paletteLines = new Map();
+
+    const themeLineColor = (id) => {
+      const color = this.#themeColors?.get(id)?.lineColor;
+      if (color && !paletteLines.has(color)) {
+        paletteLines.set(color, this.#model.metadata.appearance?.nodeStyle === "branch" ?
+          color : this.getMindmapLineColor(color, canvasColor));
       }
-      const style = { ...this.#model.metadata.nodes[this.#model.root.id], ...this.#model.metadata.nodes[edge.to] };
-      const startX = from.x + from.width;
-      const startY = from.y + (edge.from === this.#model.root.id ? from.height / 2 : from.height);
-      const endX = to.x;
-      const endY = to.y + to.height;
-      const center = (startX + endX) / 2;
-      const path = new Path2D();
-      path.moveTo(startX, startY);
-      path.bezierCurveTo(center, startY, center, endY, endX, endY);
-      path.lineTo(to.x + to.width, endY);
-      this.#linePaths.push({ id: edge.to, relation: false, path });
-      context.beginPath();
-      context.strokeStyle = resolveColor(style.lineColor, defaultLine);
-      context.lineWidth = (style.lineWidth || 1.5) + (this.#selectedEdge === edge.to ? 1 : 0) +
-        (this.#hoveredLine === `edge:${edge.to}` ? 1.5 / this.#scale : 0);
+      return paletteLines.get(color);
+    };
+
+    const connectors = this.buildListMindmapConnectors(this.#model.root.id, this.#positions, this.#edges,
+      this.#model.metadata.connectorStyle || "bezier", () => new Path2D(),
+      this.#model.metadata.appearance?.nodeStyle === "branch");
+
+    const trunkOpacities = new Map();
+
+    const rootStyle = this.#model.metadata.nodes[this.#model.root.id] || {};
+    connectors.trunks.forEach((path, index) => {
+      const id = connectors.trunkParents[index];
+      const style = this.#themeColors?.size ? { ...rootStyle, ...this.#model.metadata.nodes[id] } : rootStyle;
+      const trunkStyle = resolveLineStyle(lineStyles, style.lineColor || themeLineColor(id),
+        style.lineWidth, defaultLine, false, false, this.#themeColors?.get(id)?.lineWidth);
+      context.strokeStyle = trunkStyle.color;
+      context.lineWidth = trunkStyle.width;
+      context.globalAlpha = Math.min(this.#foldOpacities?.get(id) ?? 1, trunkOpacities.get(id) ?? 1);
       context.setLineDash(style.lineDash ? [6, 4] : []);
       context.stroke(path);
     });
+    connectors.branches.forEach(({ id, path, trunk }) => {
+      const style = { ...rootStyle, ...this.#model.metadata.nodes[id] };
+      this.#linePaths.push({ id, relation: false, path });
+      context.beginPath();
+      const selected = this.#selectedEdge === id;
+      const hovered = this.#hoveredLine === `edge:${id}`;
+      const lineStyle = resolveLineStyle(lineStyles, style.lineColor || themeLineColor(id),
+        style.lineWidth, defaultLine, selected, hovered, this.#themeColors?.get(id)?.lineWidth);
+      context.globalAlpha = this.#foldOpacities?.get(id) ?? 1;
+      context.setLineDash(style.lineDash ? [6, 4] : []);
+      if (trunk) {
+        const trunkStyle = resolveLineStyle(lineStyles, style.lineColor || themeLineColor(id),
+          style.lineWidth, defaultLine, false, false, this.#themeColors?.get(id)?.lineWidth);
+        context.strokeStyle = trunkStyle.color;
+        context.lineWidth = trunkStyle.width;
+        context.stroke(trunk);
+      }
+      context.strokeStyle = lineStyle.color;
+      context.lineWidth = lineStyle.width;
+      context.stroke(path);
+    });
+
     this.#model.metadata.relations.forEach((relation) => {
       const from = this.#positions.get(relation.from);
       const to = this.#positions.get(relation.to);
@@ -3400,8 +3632,8 @@ class ListMindmapView {
         const element = this.#nodeElements.get(id);
         return {
           id,
-          width: Math.max(64, element.offsetWidth),
-          height: Math.max(36, element.offsetHeight),
+          width: Math.max(1, element.offsetWidth),
+          height: Math.max(1, element.offsetHeight),
           collapsed: this.#folded.get(id) ?? node.collapsed,
           children: node.children.map(child => makeLayoutNode(child.id)),
         };
